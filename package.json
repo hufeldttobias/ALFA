@@ -1,0 +1,8 @@
+{
+  "name": "nimastay-living-flex",
+  "private": true,
+  "scripts": {
+    "dev": "python3 -m http.server 3011",
+    "upload-server": "python3 server.py"
+  }
+}

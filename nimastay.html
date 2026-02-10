@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nimastay - Living Flex</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <span class="logo-text">Nimastay - LivingFlex</span>
+            </div>
+            
+            <nav class="nav-menu">
+                <a href="#" class="nav-link">Build Your Own Home</a>
+                <a href="#" class="nav-link">Ready Packages</a>
+                <a href="#" class="nav-link">Send Floor Plan</a>
+                <a href="#" class="nav-link">Cancel Subscription</a>
+                <a href="#" class="nav-link">Terms and conditions</a>
+            </nav>
+            
+            <div class="header-actions">
+                <button class="login-btn" aria-label="Log in">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M20.59 22C20.59 18.13 16.74 15 12 15C7.26 15 3.41 18.13 3.41 22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <!-- Home Page -->
+        <section id="home-page" class="page active">
+            <section class="hero">
+                <div class="hero-content">
+                    <h1>Nimastay - Living Flex</h1>
+                    <p>Create your dream home with flexible furniture that fits your life</p>
+                    <button class="cta-button">Get Started</button>
+                </div>
+            </section>
+        </section>
+
+        <!-- Get Started Page -->
+        <section id="get-started-page" class="page">
+            <div class="builder-section">
+                <div class="container">
+                    <p class="section-description section-description-center">Choose where to begin and explore the options tailored to your needs.</p>
+
+                    <div class="category-buttons">
+                        <button type="button" class="category-card" data-target="build-your-own-home-page">
+                            <div class="category-card-image" style="background-image: url('B1H.jpg');" aria-hidden="true"></div>
+                            <div class="category-card-content">
+                                <h3>Build Your Own Home</h3>
+                                <p>Design your own package and tailor it to your space.</p>
+                            </div>
+                        </button>
+                        <button type="button" class="category-card" data-target="ready-packages-page">
+                            <div class="category-card-image" style="background-image: url('B3G.jpg');" aria-hidden="true"></div>
+                            <div class="category-card-content">
+                                <h3>Ready Packages</h3>
+                                <p>Browse curated packages that are ready to go.</p>
+                            </div>
+                        </button>
+                        <button type="button" class="category-card" data-target="send-floor-plan-page">
+                            <div class="category-card-image" style="background-image: url('B2P.jpg');" aria-hidden="true"></div>
+                            <div class="category-card-content">
+                                <h3>Custom</h3>
+                                <p>Send your floor plan and get a tailored proposal.</p>
+                            </div>
+                        </button>
+                    </div>
+
+                    <div class="faq-section">
+                        <h2 class="section-title section-title-center">Q&A</h2>
+                        <div class="faq-grid">
+                            <button type="button" class="faq-item">
+                                <span class="faq-question">How does the subscription work?</span>
+                                <span class="faq-icon">+</span>
+                                <div class="faq-answer">
+                                    You choose a package and adjust it over time as your needs change.
+                                </div>
+                            </button>
+                            <button type="button" class="faq-item">
+                                <span class="faq-question">What is included in delivery?</span>
+                                <span class="faq-icon">+</span>
+                                <div class="faq-answer">
+                                    We coordinate delivery and setup based on your selected option.
+                                </div>
+                            </button>
+                            <button type="button" class="faq-item">
+                                <span class="faq-question">Can I change items later?</span>
+                                <span class="faq-icon">+</span>
+                                <div class="faq-answer">
+                                    Yes, you can swap items as your space or preferences evolve.
+                                </div>
+                            </button>
+                            <button type="button" class="faq-item">
+                                <span class="faq-question">Is there a minimum term?</span>
+                                <span class="faq-icon">+</span>
+                                <div class="faq-answer">
+                                    Flexible terms let you scale up or down without long commitments.
+                                </div>
+                            </button>
+                            <button type="button" class="faq-item">
+                                <span class="faq-question">What if I move?</span>
+                                <span class="faq-icon">+</span>
+                                <div class="faq-answer">
+                                    Let us know, and we will plan the logistics for your new address.
+                                </div>
+                            </button>
+                            <button type="button" class="faq-item">
+                                <span class="faq-question">How do I get support?</span>
+                                <span class="faq-icon">+</span>
+                                <div class="faq-answer">
+                                    Reach out via the contact form below and we will respond quickly.
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="contact-section">
+                        <h2 class="section-title">Contact Us</h2>
+                        <form class="contact-form">
+                            <div class="form-group">
+                                <label for="contactName">Full Name</label>
+                                <input type="text" id="contactName" name="contactName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="contactEmail">Email</label>
+                                <input type="email" id="contactEmail" name="contactEmail" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="contactMessage">Message</label>
+                                <textarea id="contactMessage" name="contactMessage" rows="4" required></textarea>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="submit-btn">Send Message</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Build Your Own Home Page -->
+        <section id="build-your-own-home-page" class="page">
+            <div class="page-hero" style="background-image: url('BI2.jpg');">
+                <div class="page-hero-content">
+                    <h1>Build Your Own Home</h1>
+                </div>
+            </div>
+            
+            <div class="builder-section">
+                <div class="builder-container">
+                    <div class="categories-sidebar">
+                        <h3>Categories</h3>
+                        <div id="categoriesList"></div>
+                    </div>
+                    
+                    <div class="products-area">
+                        <div id="productsGrid" class="products-grid"></div>
+                    </div>
+                    
+                    <div class="package-summary">
+                        <h3>Your Package</h3>
+                        <div id="packageItems"></div>
+                        <div class="package-totals">
+                            <div class="total-item">
+                                <span>Startup Cost:</span>
+                                <span id="totalStartup">0 DKK</span>
+                            </div>
+                            <div class="total-item">
+                                <span>Month 1-4:</span>
+                                <span id="totalMonth1to4">0 DKK</span>
+                            </div>
+                            <div class="total-item">
+                                <span>Month 5-12:</span>
+                                <span id="totalMonth5to12">0 DKK</span>
+                            </div>
+                            <div class="total-item">
+                                <span>Month 13+:</span>
+                                <span id="totalMonth13plus">0 DKK</span>
+                            </div>
+                        </div>
+                        <div class="logistics-fee-info">
+                            <button type="button" class="logistics-fee-toggle" id="logisticsFeeToggle">
+                                <span>Why is there a 3,000 DKK fee?</span>
+                                <svg class="logistics-fee-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </button>
+                            <div class="logistics-fee-content" id="logisticsFeeContent" style="display: none;">
+                                <p>The 3,000 DKK startup fee covers logistics, coordination, and order handling. This includes processing your order, coordinating delivery, and administrative handling of your subscription.</p>
+                            </div>
+                        </div>
+                        <button class="submit-package-btn" id="submitPackageBtn">See Package</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ready Packages Page -->
+        <section id="ready-packages-page" class="page">
+            <div class="page-hero" style="background-image: url('BI2.jpg');">
+                <div class="page-hero-content">
+                    <h1>Ready Packages</h1>
+                    <p>Choose a complete package and move in with ease.</p>
+                </div>
+            </div>
+
+            <div class="builder-section">
+                <div class="container">
+                    <div class="ready-packages-hero">
+                        <img src="ProduktB/ReadyP.jpg" alt="Ready packages preview">
+                    </div>
+                    <p class="ready-packages-note">The image above is a guiding representation of the packages below and does not necessarily show the exact products.</p>
+                    <div class="ready-packages-grid">
+                        <div class="ready-package-card">
+                            <h2>Package 1</h2>
+                            <ul class="ready-package-list">
+                                <li>Dining table for at least 4 people</li>
+                                <li>4 matching dining chairs</li>
+                                <li>Sofa bed</li>
+                                <li>Coffee table</li>
+                                <li>2 x 90x200 beds with top mattress</li>
+                                <li>2 pillow/duvet sets</li>
+                                <li>2 side tables</li>
+                                <li>2 bedside lamps</li>
+                                <li>2 types of lighting</li>
+                                <li>55&quot; TV plus TV stand</li>
+                                <li>Cordless vacuum cleaner</li>
+                            </ul>
+                            <div class="ready-package-pricing">
+                                <div class="pricing-item">
+                                    <span>Setup &amp; logistics (incl. VAT)</span>
+                                    <span>6,250 DKK</span>
+                                </div>
+                                <div class="pricing-item">
+                                    <span>Monthly rental per started month (incl. VAT)</span>
+                                    <span>2,000 DKK</span>
+                                </div>
+                                <div class="pricing-item">
+                                    <span>Removal (incl. VAT)</span>
+                                    <span>2,500 DKK</span>
+                                </div>
+                            </div>
+                            <button type="button" class="choose-package-btn" data-ready-package="package1">Choose package</button>
+                        </div>
+
+                        <div class="ready-package-card">
+                            <h2>Package 2</h2>
+                            <ul class="ready-package-list">
+                                <li>Dining table for at least 6 people</li>
+                                <li>6 matching dining chairs</li>
+                                <li>Sofa bed</li>
+                                <li>Coffee table</li>
+                                <li>4 x 90x200 beds with top mattress</li>
+                                <li>4 pillow/duvet sets</li>
+                                <li>4 side tables</li>
+                                <li>4 bedside lamps</li>
+                                <li>2 types of lighting</li>
+                                <li>55&quot; TV plus TV stand</li>
+                                <li>Cordless vacuum cleaner</li>
+                            </ul>
+                            <div class="ready-package-pricing">
+                                <div class="pricing-item">
+                                    <span>Setup &amp; logistics (incl. VAT)</span>
+                                    <span>7,500 DKK</span>
+                                </div>
+                                <div class="pricing-item">
+                                    <span>Monthly rental per started month (incl. VAT)</span>
+                                    <span>2,750 DKK</span>
+                                </div>
+                                <div class="pricing-item">
+                                    <span>Removal (incl. VAT)</span>
+                                    <span>3,125 DKK</span>
+                                </div>
+                            </div>
+                            <button type="button" class="choose-package-btn" data-ready-package="package2">Choose package</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Send Floor Plan Page -->
+        <section id="send-floor-plan-page" class="page">
+            <div class="page-hero" style="background-image: url('BI2.jpg');">
+                <div class="page-hero-content">
+                    <h1>Send Floor Plan</h1>
+                    <p>Upload your floor plan and we'll create a personalized interior design proposal for you</p>
+                </div>
+            </div>
+            
+            <div class="builder-section">
+                <div class="container">
+                    <div class="floor-plan-container">
+                        <div class="floor-plan-form-section">
+                            <h2>Upload Your Floor Plan</h2>
+                            <p class="section-description">Send us a photo or image of your apartment floor plan, and our team will return with a personalized interior design proposal tailored to your space.</p>
+                            
+                            <form id="floorPlanForm" class="floor-plan-form">
+                                <div class="form-group">
+                                    <label for="floorPlanImage">Floor Plan Image</label>
+                                    <div class="image-upload-area">
+                                        <input type="file" id="floorPlanImage" name="floorPlanImage" accept="image/*" style="display: none;">
+                                        <div class="drop-zone" id="floorPlanDropZone">
+                                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                                <path d="M17 8L12 3L7 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                                <path d="M12 3V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                            <p>Drag and drop your floor plan image here, or <span class="browse-link">select file</span></p>
+                                            <p class="file-info">PNG, JPG up to 10MB</p>
+                                        </div>
+                                        <div class="image-preview" id="floorPlanPreview" style="display: none;">
+                                            <img id="floorPlanPreviewImg" src="" alt="Floor Plan Preview">
+                                            <button type="button" class="remove-image" id="removeFloorPlanImage">×</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="customerName">Full Name</label>
+                                    <input type="text" id="customerName" name="customerName" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="customerEmail">Email</label>
+                                    <input type="email" id="customerEmail" name="customerEmail" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="customerPhone">Phone Number</label>
+                                    <input type="tel" id="customerPhone" name="customerPhone" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="customerAddress">Address</label>
+                                    <input type="text" id="customerAddress" name="customerAddress" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="additionalNotes">Additional Notes (Optional)</label>
+                                    <textarea id="additionalNotes" name="additionalNotes" rows="4" placeholder="Any specific requirements or preferences for your interior design..."></textarea>
+                                </div>
+                                
+                                <div class="form-actions">
+                                    <button type="submit" class="submit-btn" id="submitFloorPlanBtn">Send Floor Plan</button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <div class="floor-plan-info-section">
+                            <div class="info-card">
+                                <h3>How It Works</h3>
+                                <div class="info-steps">
+                                    <div class="info-step">
+                                        <div class="step-number">1</div>
+                                        <div class="step-content">
+                                            <h4>Upload Your Floor Plan</h4>
+                                            <p>Take a photo or upload an image of your apartment floor plan</p>
+                                        </div>
+                                    </div>
+                                    <div class="info-step">
+                                        <div class="step-number">2</div>
+                                        <div class="step-content">
+                                            <h4>Fill in Your Details</h4>
+                                            <p>Provide your contact information and any specific requirements</p>
+                                        </div>
+                                    </div>
+                                    <div class="info-step">
+                                        <div class="step-number">3</div>
+                                        <div class="step-content">
+                                            <h4>We Review & Design</h4>
+                                            <p>Our team reviews your floor plan and creates a personalized proposal</p>
+                                        </div>
+                                    </div>
+                                    <div class="info-step">
+                                        <div class="step-number">4</div>
+                                        <div class="step-content">
+                                            <h4>Receive Your Proposal</h4>
+                                            <p>We'll send you a detailed interior design proposal via email</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cancel Subscription Page -->
+        <section id="cancel-subscription-page" class="page">
+            <div class="page-hero" style="background-image: url('BI2.jpg');">
+                <div class="page-hero-content">
+                    <h1>Cancel Subscription</h1>
+                    <p>Find and cancel your subscription using your order number and name</p>
+                </div>
+            </div>
+            
+            <div class="builder-section">
+                <div class="container">
+                    <div class="cancel-subscription-container">
+                        <div class="cancel-search-section">
+                            <h2>Find Your Order</h2>
+                            <p class="section-description">Enter your order number and the name used when placing the order to find and cancel your subscription.</p>
+                            
+                            <form id="cancelSearchForm" class="cancel-search-form">
+                                <div class="form-group">
+                                    <label for="orderNumberSearch">Order Number</label>
+                                    <input type="text" id="orderNumberSearch" name="orderNumberSearch" placeholder="Enter order number (e.g. 1234567890)" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="orderNameSearch">Name</label>
+                                    <input type="text" id="orderNameSearch" name="orderNameSearch" placeholder="Enter the name used when placing the order" required>
+                                </div>
+                                
+                                <div class="form-actions">
+                                    <button type="submit" class="submit-btn" id="searchOrderBtn">Search Order</button>
+                                </div>
+                            </form>
+                            
+                            <div id="orderSearchError" class="error-message" style="display: none; margin-top: 1rem;"></div>
+                        </div>
+                        
+                        <div id="orderFoundSection" class="order-found-section" style="display: none;">
+                            <h2>Order Found</h2>
+                            <div class="order-found-card">
+                                <div class="order-found-header">
+                                    <div class="order-found-number">
+                                        <span class="order-label">Order Number:</span>
+                                        <span class="order-value" id="foundOrderNumber"></span>
+                                    </div>
+                                </div>
+                                <div class="order-found-products" id="foundOrderProducts">
+                                    <!-- Products will be inserted here -->
+                                </div>
+                                <div class="order-found-details">
+                                    <div class="order-found-detail-row">
+                                        <span class="order-label">Name:</span>
+                                        <span class="order-value" id="foundOrderName"></span>
+                                    </div>
+                                    <div class="order-found-detail-row">
+                                        <span class="order-label">Address:</span>
+                                        <span class="order-value" id="foundOrderAddress"></span>
+                                    </div>
+                                </div>
+                                <div class="order-found-actions">
+                                    <button type="button" class="cancel-subscription-btn" id="cancelSubscriptionBtn">End Subscription</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Terms and Conditions Page -->
+        <section id="terms-page" class="page">
+            <div class="page-hero" style="background-image: url('BI2.jpg');">
+                <div class="page-hero-content">
+                    <h1>Terms and conditions</h1>
+                    <p>Overblik over vilkår og rammer for dit abonnement.</p>
+                </div>
+            </div>
+
+            <div class="builder-section terms-section">
+                <div class="container">
+                    <div class="terms-intro">
+                        <h2>Vilkår i korte træk</h2>
+                        <p class="section-description">Her finder du de vigtigste punkter samlet, så det er nemt at få overblik. Har du spørgsmål, er du altid velkommen til at kontakte os.</p>
+                    </div>
+
+                    <div class="terms-grid">
+                        <article class="terms-card">
+                            <h3>Generelt</h3>
+                            <ul class="terms-list">
+                                <li>Disse vilkår gælder for alle abonnementer hos Nimastay - Living Flex.</li>
+                                <li>Vi forbeholder os retten til at opdatere vilkårene med rimeligt varsel.</li>
+                            </ul>
+                        </article>
+
+                        <article class="terms-card">
+                            <h3>Abonnement</h3>
+                            <ul class="terms-list">
+                                <li>Du vælger en pakke og kan tilpasse den over tid efter behov.</li>
+                                <li>Din løsning er fleksibel, så du kan op- eller nedskalere, hvis behovet ændrer sig.</li>
+                            </ul>
+                        </article>
+
+                        <article class="terms-card">
+                            <h3>Levering og opsætning</h3>
+                            <ul class="terms-list">
+                                <li>Levering planlægges i samarbejde med dig, så det passer til din indflytning.</li>
+                                <li>Vi informerer om levering, opsætning og eventuelle logistikgebyrer på forhånd.</li>
+                            </ul>
+                        </article>
+
+                        <article class="terms-card">
+                            <h3>Betaling</h3>
+                            <ul class="terms-list">
+                                <li>Betaling sker månedligt for den valgte periode og pakke.</li>
+                                <li>Alle priser vises inkl. moms, medmindre andet er angivet.</li>
+                            </ul>
+                        </article>
+
+                        <article class="terms-card">
+                            <h3>Skader og ansvar</h3>
+                            <ul class="terms-list">
+                                <li>Normal slitage er forventet og dækket.</li>
+                                <li>Skader ud over almindelig brug kan medføre ekstra omkostninger.</li>
+                            </ul>
+                        </article>
+
+                        <article class="terms-card">
+                            <h3>Opsigelse</h3>
+                            <ul class="terms-list">
+                                <li>Du kan opsige abonnementet via siden “Cancel Subscription”.</li>
+                                <li>Vi koordinerer afhentning og afslutter abonnementet, når møblerne er returneret.</li>
+                            </ul>
+                        </article>
+                    </div>
+
+                    <div class="terms-footer-note">
+                        <p>
+                            Spørgsmål? Kontakt os via kontaktformularen eller skriv til <strong>info@livingflex.com</strong>.<br>
+                            <a class="terms-pdf-link" href="LivingFlex%20Rental%20-%20NIMASTAY%20-%20Terms%26Conditions.pdf" target="_blank" rel="noopener">
+                                Download det komplette vilkår (PDF)
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Product Detail Modal -->
+    <!-- Package Review Modal -->
+    <div id="packageReviewModal" class="modal">
+        <div class="modal-content package-review-modal">
+            <span class="close-modal" id="closePackageReviewModal">&times;</span>
+            
+            <!-- Review Step -->
+            <div id="packageReviewStep" class="package-review-step">
+                <h2>Your Package</h2>
+                <div class="package-review-content">
+                    <div id="packageReviewItems" class="package-review-items">
+                        <!-- Products will be inserted here -->
+                    </div>
+                    <div class="delivery-options">
+                        <h3>Delivery Options</h3>
+                        <div class="delivery-options-buttons">
+                            <button type="button" class="delivery-option-btn" data-delivery="curbside" data-price="0">
+                                <span class="delivery-option-title">Curbside Delivery</span>
+                                <span class="delivery-option-price">0 DKK</span>
+                            </button>
+                            <button type="button" class="delivery-option-btn active" data-delivery="setup" data-price="2000">
+                                <span class="delivery-option-title">Delivery and Setup</span>
+                                <span class="delivery-option-price">2,000 DKK</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="extra-room-options" style="display: none;">
+                        <h3>Extra Room</h3>
+                        <div class="delivery-options-buttons">
+                            <button type="button" class="delivery-option-btn extra-room-option-btn active" data-extra-room="no" data-price="0">
+                                <span class="delivery-option-title">No extra room</span>
+                                <span class="delivery-option-price">0 DKK / month</span>
+                            </button>
+                            <button type="button" class="delivery-option-btn extra-room-option-btn" data-extra-room="yes" data-price="1250">
+                                <span class="delivery-option-title">Add extra room</span>
+                                <span class="delivery-option-price">+1,250 DKK / month</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="package-review-totals" id="packageReviewTotals">
+                        <!-- Totals will be inserted here -->
+                    </div>
+                    <div class="package-review-actions">
+                        <button class="cancel-btn" id="closePackageReviewBtn">Close</button>
+                        <button class="submit-btn" id="submitPackageFromReviewBtn">Submit Package</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Form Step -->
+            <div id="packageFormStep" class="package-form-step" style="display: none;">
+                <h2>Submit Package</h2>
+                <div class="package-form-container">
+                    <div class="package-form-left">
+                        <form id="packageSubmitForm">
+                            <div class="form-group">
+                                <label for="fullName">Full Name</label>
+                                <input type="text" id="fullName" name="fullName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="phoneNumber">Phone Number</label>
+                                <input type="tel" id="phoneNumber" name="phoneNumber" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" id="email" name="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="address">Moving Address</label>
+                                <input type="text" id="address" name="address" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="installationDate">Desired Installation Date</label>
+                                <div class="date-input-container">
+                                    <input type="date" id="installationDate" name="installationDate" required>
+                                    <div class="week-display" id="weekDisplay">
+                                        <span id="weekNumber"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="package-form-actions">
+                                <button type="button" class="cancel-btn" id="backToReviewBtn">Back</button>
+                                <button type="submit" class="submit-btn" id="finalSubmitBtn">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="package-form-right">
+                        <div class="package-review-totals" id="packageFormTotals">
+                            <!-- Totals will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quantity Selection Modal -->
+    <div id="quantityModal" class="modal">
+        <div class="modal-content quantity-modal">
+            <span class="close-modal" id="closeQuantityModal">&times;</span>
+            <h2>Select Quantity</h2>
+            <div class="quantity-modal-content">
+                <div class="quantity-product-image" id="quantityProductImage">
+                    <img id="quantityImage" src="" alt="Product">
+                </div>
+                <div class="quantity-input-section">
+                    <label for="quantityInput">Quantity:</label>
+                    <input type="number" id="quantityInput" min="1" value="1" step="1">
+                    <div class="quantity-modal-actions">
+                        <button class="cancel-btn" id="cancelQuantityBtn">Cancel</button>
+                        <button class="submit-btn" id="confirmQuantityBtn">Add to Package</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="productDetailModal" class="modal">
+        <div class="modal-content product-detail-modal">
+            <span class="close-modal">&times;</span>
+            <div class="product-detail-container">
+                <div class="product-detail-image-container" id="detailProductImage"></div>
+                <div class="product-detail-info">
+                    <h2 id="detailProductName"></h2>
+                    <div class="product-detail-section">
+                        <h3>Prices</h3>
+                        <div class="detail-prices">
+                            <div class="detail-price-item">
+                                <span>Startup:</span>
+                                <span id="detailStartup"></span>
+                            </div>
+                            <div class="detail-price-item">
+                                <span>Month 1-4:</span>
+                                <span id="detailMonth1to4"></span>
+                            </div>
+                            <div class="detail-price-item">
+                                <span>Month 5-12:</span>
+                                <span id="detailMonth5to12"></span>
+                            </div>
+                            <div class="detail-price-item">
+                                <span>Month 13+:</span>
+                                <span id="detailMonth13plus"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-detail-section">
+                        <h3>Size</h3>
+                        <div class="detail-sizes">
+                            <span id="detailSize"></span>
+                        </div>
+                    </div>
+                    <button class="add-to-package-btn" id="detailAddToPackageBtn">Add to Package</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Log in</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Name</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="submit-btn">Log in</button>
+                <div id="loginError" class="error-message"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Order Confirmation Modal -->
+    <div id="orderConfirmationModal" class="modal">
+        <div class="modal-content order-confirmation-modal">
+            <span class="close-modal" id="closeOrderConfirmationModal">&times;</span>
+            <div class="order-confirmation-header">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="confirmation-icon">
+                    <circle cx="12" cy="12" r="10" fill="#10b981" opacity="0.2"/>
+                    <path d="M9 12L11 14L15 10" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="12" cy="12" r="10" stroke="#10b981" stroke-width="2"/>
+                </svg>
+                <h2>Order Confirmation</h2>
+                <p class="confirmation-subtitle">Thank you for your order!</p>
+            </div>
+            
+            <div class="order-confirmation-body">
+                <div class="order-number-section">
+                    <span class="order-number-label">Order Number</span>
+                    <span class="order-number-value" id="confirmationOrderNumber"></span>
+                </div>
+                
+                <div class="confirmation-section">
+                    <h3>Customer Information</h3>
+                    <div class="confirmation-info-grid">
+                        <div class="confirmation-info-item">
+                            <span class="confirmation-label">Name:</span>
+                            <span class="confirmation-value" id="confirmationCustomerName"></span>
+                        </div>
+                        <div class="confirmation-info-item">
+                            <span class="confirmation-label">Email:</span>
+                            <span class="confirmation-value" id="confirmationCustomerEmail"></span>
+                        </div>
+                        <div class="confirmation-info-item">
+                            <span class="confirmation-label">Phone:</span>
+                            <span class="confirmation-value" id="confirmationCustomerPhone"></span>
+                        </div>
+                        <div class="confirmation-info-item">
+                            <span class="confirmation-label">Address:</span>
+                            <span class="confirmation-value" id="confirmationCustomerAddress"></span>
+                        </div>
+                        <div class="confirmation-info-item">
+                            <span class="confirmation-label">Installation Week:</span>
+                            <span class="confirmation-value" id="confirmationInstallationWeek"></span>
+                        </div>
+                        <div class="confirmation-info-item">
+                            <span class="confirmation-label">Delivery Option:</span>
+                            <span class="confirmation-value" id="confirmationDeliveryOption"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="confirmation-section">
+                    <h3>Order Items</h3>
+                    <div id="confirmationOrderItems" class="confirmation-order-items">
+                        <!-- Order items will be inserted here -->
+                    </div>
+                </div>
+                
+                <div class="confirmation-section">
+                    <h3>Price Summary</h3>
+                    <div class="confirmation-pricing">
+                        <div class="confirmation-price-row">
+                            <span class="confirmation-price-label">Startup Cost:</span>
+                            <span class="confirmation-price-value" id="confirmationStartupCost"></span>
+                        </div>
+                        <div class="confirmation-price-row">
+                            <span class="confirmation-price-label">Month 1-4:</span>
+                            <span class="confirmation-price-value" id="confirmationMonth1to4"></span>
+                        </div>
+                        <div class="confirmation-price-row">
+                            <span class="confirmation-price-label">Month 5-12:</span>
+                            <span class="confirmation-price-value" id="confirmationMonth5to12"></span>
+                        </div>
+                        <div class="confirmation-price-row">
+                            <span class="confirmation-price-label">Month 13+:</span>
+                            <span class="confirmation-price-value" id="confirmationMonth13plus"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="order-confirmation-footer">
+                <p class="confirmation-message">Your order has been received and will be processed shortly. You can view your order in the Admin Panel.</p>
+                <button class="submit-btn" id="closeConfirmationBtn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <span class="footer-name">Flexliving ApS</span>
+                <span class="footer-cvr">CVR: 40024069</span>
+            </div>
+            <div class="footer-powered">Powered by Agent360 Group ApS</div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
