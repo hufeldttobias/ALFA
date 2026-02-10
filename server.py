@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
+from whitenoise import WhiteNoise
 import os
 import uuid
 import smtplib
@@ -11,6 +12,10 @@ import requests
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
+
+# Static file serving with WhiteNoise
+app.wsgi_app = WhiteNoise(app.wsgi_app, root='./', index_file=True)
+app.wsgi_app.add_files('./', prefix='/')
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 load_dotenv(dotenv_path)
@@ -260,5 +265,6 @@ def send_order_confirmation():
         return jsonify({'error': 'Server error during email send', 'detail': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5001, host='0.0.0.0')
+    port = int(os.environ.get('PORT', 5001))
+    app.run(debug=False, port=port, host='0.0.0.0')
 

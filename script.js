@@ -1360,6 +1360,7 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const host = window.location.hostname || 'localhost';
             const candidates = [
+                '', // Relative path for Railway
                 `http://${host}:5001`,
                 'http://localhost:5001',
                 'http://127.0.0.1:5001',
