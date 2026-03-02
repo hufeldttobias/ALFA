@@ -184,6 +184,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let readyPackagePricing = null;
     let readyPackageId = null;
     let extraRoomSelected = false;
+    let builderProducts = [];
 
     const readyPackages = {
         package1: {
@@ -311,6 +312,21 @@ document.addEventListener('DOMContentLoaded', function() {
         return null;
     }
 
+    function getBuilderProductsFromStorage() {
+        if (builderProducts && builderProducts.length > 0) {
+            return builderProducts;
+        }
+        const stored = localStorage.getItem('products');
+        if (!stored) return [];
+        try {
+            const parsed = JSON.parse(stored);
+            return Array.isArray(parsed) ? parsed : [];
+        } catch (error) {
+            console.error('Error parsing local products:', error);
+            return [];
+        }
+    }
+
     // Load products for builder
     async function loadProductsForBuilder() {
         let products = await fetchProductsFromServer();
@@ -346,6 +362,13 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!Array.isArray(products) || products.length === 0) {
             document.getElementById('productsGrid').innerHTML = '<p>Der er endnu ingen produkter. Sortimentet og lejevilkår skal først aftales.</p>';
             return;
+        }
+
+        builderProducts = products;
+        try {
+            localStorage.setItem('products', JSON.stringify(products));
+        } catch (error) {
+            console.warn('Unable to cache products in localStorage:', error);
         }
 
         displayCategories(products);
@@ -556,7 +579,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         // Update button visibility
-        const product = products.find(p => p.id === productId);
+        const product = getBuilderProductsFromStorage().find(p => p.id === productId);
         if (product && hasOrientationImages) {
             const leftBtn = document.querySelector(`.builder-image-nav-left[data-product-id="${productId}"]`);
             const rightBtn = document.querySelector(`.builder-image-nav-right[data-product-id="${productId}"]`);
@@ -573,10 +596,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Show product details modal
     function showProductDetails(productId) {
-        const stored = localStorage.getItem('products');
-        if (!stored) return;
-        
-        const products = JSON.parse(stored);
+        const products = getBuilderProductsFromStorage();
+        if (!products.length) return;
         const product = products.find(p => p.id === productId);
         if (!product) return;
 
@@ -731,10 +752,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Show quantity modal for Spisebordsstole
     function showQuantityModal(productId, orientation = 'main') {
-        const stored = localStorage.getItem('products');
-        if (!stored) return;
-        
-        const products = JSON.parse(stored);
+        const products = getBuilderProductsFromStorage();
+        if (!products.length) return;
         const product = products.find(p => p.id === productId);
         if (!product) return;
         
@@ -819,14 +838,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Add to package
     function addToPackage(productId, orientation = 'main', quantity = 1) {
-        const stored = localStorage.getItem('products');
-        if (!stored) {
-            console.error('Ingen produkter fundet i localStorage');
+        const products = getBuilderProductsFromStorage();
+        if (!products.length) {
+            console.error('Ingen produkter fundet til builder');
             alert('Ingen produkter tilgængelige. Tilføj produkter i adminpanelet.');
             return;
         }
-        
-        const products = JSON.parse(stored);
         const product = products.find(p => p.id === productId);
         if (!product) {
             console.error('Product not found:', productId);
