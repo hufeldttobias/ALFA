@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="da">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,17 +12,17 @@
         <aside class="sidebar">
             <div class="sidebar-header">
                 <img src="Logo.png" alt="LivingFlex Logo" class="sidebar-logo">
-                <h2>Admin Panel</h2>
+                <h2>Adminpanel</h2>
             </div>
             <nav class="sidebar-menu">
                 <a href="#" class="menu-item active" data-page="produkter">
-                    <span>Products</span>
+                    <span>Produkter</span>
                 </a>
                 <a href="#" class="menu-item" data-page="oversigt">
-                    <span>Overview</span>
+                    <span>Oversigt</span>
                 </a>
                 <a href="#" class="menu-item" data-page="opgaver">
-                    <span>Tasks</span>
+                    <span>Opgaver</span>
                     <span class="menu-badge" id="opgaverBadge" style="display: none;">0</span>
                 </a>
             </nav>
@@ -30,15 +30,15 @@
         
         <main class="admin-main">
             <header class="admin-header">
-                <h1 id="pageTitle">Products</h1>
-                <a href="index.html" class="back-link">← Back to site</a>
+                <h1 id="pageTitle">Produkter</h1>
+                <a href="index.html" class="back-link">← Tilbage til siden</a>
             </header>
             
             <div class="admin-content">
                 <div id="produkter" class="page-content active">
                     <div class="page-header">
-                        <h2>Products</h2>
-                        <button class="add-product-btn" id="addProductBtn" aria-label="Add product">
+                        <h2>Produkter</h2>
+                        <button class="add-product-btn" id="addProductBtn" aria-label="Tilføj produkt">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                             </svg>
@@ -49,41 +49,41 @@
                 
                 <div id="oversigt" class="page-content">
                     <div class="page-header">
-                        <h2>Overview</h2>
+                        <h2>Oversigt</h2>
                     </div>
                     <div class="overview-groups">
                         <div class="overview-group" id="activeGroup">
-                            <h3 class="group-title">Active</h3>
+                            <h3 class="group-title">Aktive</h3>
                             <div id="activeOrdersContainer" class="orders-container">
                                 <div class="overview-order-header">
-                                    <div class="overview-order-number">Order Number</div>
-                                    <div class="overview-order-name">Name</div>
-                                    <div class="overview-order-address">Address</div>
-                                    <div class="overview-order-rent">Monthly Rent</div>
+                                    <div class="overview-order-number">Ordrenummer</div>
+                                    <div class="overview-order-name">Navn</div>
+                                    <div class="overview-order-address">Adresse</div>
+                                    <div class="overview-order-rent">Månedlig leje</div>
                                 </div>
                                 <!-- Active orders will be displayed here -->
                             </div>
                         </div>
                         <div class="overview-group" id="cancelledPendingGroup">
-                            <h3 class="group-title">Cancelled, Pending Pickup</h3>
+                            <h3 class="group-title">Annulleret, afventer afhentning</h3>
                             <div id="cancelledPendingOrdersContainer" class="orders-container">
                                 <div class="overview-order-header">
-                                    <div class="overview-order-number">Order Number</div>
-                                    <div class="overview-order-name">Name</div>
-                                    <div class="overview-order-address">Address</div>
-                                    <div class="overview-order-rent">Monthly Rent</div>
+                                    <div class="overview-order-number">Ordrenummer</div>
+                                    <div class="overview-order-name">Navn</div>
+                                    <div class="overview-order-address">Adresse</div>
+                                    <div class="overview-order-rent">Månedlig leje</div>
                                 </div>
                                 <!-- Cancelled pending orders will be displayed here -->
                             </div>
                         </div>
                         <div class="overview-group" id="cancelledCollectedGroup">
-                            <h3 class="group-title">Cancelled and Collected</h3>
+                            <h3 class="group-title">Annulleret og afhentet</h3>
                             <div id="cancelledCollectedOrdersContainer" class="orders-container">
                                 <div class="overview-order-header">
-                                    <div class="overview-order-number">Order Number</div>
-                                    <div class="overview-order-name">Name</div>
-                                    <div class="overview-order-address">Address</div>
-                                    <div class="overview-order-rent">Monthly Rent</div>
+                                    <div class="overview-order-number">Ordrenummer</div>
+                                    <div class="overview-order-name">Navn</div>
+                                    <div class="overview-order-address">Adresse</div>
+                                    <div class="overview-order-rent">Månedlig leje</div>
                                 </div>
                                 <!-- Cancelled collected orders will be displayed here -->
                             </div>
@@ -93,15 +93,15 @@
                 
                 <div id="opgaver" class="page-content">
                     <div class="page-header">
-                        <h2>Tasks</h2>
+                        <h2>Opgaver</h2>
                         <div class="page-header-actions">
                             <select id="orderFilter" class="order-filter">
-                                <option value="upcoming">First Upcoming Task</option>
-                                <option value="setup">With Setup</option>
-                                <option value="curbside">Curbside</option>
+                                <option value="upcoming">Næste opgave</option>
+                                <option value="setup">Med opsætning</option>
+                                <option value="curbside">Kantsten</option>
                             </select>
                             <button type="button" class="clear-examples-btn" id="clearExamplesBtn" style="display: none;">
-                                Clear Example Orders
+                                Ryd eksempelordrer
                             </button>
                         </div>
                     </div>
@@ -109,7 +109,7 @@
                         <!-- Active orders will be displayed here -->
                     </div>
                     <div class="tasks-section" id="cancelledPendingTasksSection" style="display: none;">
-                        <h3 class="tasks-section-title">Cancelled, Pending Pickup</h3>
+                        <h3 class="tasks-section-title">Annulleret, afventer afhentning</h3>
                         <div id="cancelledPendingTasksContainer" class="orders-container">
                             <!-- Cancelled pending orders will be displayed here -->
                         </div>
@@ -123,14 +123,14 @@
     <div id="addProductModal" class="modal">
         <div class="modal-content">
             <span class="close-modal">&times;</span>
-            <h2 id="modalTitle">Add Product</h2>
+            <h2 id="modalTitle">Tilføj produkt</h2>
             <form id="productForm">
                 <div class="form-group">
-                    <label for="productImage">Product Image</label>
+                    <label for="productImage">Produktbillede</label>
                     <div class="image-upload-options">
                         <div class="upload-option-tabs">
-                            <button type="button" class="option-tab active" data-option="upload">Upload Image</button>
-                            <button type="button" class="option-tab" data-option="reference">Reference File</button>
+                            <button type="button" class="option-tab active" data-option="upload">Upload billede</button>
+                            <button type="button" class="option-tab" data-option="reference">Referencefil</button>
                         </div>
                         
                         <!-- Upload Option -->
@@ -143,11 +143,11 @@
                                         <path d="M17 8L12 3L7 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                         <path d="M12 3V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                     </svg>
-                                    <p>Drag and drop image here, or <span class="browse-link">select file</span></p>
-                                    <p class="file-info">PNG, JPG up to 10MB</p>
+                                    <p>Træk og slip billede her, eller <span class="browse-link">vælg fil</span></p>
+                                    <p class="file-info">PNG, JPG op til 10MB</p>
                                 </div>
                                 <div class="image-preview" id="imagePreview" style="display: none;">
-                                    <img id="previewImg" src="" alt="Preview">
+                                    <img id="previewImg" src="" alt="Forhåndsvisning">
                                     <button type="button" class="remove-image" id="removeImage">×</button>
                                 </div>
                             </div>
@@ -156,11 +156,11 @@
                         <!-- Reference Option -->
                         <div id="referenceOption" class="upload-option-content">
                             <div class="image-reference-area">
-                                <label for="imageReference">Image filename from ProduktB folder:</label>
-                                <input type="text" id="imageReference" name="imageReference" placeholder="e.g. sofa1.jpg">
-                                <p class="file-info">Enter the image filename (including file type, e.g. .jpg, .png)</p>
+                                <label for="imageReference">Billedfilnavn fra ProduktB-mappen:</label>
+                                <input type="text" id="imageReference" name="imageReference" placeholder="fx sofa1.jpg">
+                                <p class="file-info">Indtast billedfilnavnet (inkl. filtype, fx .jpg, .png)</p>
                                 <div class="image-reference-preview" id="imageReferencePreview" style="display: none;">
-                                    <img id="referencePreviewImg" src="" alt="Preview">
+                                    <img id="referencePreviewImg" src="" alt="Forhåndsvisning">
                                     <button type="button" class="remove-image" id="removeReferenceImage">×</button>
                                 </div>
                             </div>
@@ -169,9 +169,9 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="productCategory">Product Category</label>
+                    <label for="productCategory">Produktkategori</label>
                     <select id="productCategory" name="productCategory" required>
-                        <option value="">Select Category</option>
+                        <option value="">Vælg kategori</option>
                         <option value="Sofa">Sofa</option>
                         <option value="Sofabord">Sofabord</option>
                         <option value="loungestol">loungestol</option>
@@ -186,7 +186,7 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="productName">Product Name</label>
+                    <label for="productName">Produktnavn</label>
                     <input type="text" id="productName" name="productName" required>
                 </div>
                 
@@ -196,55 +196,55 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="productPrice">Recommended Retail Price</label>
+                    <label for="productPrice">Anbefalet vejledende pris</label>
                     <input type="number" id="productPrice" name="productPrice" step="0.01" min="0" required>
                 </div>
                 
                 <div class="price-grid">
                     <div class="form-group">
-                        <label for="startupCost">Startup Cost (10%)</label>
+                        <label for="startupCost">Opstartspris (10%)</label>
                         <input type="number" id="startupCost" name="startupCost" step="0.01" min="0" required>
                     </div>
                     
                     <div class="form-group">
-                        <label for="month1to4">Month 1-4 (3.25%)</label>
+                        <label for="month1to4">Måned 1-4 (3,25%)</label>
                         <input type="number" id="month1to4" name="month1to4" step="0.01" min="0" required>
                     </div>
                     
                     <div class="form-group">
-                        <label for="month5to12">Month 5-12 (2%)</label>
+                        <label for="month5to12">Måned 5-12 (2%)</label>
                         <input type="number" id="month5to12" name="month5to12" step="0.01" min="0" required>
                     </div>
                     
                     <div class="form-group">
-                        <label for="month13plus">Month 13+ (1%)</label>
+                        <label for="month13plus">Måned 13+ (1%)</label>
                         <input type="number" id="month13plus" name="month13plus" step="0.01" min="0" required>
                     </div>
                 </div>
                 
                 <div class="form-group">
-                    <label>Size</label>
+                    <label>Størrelse</label>
                     <div class="size-inputs">
-                        <input type="number" id="productLength" name="productLength" placeholder="Length" step="0.01" min="0">
-                        <input type="number" id="productWidth" name="productWidth" placeholder="Width" step="0.01" min="0">
-                        <input type="number" id="productHeight" name="productHeight" placeholder="Height" step="0.01" min="0">
+                        <input type="number" id="productLength" name="productLength" placeholder="Længde" step="0.01" min="0">
+                        <input type="number" id="productWidth" name="productWidth" placeholder="Bredde" step="0.01" min="0">
+                        <input type="number" id="productHeight" name="productHeight" placeholder="Højde" step="0.01" min="0">
                     </div>
                 </div>
                 
                 <div id="sofaOrientationSection" style="display: none;">
                     <div class="form-group">
                         <label>
-                            <input type="checkbox" id="enableOrientation"> Add right-oriented and left-oriented image
+                            <input type="checkbox" id="enableOrientation"> Tilføj højre- og venstreorienteret billede
                         </label>
                     </div>
                     
                     <div id="orientationImages" style="display: none;">
                         <div class="form-group">
-                            <label for="rightOrientedImage">Right-Oriented Image</label>
+                            <label for="rightOrientedImage">Højreorienteret billede</label>
                             <div class="image-upload-options">
                                 <div class="upload-option-tabs">
-                                    <button type="button" class="option-tab active" data-option="upload-right" data-orientation="right">Upload Image</button>
-                                    <button type="button" class="option-tab" data-option="reference-right" data-orientation="right">Reference File</button>
+                                    <button type="button" class="option-tab active" data-option="upload-right" data-orientation="right">Upload billede</button>
+                                    <button type="button" class="option-tab" data-option="reference-right" data-orientation="right">Referencefil</button>
                                 </div>
                                 
                                 <!-- Upload Option -->
@@ -260,7 +260,7 @@
                                             <p>Træk og slip billede her, eller <span class="browse-link">vælg fil</span></p>
                                         </div>
                                         <div class="image-preview" id="rightImagePreview" style="display: none;">
-                                            <img id="rightPreviewImg" src="" alt="Preview">
+                                            <img id="rightPreviewImg" src="" alt="Forhåndsvisning">
                                             <button type="button" class="remove-image" id="removeRightImage">×</button>
                                         </div>
                                     </div>
@@ -269,11 +269,11 @@
                                 <!-- Reference Option -->
                                 <div id="referenceOptionRight" class="upload-option-content">
                                     <div class="image-reference-area">
-                                        <label for="rightImageReference">Image filename from ProduktB folder:</label>
-                                        <input type="text" id="rightImageReference" name="rightImageReference" placeholder="e.g. sofa1.jpg">
-                                        <p class="file-info">Enter the image filename (including file type, e.g. .jpg, .png)</p>
+                                        <label for="rightImageReference">Billedfilnavn fra ProduktB-mappen:</label>
+                                        <input type="text" id="rightImageReference" name="rightImageReference" placeholder="fx sofa1.jpg">
+                                        <p class="file-info">Indtast billedfilnavnet (inkl. filtype, fx .jpg, .png)</p>
                                         <div class="image-reference-preview" id="rightImageReferencePreview" style="display: none;">
-                                            <img id="rightReferencePreviewImg" src="" alt="Preview">
+                                            <img id="rightReferencePreviewImg" src="" alt="Forhåndsvisning">
                                             <button type="button" class="remove-image" id="removeRightReferenceImage">×</button>
                                         </div>
                                     </div>
@@ -282,11 +282,11 @@
                         </div>
                         
                         <div class="form-group">
-                            <label for="leftOrientedImage">Left-Oriented Image</label>
+                            <label for="leftOrientedImage">Venstreorienteret billede</label>
                             <div class="image-upload-options">
                                 <div class="upload-option-tabs">
-                                    <button type="button" class="option-tab active" data-option="upload-left" data-orientation="left">Upload Image</button>
-                                    <button type="button" class="option-tab" data-option="reference-left" data-orientation="left">Reference File</button>
+                                    <button type="button" class="option-tab active" data-option="upload-left" data-orientation="left">Upload billede</button>
+                                    <button type="button" class="option-tab" data-option="reference-left" data-orientation="left">Referencefil</button>
                                 </div>
                                 
                                 <!-- Upload Option -->
@@ -302,7 +302,7 @@
                                             <p>Træk og slip billede her, eller <span class="browse-link">vælg fil</span></p>
                                         </div>
                                         <div class="image-preview" id="leftImagePreview" style="display: none;">
-                                            <img id="leftPreviewImg" src="" alt="Preview">
+                                            <img id="leftPreviewImg" src="" alt="Forhåndsvisning">
                                             <button type="button" class="remove-image" id="removeLeftImage">×</button>
                                         </div>
                                     </div>
@@ -311,11 +311,11 @@
                                 <!-- Reference Option -->
                                 <div id="referenceOptionLeft" class="upload-option-content">
                                     <div class="image-reference-area">
-                                        <label for="leftImageReference">Image filename from ProduktB folder:</label>
-                                        <input type="text" id="leftImageReference" name="leftImageReference" placeholder="e.g. sofa1.jpg">
-                                        <p class="file-info">Enter the image filename (including file type, e.g. .jpg, .png)</p>
+                                        <label for="leftImageReference">Billedfilnavn fra ProduktB-mappen:</label>
+                                        <input type="text" id="leftImageReference" name="leftImageReference" placeholder="fx sofa1.jpg">
+                                        <p class="file-info">Indtast billedfilnavnet (inkl. filtype, fx .jpg, .png)</p>
                                         <div class="image-reference-preview" id="leftImageReferencePreview" style="display: none;">
-                                            <img id="leftReferencePreviewImg" src="" alt="Preview">
+                                            <img id="leftReferencePreviewImg" src="" alt="Forhåndsvisning">
                                             <button type="button" class="remove-image" id="removeLeftReferenceImage">×</button>
                                         </div>
                                     </div>
@@ -326,10 +326,10 @@
                 </div>
                 
                 <div class="form-actions">
-                    <button type="button" class="cancel-btn" id="cancelBtn">Cancel</button>
-                    <button type="submit" class="submit-btn" id="submitBtn">Save Product</button>
-                    <button type="button" class="delete-btn" id="deleteBtn" style="display: none;">Delete Product</button>
-                    <button type="button" class="hide-btn" id="hideBtn" style="display: none;">Hide</button>
+                    <button type="button" class="cancel-btn" id="cancelBtn">Annuller</button>
+                    <button type="submit" class="submit-btn" id="submitBtn">Gem produkt</button>
+                    <button type="button" class="delete-btn" id="deleteBtn" style="display: none;">Slet produkt</button>
+                    <button type="button" class="hide-btn" id="hideBtn" style="display: none;">Skjul</button>
                 </div>
             </form>
         </div>
@@ -345,36 +345,36 @@
             </div>
             <div class="order-detail-body">
                 <div class="order-products-section">
-                    <h4>Products</h4>
+                    <h4>Produkter</h4>
                     <div id="orderProductsList" class="order-products-list">
                         <!-- Products will be inserted here -->
                     </div>
                 </div>
                 
                 <div class="order-customer-section">
-                    <h4>Customer Information</h4>
+                    <h4>Kundeoplysninger</h4>
                     <div class="customer-info-grid">
                         <div class="customer-info-item">
-                            <span class="customer-label">Name:</span>
+                            <span class="customer-label">Navn:</span>
                             <span class="customer-value" id="orderCustomerName"></span>
                         </div>
                         <div class="customer-info-item">
-                            <span class="customer-label">Address:</span>
+                            <span class="customer-label">Adresse:</span>
                             <span class="customer-value" id="orderCustomerAddress"></span>
                         </div>
                         <div class="customer-info-item">
-                            <span class="customer-label">Phone:</span>
+                            <span class="customer-label">Telefon:</span>
                             <span class="customer-value" id="orderCustomerPhone"></span>
                         </div>
                         <div class="customer-info-item">
-                            <span class="customer-label">Email:</span>
+                            <span class="customer-label">E-mail:</span>
                             <span class="customer-value" id="orderCustomerEmail"></span>
                         </div>
                     </div>
                 </div>
                 
                 <div class="order-pricing-section">
-                    <h4>Pricing Breakdown</h4>
+                    <h4>Prisoversigt</h4>
                     <div class="pricing-details" id="orderPricingDetails">
                         <!-- Pricing details will be inserted here -->
                     </div>

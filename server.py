@@ -191,36 +191,17 @@ def build_order_email(order, totals):
             created_at_text = created_at
 
     body_lines = [
-        "Thank you for your order.",
+        "Tak for at have valgt",
         "",
-        f"Order number: #{order_id}"
-    ]
-    if created_at_text:
-        body_lines.append(f"Order date: {created_at_text}")
-    body_lines.extend([
-        "",
-        "Customer information:",
-        f"Name: {order.get('name', '')}",
-        f"Email: {order.get('email', '')}",
-        f"Phone: {order.get('phoneNumber', '')}",
-        f"Address: {order.get('address', '')}",
-        f"Installation week: {order.get('installationWeek', 'Not specified')}",
-        f"Installation date: {order.get('installationDate', 'Not specified')}",
-        "",
-        "Delivery option:",
-        format_delivery_option(order),
-        "",
-        "Order items:",
         format_order_items(order),
         "",
-        "Pricing:",
-        f"Startup: {totals.get('startup', '0.00')} DKK",
-        f"Month 1-4: {totals.get('month1to4', '0.00')} DKK",
-        f"Month 5-12: {totals.get('month5to12', '0.00')} DKK",
-        f"Month 13+: {totals.get('month13plus', '0.00')} DKK",
+        f"Dit ordre nummer er {order_id}",
         "",
-        "If you have any questions, please contact info@livingflex.com."
-    ])
+        "Du vil blive kontaktet snarest af en fra vores team",
+        "",
+        "Med vennelig hilsen",
+        "LivingFlex"
+    ]
     body = "\n".join(body_lines)
     return subject, body
 

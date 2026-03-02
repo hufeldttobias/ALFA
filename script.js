@@ -27,16 +27,16 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Navigate to appropriate page
             const linkText = this.textContent.trim();
-            if (linkText === 'Build Your Own Home') {
+            if (linkText === 'Byg dit eget hjem') {
                 showPage('build-your-own-home-page');
                 loadProductsForBuilder();
-            } else if (linkText === 'Ready Packages') {
+            } else if (linkText === 'Færdige pakker') {
                 showPage('ready-packages-page');
-            } else if (linkText === 'Send Floor Plan') {
+            } else if (linkText === 'Send plantegning') {
                 showPage('send-floor-plan-page');
-            } else if (linkText === 'Cancel Subscription') {
+            } else if (linkText === 'Opsig abonnement') {
                 showPage('cancel-subscription-page');
-            } else if (linkText === 'Terms and conditions') {
+            } else if (linkText === 'Vilkår og betingelser') {
                 showPage('terms-page');
             } else {
                 showPage('home-page');
@@ -74,9 +74,9 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             navLinks.forEach(l => l.classList.remove('active'));
             const navMap = {
-                'build-your-own-home-page': 'Build Your Own Home',
-                'ready-packages-page': 'Ready Packages',
-                'send-floor-plan-page': 'Send Floor Plan'
+                'build-your-own-home-page': 'Byg dit eget hjem',
+                'ready-packages-page': 'Færdige pakker',
+                'send-floor-plan-page': 'Send plantegning'
             };
             const targetLabel = navMap[targetPage];
             if (targetLabel) {
@@ -170,7 +170,7 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 // Show error message
                 if (loginError) {
-                    loginError.textContent = 'Invalid username or password';
+                    loginError.textContent = 'Ugyldigt brugernavn eller adgangskode';
                 }
             }
         });
@@ -333,20 +333,20 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!products) {
             const stored = localStorage.getItem('products');
             if (!stored) {
-                document.getElementById('productsGrid').innerHTML = '<p>There are no products yet. The range must be agreed upon, as well as rental guidelines.</p>';
+                document.getElementById('productsGrid').innerHTML = '<p>Der er endnu ingen produkter. Sortimentet og lejevilkår skal først aftales.</p>';
                 return;
             }
             try {
                 products = JSON.parse(stored);
             } catch (error) {
                 console.error('Error parsing local products:', error);
-                document.getElementById('productsGrid').innerHTML = '<p>There are no products yet. The range must be agreed upon, as well as rental guidelines.</p>';
+                document.getElementById('productsGrid').innerHTML = '<p>Der er endnu ingen produkter. Sortimentet og lejevilkår skal først aftales.</p>';
                 return;
             }
         }
 
         if (!Array.isArray(products) || products.length === 0) {
-            document.getElementById('productsGrid').innerHTML = '<p>There are no products yet. The range must be agreed upon, as well as rental guidelines.</p>';
+            document.getElementById('productsGrid').innerHTML = '<p>Der er endnu ingen produkter. Sortimentet og lejevilkår skal først aftales.</p>';
             return;
         }
 
@@ -400,7 +400,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const productsGrid = document.getElementById('productsGrid');
         
         if (products.length === 0) {
-            productsGrid.innerHTML = '<p>No products in this category.</p>';
+            productsGrid.innerHTML = '<p>Ingen produkter i denne kategori.</p>';
             return;
         }
         
@@ -446,8 +446,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                     <div class="builder-product-info">
                         <h4>${product.name}</h4>
-                        <div class="builder-product-price">Startup: ${startupCost} DKK</div>
-                        <button class="add-to-package-btn" data-product-id="${product.id}">Add to Package</button>
+                        <div class="builder-product-price">Opstart: ${startupCost} DKK</div>
+                        <button class="add-to-package-btn" data-product-id="${product.id}">Tilføj til pakke</button>
                     </div>
                 </div>
             `;
@@ -823,8 +823,8 @@ document.addEventListener('DOMContentLoaded', function() {
     function addToPackage(productId, orientation = 'main', quantity = 1) {
         const stored = localStorage.getItem('products');
         if (!stored) {
-            console.error('No products found in localStorage');
-            alert('No products available. Please add products in admin panel.');
+            console.error('Ingen produkter fundet i localStorage');
+            alert('Ingen produkter tilgængelige. Tilføj produkter i adminpanelet.');
             return;
         }
         
@@ -890,9 +890,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const orientation = product.selectedOrientation || 'main';
             let orientationText = '';
             if (orientation === 'right') {
-                orientationText = '<span class="orientation-badge">Right-oriented</span>';
+                orientationText = '<span class="orientation-badge">Højreorienteret</span>';
             } else if (orientation === 'left') {
-                orientationText = '<span class="orientation-badge">Left-oriented</span>';
+                orientationText = '<span class="orientation-badge">Venstreorienteret</span>';
             }
             
             const quantity = product.quantity || 1;
@@ -1061,7 +1061,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Show package review modal
     function showPackageReviewModal() {
         if (selectedPackage.length === 0) {
-            alert('Your package is empty. Please add products first.');
+            alert('Din pakke er tom. Tilføj produkter først.');
             return;
         }
 
@@ -1113,23 +1113,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="package-review-total-section">
                     <h3>Total</h3>
                     <div class="review-total-row">
-                        <span>Setup &amp; logistics (incl. VAT):</span>
+                        <span>Opsætning &amp; logistik (inkl. moms):</span>
                         <span>${readyPackagePricing.startup.toFixed(2)} DKK</span>
                     </div>
                     <div class="review-total-row">
-                        <span>Month 1-4:</span>
+                        <span>Måned 1-4:</span>
                         <span>${monthlyTotal.toFixed(2)} DKK</span>
                     </div>
                     <div class="review-total-row">
-                        <span>Month 5-12:</span>
+                        <span>Måned 5-12:</span>
                         <span>${monthlyTotal.toFixed(2)} DKK</span>
                     </div>
                     <div class="review-total-row">
-                        <span>Month 13+:</span>
+                        <span>Måned 13+:</span>
                         <span>${monthlyTotal.toFixed(2)} DKK</span>
                     </div>
                     <div class="review-total-row">
-                        <span>Removal (incl. VAT):</span>
+                        <span>Afhentning (inkl. moms):</span>
                         <span>${readyPackagePricing.removal.toFixed(2)} DKK</span>
                     </div>
                 </div>
@@ -1163,19 +1163,19 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="package-review-total-section">
                 <h3>Total</h3>
                 <div class="review-total-row">
-                    <span>Startup (incl. delivery & logistics, coordination & handling):</span>
+                    <span>Opstart (inkl. levering &amp; logistik, koordinering &amp; håndtering):</span>
                     <span>${totalStartup.toFixed(2)} DKK</span>
                 </div>
                 <div class="review-total-row">
-                    <span>Month 1-4:</span>
+                    <span>Måned 1-4:</span>
                     <span>${totalMonth1to4.toFixed(2)} DKK</span>
                 </div>
                 <div class="review-total-row">
-                    <span>Month 5-12:</span>
+                    <span>Måned 5-12:</span>
                     <span>${totalMonth5to12.toFixed(2)} DKK</span>
                 </div>
                 <div class="review-total-row">
-                    <span>Month 13+:</span>
+                    <span>Måned 13+:</span>
                     <span>${totalMonth13plus.toFixed(2)} DKK</span>
                 </div>
             </div>
@@ -1286,7 +1286,7 @@ document.addEventListener('DOMContentLoaded', function() {
             id: Date.now(), // Unique ID based on timestamp
             name: formData.fullName,
             address: formData.address,
-            installationWeek: weekNumber ? `Week ${weekNumber}` : '',
+            installationWeek: weekNumber ? `Uge ${weekNumber}` : '',
             installationDate: installationDate,
             firstPayment: totalStartup.toFixed(2),
             phoneNumber: formData.phoneNumber,
@@ -1314,7 +1314,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 formData: formData,
                 order: order
             });
-            alert('Error: Order is missing required information. Please try again.');
+            alert('Fejl: Ordren mangler påkrævede oplysninger. Prøv igen.');
             return;
         }
         
@@ -1477,19 +1477,19 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('confirmationCustomerEmail').textContent = order.email || 'N/A';
         document.getElementById('confirmationCustomerPhone').textContent = order.phoneNumber || 'N/A';
         document.getElementById('confirmationCustomerAddress').textContent = order.address || 'N/A';
-        document.getElementById('confirmationInstallationWeek').textContent = order.installationWeek || 'Not specified';
+        document.getElementById('confirmationInstallationWeek').textContent = order.installationWeek || 'Ikke angivet';
         
         // Set delivery option / extra room
         const deliveryOptionEl = document.getElementById('confirmationDeliveryOption');
         if (deliveryOptionEl) {
             if (order.packageType === 'ready') {
                 deliveryOptionEl.textContent = order.extraRoomSelected
-                    ? 'Extra room - 500 DKK / month'
-                    : 'No extra room - 0 DKK / month';
+                    ? 'Ekstra rum - 500 DKK / måned'
+                    : 'Intet ekstra rum - 0 DKK / måned';
             } else if (order.deliveryOption && order.deliveryOption.type === 'setup') {
-                deliveryOptionEl.textContent = 'Delivery and Setup - 2,000 DKK';
+                deliveryOptionEl.textContent = 'Levering og opsætning - 2.000 DKK';
             } else {
-                deliveryOptionEl.textContent = 'Curbside Delivery - 0 DKK';
+                deliveryOptionEl.textContent = 'Kantstenslevering - 0 DKK';
             }
         }
         
@@ -1637,7 +1637,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 minAllowedDate.setHours(0, 0, 0, 0);
                 
                 if (selectedDate < minAllowedDate) {
-                    alert('The installation date must be at least 14 days in the future.');
+                    alert('Installationsdatoen skal være mindst 14 dage ude i fremtiden.');
                     this.value = '';
                     updateWeekDisplay('');
                     setInstallationDateMin(this); // Re-set min date
@@ -1662,7 +1662,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const weekDisplay = document.getElementById('weekNumber');
         if (weekDisplay && dateString) {
             const weekNumber = getWeekNumber(dateString);
-            weekDisplay.textContent = `Week ${weekNumber}`;
+            weekDisplay.textContent = `Uge ${weekNumber}`;
         } else if (weekDisplay) {
             weekDisplay.textContent = '';
         }
@@ -1688,7 +1688,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 minDate.setHours(0, 0, 0, 0);
                 
                 if (selectedDate < minDate) {
-                    alert('The installation date must be at least 14 days in the future.');
+                    alert('Installationsdatoen skal være mindst 14 dage ude i fremtiden.');
                     return;
                 }
             }
@@ -1819,7 +1819,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle file selection
     function handleFloorPlanFileSelect(file) {
         if (!file || !file.type.startsWith('image/')) {
-            alert('Please select an image file');
+            alert('Vælg venligst en billedfil');
             return;
         }
 
@@ -1858,7 +1858,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Validate image
             if (!selectedFloorPlanFile) {
-                alert('Please upload a floor plan image');
+                alert('Upload venligst et billede af plantegningen');
                 return;
             }
 
@@ -1878,16 +1878,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 const imageBase64 = e.target.result;
                 
                 // Create email content
-                const subject = encodeURIComponent('Floor Plan Request - ' + formData.name);
+                const subject = encodeURIComponent('Plantegningsforespørgsel - ' + formData.name);
                 const body = encodeURIComponent(
-                    'New Floor Plan Request\n\n' +
-                    'Customer Information:\n' +
+                    'Ny plantegningsforespørgsel\n\n' +
+                    'Kundeoplysninger:\n' +
                     'Name: ' + formData.name + '\n' +
                     'Email: ' + formData.email + '\n' +
                     'Phone: ' + formData.phone + '\n' +
                     'Address: ' + formData.address + '\n\n' +
                     'Additional Notes:\n' + (formData.notes || 'None') + '\n\n' +
-                    'Please see attached floor plan image.'
+                    'Se venligst vedhæftet billede af plantegningen.'
                 );
 
                 // For now, we'll use mailto with a note about the image
@@ -1898,7 +1898,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 window.location.href = mailtoLink;
 
                 // Show success message
-                alert('Thank you! Your floor plan request has been prepared. Please attach the floor plan image to the email that will open, and send it. Our team will review your request and get back to you with a personalized interior design proposal.');
+                alert('Tak! Din plantegningsforespørgsel er klar. Vedhæft plantegningen til e-mailen der åbner, og send den. Vores team gennemgår din forespørgsel og vender tilbage med et personligt indretningsforslag.');
 
                 // Reset form
                 floorPlanForm.reset();
@@ -1928,7 +1928,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Validate inputs
             if (!orderNumber || !orderName) {
-                showOrderSearchError('Please enter both order number and name.');
+                showOrderSearchError('Indtast både ordrenummer og navn.');
                 return;
             }
             
@@ -1961,7 +1961,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 hideOrderSearchError();
             } else {
                 // Show error
-                showOrderSearchError('Order not found. Please check your order number and name and try again.');
+                showOrderSearchError('Ordre ikke fundet. Tjek ordrenummer og navn og prøv igen.');
                 hideFoundOrder();
             }
         });
@@ -1992,7 +1992,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 `;
             }).join('');
         } else if (productsContainer) {
-            productsContainer.innerHTML = '<p style="color: #6b7280; font-size: 0.875rem;">No products found in this order.</p>';
+            productsContainer.innerHTML = '<p style="color: #6b7280; font-size: 0.875rem;">Ingen produkter fundet i denne ordre.</p>';
         }
         
         orderFoundSection.style.display = 'block';
@@ -2028,12 +2028,12 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             
             if (!foundOrder) {
-                alert('No order found. Please search for your order first.');
+                alert('Ingen ordre fundet. Søg efter din ordre først.');
                 return;
             }
             
             // Confirm cancellation
-            if (confirm('Are you sure you want to cancel this subscription? This action cannot be undone.')) {
+            if (confirm('Er du sikker på, at du vil opsige dette abonnement? Denne handling kan ikke fortrydes.')) {
                 cancelOrderSubscription(foundOrder);
             }
         });
@@ -2066,7 +2066,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (orderInCompleted.status === 'active') {
                 // Order is active in Overview - move to Cancelled, Pending Pickup
                 newStatus = 'cancelled_pending';
-                statusMessage = 'Cancelled, Pending Pickup';
+                statusMessage = 'Annulleret, afventer afhentning';
                 
                 // Remove order from completedOrders
                 completedOrders = completedOrders.filter(o => o.id !== order.id);
@@ -2077,7 +2077,7 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 // Order is already cancelled, just update it
                 newStatus = orderInCompleted.status;
-                statusMessage = newStatus === 'cancelled_pending' ? 'Cancelled, Pending Pickup' : 'Cancelled and Collected';
+                statusMessage = newStatus === 'cancelled_pending' ? 'Annulleret, afventer afhentning' : 'Annulleret og afhentet';
                 
                 // Order is already in the right place, nothing to do
                 // But we'll refresh it to ensure consistency
@@ -2087,7 +2087,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Order is only in Tasks (orders array) - never been activated
             // Move to Cancelled and Collected
             newStatus = 'cancelled_collected';
-            statusMessage = 'Cancelled and Collected';
+            statusMessage = 'Annulleret og afhentet';
             
             // Remove order from active orders (Tasks)
             orders = orders.filter(o => o.id !== order.id);

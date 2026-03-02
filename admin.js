@@ -102,9 +102,9 @@ function saveProducts() {
     } catch (error) {
         console.error('Error saving products to localStorage:', error);
         if (error.name === 'QuotaExceededError' || error.code === 22) {
-            alert('There is not enough space in browser storage. Try deleting some old products or images.');
+            alert('Der er ikke nok plads i browserens lager. Prøv at slette nogle gamle produkter eller billeder.');
         } else {
-            alert('An error occurred while saving products. Please try again.');
+            alert('Der opstod en fejl under gemning af produkter. Prøv igen.');
         }
         throw error;
     }
@@ -121,7 +121,7 @@ function displayProducts() {
     if (!container) return;
     
     if (products.length === 0) {
-        container.innerHTML = '<p style="color: #6b7280; text-align: center; padding: 2rem;">No products added yet. Click + to add a product.</p>';
+        container.innerHTML = '<p style="color: #6b7280; text-align: center; padding: 2rem;">Ingen produkter endnu. Klik + for at tilføje et produkt.</p>';
         return;
     }
     
@@ -170,16 +170,16 @@ function displayProducts() {
                     <div class="product-image-container">
                         <div class="product-image" data-product-id="${product.id}">
                             <img src="${mainImageSrc}" alt="${product.name}" class="product-main-image" data-orientation="main" style="display: ${mainImageDisplay};">
-                            ${rightImageSrc ? `<img src="${rightImageSrc}" alt="${product.name} - Right-Oriented" class="product-orientation-image" data-orientation="right" style="display: ${initialDisplay === 'right' ? 'block' : 'none'};">` : ''}
-                            ${leftImageSrc ? `<img src="${leftImageSrc}" alt="${product.name} - Left-Oriented" class="product-orientation-image" data-orientation="left" style="display: ${initialDisplay === 'left' ? 'block' : 'none'};">` : ''}
+                            ${rightImageSrc ? `<img src="${rightImageSrc}" alt="${product.name} - Højreorienteret" class="product-orientation-image" data-orientation="right" style="display: ${initialDisplay === 'right' ? 'block' : 'none'};">` : ''}
+                            ${leftImageSrc ? `<img src="${leftImageSrc}" alt="${product.name} - Venstreorienteret" class="product-orientation-image" data-orientation="left" style="display: ${initialDisplay === 'left' ? 'block' : 'none'};">` : ''}
                         </div>
                         ${hasOrientation ? `
-                            <button class="image-nav-btn image-nav-left" data-product-id="${product.id}" data-direction="left" aria-label="Left-Oriented">
+                            <button class="image-nav-btn image-nav-left" data-product-id="${product.id}" data-direction="left" aria-label="Venstreorienteret">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
                             </button>
-                            <button class="image-nav-btn image-nav-right" data-product-id="${product.id}" data-direction="right" aria-label="Right-Oriented">
+                            <button class="image-nav-btn image-nav-right" data-product-id="${product.id}" data-direction="right" aria-label="Højreorienteret">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
@@ -190,19 +190,19 @@ function displayProducts() {
                         <h4 class="product-name">${product.name}</h4>
                         <div class="product-prices">
                             <div class="price-item">
-                                <span class="price-label">Startup:</span>
+                                <span class="price-label">Opstart:</span>
                                 <span class="price-value">${parseFloat(product.startupCost).toFixed(2)} DKK</span>
                             </div>
                             <div class="price-item">
-                                <span class="price-label">Month 1-4:</span>
+                                <span class="price-label">Måned 1-4:</span>
                                 <span class="price-value">${parseFloat(product.month1to4).toFixed(2)} DKK</span>
                             </div>
                             <div class="price-item">
-                                <span class="price-label">Month 5-12:</span>
+                                <span class="price-label">Måned 5-12:</span>
                                 <span class="price-value">${parseFloat(product.month5to12).toFixed(2)} DKK</span>
                             </div>
                             <div class="price-item">
-                                <span class="price-label">Month 13+:</span>
+                                <span class="price-label">Måned 13+:</span>
                                 <span class="price-value">${parseFloat(product.month13plus).toFixed(2)} DKK</span>
                             </div>
                         </div>
@@ -362,9 +362,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Page titles mapping
     const pageTitles = {
-        'produkter': 'Products',
-        'oversigt': 'Overview',
-        'opgaver': 'Tasks'
+        'produkter': 'Produkter',
+        'oversigt': 'Oversigt',
+        'opgaver': 'Opgaver'
     };
     
     // Menu navigation
@@ -586,7 +586,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('All orders data:', orders);
         
         if (orders.length === 0) {
-            container.innerHTML = '<p style="color: #6b7280; text-align: center; padding: 2rem;">No orders yet.</p>';
+            container.innerHTML = '<p style="color: #6b7280; text-align: center; padding: 2rem;">Ingen ordrer endnu.</p>';
         } else {
             container.innerHTML = orders.map(order => {
                 console.log('Rendering order:', order.id, order.name, order);
@@ -597,24 +597,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 return `
                     <div class="order-card ${setupClass}" data-order-id="${order.id}" style="cursor: pointer;">
                         <div class="order-header">
-                            <div class="order-id">Order #${order.id}</div>
+                            <div class="order-id">Ordre #${order.id}</div>
                             <div class="order-date">${new Date(order.createdAt).toLocaleDateString('da-DK')}</div>
                         </div>
                         <div class="order-details">
                             <div class="order-detail-row">
-                                <span class="order-label">Name:</span>
+                                <span class="order-label">Navn:</span>
                                 <span class="order-value">${order.name}</span>
                             </div>
                             <div class="order-detail-row">
-                                <span class="order-label">Address:</span>
+                                <span class="order-label">Adresse:</span>
                                 <span class="order-value">${order.address}</span>
                             </div>
                             <div class="order-detail-row">
-                                <span class="order-label">Desired Installation Week:</span>
-                                <span class="order-value">${order.installationWeek || 'Not specified'}</span>
+                                <span class="order-label">Ønsket installationsuge:</span>
+                                <span class="order-value">${order.installationWeek || 'Ikke angivet'}</span>
                             </div>
                             <div class="order-detail-row">
-                                <span class="order-label">First Payment:</span>
+                                <span class="order-label">Første betaling:</span>
                                 <span class="order-value order-price">${order.firstPayment} DKK</span>
                             </div>
                         </div>
@@ -652,24 +652,24 @@ document.addEventListener('DOMContentLoaded', function() {
                     return `
                         <div class="order-card order-card-cancelled-pending" data-order-id="${order.id}" style="cursor: pointer;">
                             <div class="order-header">
-                                <div class="order-id">Order #${order.id}</div>
+                            <div class="order-id">Ordre #${order.id}</div>
                                 <div class="order-date">${new Date(order.createdAt).toLocaleDateString('da-DK')}</div>
                             </div>
                             <div class="order-details">
                                 <div class="order-detail-row">
-                                    <span class="order-label">Name:</span>
+                                    <span class="order-label">Navn:</span>
                                     <span class="order-value">${order.name}</span>
                                 </div>
                                 <div class="order-detail-row">
-                                    <span class="order-label">Address:</span>
+                                    <span class="order-label">Adresse:</span>
                                     <span class="order-value">${order.address}</span>
                                 </div>
                                 <div class="order-detail-row">
-                                    <span class="order-label">Desired Installation Week:</span>
-                                    <span class="order-value">${order.installationWeek || 'Not specified'}</span>
+                                    <span class="order-label">Ønsket installationsuge:</span>
+                                    <span class="order-value">${order.installationWeek || 'Ikke angivet'}</span>
                                 </div>
                                 <div class="order-detail-row">
-                                    <span class="order-label">First Payment:</span>
+                                    <span class="order-label">Første betaling:</span>
                                     <span class="order-value order-price">${order.firstPayment} DKK</span>
                                 </div>
                             </div>
@@ -778,9 +778,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const removedCount = originalCount - orders.length;
         if (removedCount > 0) {
-            alert(`${removedCount} example order(s) have been removed.`);
+            alert(`${removedCount} eksempelordre er blevet fjernet.`);
         } else {
-            alert('No example orders found.');
+            alert('Ingen eksempelordrer fundet.');
         }
     }
     
@@ -819,16 +819,16 @@ document.addEventListener('DOMContentLoaded', function() {
         // Set installation week
         const installationWeekEl = document.getElementById('orderInstallationWeek');
         if (installationWeekEl) {
-            installationWeekEl.textContent = order.installationWeek || 'Not specified';
+            installationWeekEl.textContent = order.installationWeek || 'Ikke angivet';
         }
         
         // Set delivery type
         const deliveryTypeEl = document.getElementById('orderDeliveryType');
         if (deliveryTypeEl) {
             if (order.deliveryOption && order.deliveryOption.type === 'setup') {
-                deliveryTypeEl.textContent = 'Delivery and Setup - 2,000 DKK';
+                deliveryTypeEl.textContent = 'Levering og opsætning - 2.000 DKK';
             } else {
-                deliveryTypeEl.textContent = 'Curbside Delivery - 0 DKK';
+                deliveryTypeEl.textContent = 'Kantstenslevering - 0 DKK';
             }
         }
         
@@ -843,7 +843,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     cancelCollectedBtn.type = 'button';
                     cancelCollectedBtn.className = 'cancel-order-btn cancel-collected-btn';
                     cancelCollectedBtn.id = 'cancelCollectedBtn';
-                    cancelCollectedBtn.textContent = 'Cancelled and Collected';
+                    cancelCollectedBtn.textContent = 'Annulleret og afhentet';
                     cancelCollectedBtn.dataset.orderId = order.id;
                     
                     orderActions.innerHTML = '';
@@ -856,9 +856,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     completeOrderBtn.id = 'completeOrderBtn';
                     
                     if (order.deliveryOption && order.deliveryOption.type === 'setup') {
-                        completeOrderBtn.textContent = 'Completed - Installed';
+                        completeOrderBtn.textContent = 'Afsluttet - Installeret';
                     } else {
-                        completeOrderBtn.textContent = 'Completed - Delivered';
+                        completeOrderBtn.textContent = 'Afsluttet - Leveret';
                     }
                     completeOrderBtn.dataset.orderId = order.id;
                     
@@ -871,14 +871,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 cancelPendingBtn.type = 'button';
                 cancelPendingBtn.className = 'cancel-order-btn cancel-pending-btn';
                 cancelPendingBtn.id = 'cancelPendingBtn';
-                cancelPendingBtn.textContent = 'Cancelled, Pending Pickup';
+                cancelPendingBtn.textContent = 'Annulleret, afventer afhentning';
                 cancelPendingBtn.dataset.orderId = order.id;
                 
                 const cancelCollectedBtn = document.createElement('button');
                 cancelCollectedBtn.type = 'button';
                 cancelCollectedBtn.className = 'cancel-order-btn cancel-collected-btn';
                 cancelCollectedBtn.id = 'cancelCollectedBtn';
-                cancelCollectedBtn.textContent = 'Cancelled and Collected';
+                cancelCollectedBtn.textContent = 'Annulleret og afhentet';
                 cancelCollectedBtn.dataset.orderId = order.id;
                 
                 orderActions.innerHTML = '';
@@ -901,8 +901,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     imageToShow = product.leftOrientedImage;
                 }
                 
-                const orientationText = orientation === 'right' ? ' (Right-Oriented)' : 
-                                      orientation === 'left' ? ' (Left-Oriented)' : '';
+                const orientationText = orientation === 'right' ? ' (Højreorienteret)' : 
+                                      orientation === 'left' ? ' (Venstreorienteret)' : '';
                 const quantityText = quantity > 1 ? ` x${quantity}` : '';
                 
                 return `
@@ -912,20 +912,20 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                         <div class="order-product-info">
                             <h3>${product.name}${orientationText}${quantityText}</h3>
-                            <p>SKU: ${product.sku || 'N/A'}</p>
+                            <p>SKU: ${product.sku || 'Ikke angivet'}</p>
                         </div>
                     </div>
                 `;
             }).join('');
         } else if (productsList) {
-            productsList.innerHTML = '<p style="color: #6b7280;">No products in this order.</p>';
+            productsList.innerHTML = '<p style="color: #6b7280;">Ingen produkter i denne ordre.</p>';
         }
         
         // Set customer information
-        document.getElementById('orderCustomerName').textContent = order.name || 'N/A';
-        document.getElementById('orderCustomerAddress').textContent = order.address || 'N/A';
-        document.getElementById('orderCustomerPhone').textContent = order.phoneNumber || 'N/A';
-        document.getElementById('orderCustomerEmail').textContent = order.email || 'N/A';
+        document.getElementById('orderCustomerName').textContent = order.name || 'Ikke angivet';
+        document.getElementById('orderCustomerAddress').textContent = order.address || 'Ikke angivet';
+        document.getElementById('orderCustomerPhone').textContent = order.phoneNumber || 'Ikke angivet';
+        document.getElementById('orderCustomerEmail').textContent = order.email || 'Ikke angivet';
         
         // Calculate and display pricing
         const pricingDetails = document.getElementById('orderPricingDetails');
@@ -952,24 +952,24 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 0);
             
             const deliveryOptionText = order.deliveryOption && order.deliveryOption.type === 'setup' 
-                ? 'Delivery and Setup' 
-                : 'Curbside Delivery';
+                ? 'Levering og opsætning' 
+                : 'Kantstenslevering';
             
             pricingDetails.innerHTML = `
                 <div class="pricing-row">
-                    <span class="pricing-label">Startup (incl. ${deliveryOptionText} and logistics, coordination & handling):</span>
+                    <span class="pricing-label">Opstart (inkl. ${deliveryOptionText} og logistik, koordinering & håndtering):</span>
                     <span class="pricing-value">${totalStartup.toFixed(2)} DKK</span>
                 </div>
                 <div class="pricing-row">
-                    <span class="pricing-label">Month 1-4:</span>
+                    <span class="pricing-label">Måned 1-4:</span>
                     <span class="pricing-value">${totalMonth1to4.toFixed(2)} DKK</span>
                 </div>
                 <div class="pricing-row">
-                    <span class="pricing-label">Month 5-12:</span>
+                    <span class="pricing-label">Måned 5-12:</span>
                     <span class="pricing-value">${totalMonth5to12.toFixed(2)} DKK</span>
                 </div>
                 <div class="pricing-row">
-                    <span class="pricing-label">Month 13+:</span>
+                    <span class="pricing-label">Måned 13+:</span>
                     <span class="pricing-value">${totalMonth13plus.toFixed(2)} DKK</span>
                 </div>
             `;
@@ -1069,7 +1069,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 return `
                     <div class="overview-order-row" data-order-id="${order.id}" style="cursor: pointer;">
-                        <div class="overview-order-number">Order #${order.id}</div>
+                        <div class="overview-order-number">Ordre #${order.id}</div>
                         <div class="overview-order-name">${order.name}</div>
                         <div class="overview-order-address">${order.address}</div>
                         <div class="overview-order-rent">${monthlyRent.toFixed(2)} DKK</div>
@@ -1099,14 +1099,14 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Display cancelled pending orders
         const cancelledPendingContent = cancelledPendingOrders.length === 0 
-            ? '<p style="color: #6b7280; text-align: center; padding: 2rem;">No orders in this category.</p>'
+            ? '<p style="color: #6b7280; text-align: center; padding: 2rem;">Ingen ordrer i denne kategori.</p>'
             : cancelledPendingOrders.map(order => {
                 // Calculate current monthly rent based on installation date
                 const monthlyRent = calculateCurrentMonthlyRent(order);
                 
                 return `
                     <div class="overview-order-row" data-order-id="${order.id}" style="cursor: pointer;">
-                        <div class="overview-order-number">Order #${order.id}</div>
+                        <div class="overview-order-number">Ordre #${order.id}</div>
                         <div class="overview-order-name">${order.name}</div>
                         <div class="overview-order-address">${order.address}</div>
                         <div class="overview-order-rent">${monthlyRent.toFixed(2)} DKK</div>
@@ -1136,14 +1136,14 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Display cancelled collected orders
         const cancelledCollectedContent = cancelledCollectedOrders.length === 0 
-            ? '<p style="color: #6b7280; text-align: center; padding: 2rem;">No orders in this category.</p>'
+            ? '<p style="color: #6b7280; text-align: center; padding: 2rem;">Ingen ordrer i denne kategori.</p>'
             : cancelledCollectedOrders.map(order => {
                 // Calculate current monthly rent based on installation date
                 const monthlyRent = calculateCurrentMonthlyRent(order);
                 
                 return `
                     <div class="overview-order-row" data-order-id="${order.id}" style="cursor: pointer;">
-                        <div class="overview-order-number">Order #${order.id}</div>
+                        <div class="overview-order-number">Ordre #${order.id}</div>
                         <div class="overview-order-name">${order.name}</div>
                         <div class="overview-order-address">${order.address}</div>
                         <div class="overview-order-rent">${monthlyRent.toFixed(2)} DKK</div>
@@ -1256,21 +1256,21 @@ document.addEventListener('DOMContentLoaded', function() {
         if (e.target && e.target.id === 'completeOrderBtn') {
             const orderId = parseInt(e.target.dataset.orderId);
             if (orderId) {
-                if (confirm('Are you sure you want to mark this order as completed?')) {
+                if (confirm('Er du sikker på, at du vil markere ordren som afsluttet?')) {
                     completeOrder(orderId);
                 }
             }
         } else if (e.target && e.target.id === 'cancelPendingBtn') {
             const orderId = parseInt(e.target.dataset.orderId);
             if (orderId) {
-                if (confirm('Are you sure you want to mark this order as cancelled, pending pickup?')) {
+                if (confirm('Er du sikker på, at du vil markere ordren som annulleret og afventer afhentning?')) {
                     cancelOrderPending(orderId);
                 }
             }
         } else if (e.target && e.target.id === 'cancelCollectedBtn') {
             const orderId = parseInt(e.target.dataset.orderId);
             if (orderId) {
-                if (confirm('Are you sure you want to mark this order as cancelled and collected?')) {
+                if (confirm('Er du sikker på, at du vil markere ordren som annulleret og afhentet?')) {
                     cancelOrderCollected(orderId);
                 }
             }
@@ -1363,7 +1363,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const clearExamplesBtn = document.getElementById('clearExamplesBtn');
     if (clearExamplesBtn) {
         clearExamplesBtn.addEventListener('click', function() {
-            if (confirm('Are you sure you want to remove all example orders?')) {
+            if (confirm('Er du sikker på, at du vil fjerne alle eksempelordrer?')) {
                 clearExampleOrders();
             }
         });
@@ -1646,20 +1646,20 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (!addProductModal) {
                 console.error('addProductModal is not defined');
-                alert('Error: Modal not found. Please reload the page.');
+                alert('Fejl: Modal ikke fundet. Genindlæs siden.');
                 return;
             }
             
             if (!modalTitle || !submitBtn) {
                 console.error('Modal elements not found');
-                alert('Error: Modal elements not found. Please reload the page.');
+                alert('Fejl: Modal-elementer ikke fundet. Genindlæs siden.');
                 return;
             }
             
             editingProductId = null;
             editingOrientation = 'main';
-            modalTitle.textContent = 'Add Product';
-            submitBtn.textContent = 'Save Product';
+            modalTitle.textContent = 'Tilføj produkt';
+            submitBtn.textContent = 'Gem produkt';
             if (deleteBtn) deleteBtn.style.display = 'none';
             
             // Reset form
@@ -1858,7 +1858,7 @@ document.addEventListener('DOMContentLoaded', function() {
         editingOrientation = selectedOrientation;
         
         modalTitle.textContent = 'Edit Product';
-        submitBtn.textContent = 'Save Changes';
+        submitBtn.textContent = 'Gem ændringer';
         if (deleteBtn) deleteBtn.style.display = 'block';
         if (hideBtn) hideBtn.style.display = 'block';
         
@@ -2107,7 +2107,7 @@ document.addEventListener('DOMContentLoaded', function() {
             product.hidden = !product.hidden;
             saveProducts();
             if (hideBtn) {
-                hideBtn.textContent = product.hidden ? 'Show' : 'Hide';
+                hideBtn.textContent = product.hidden ? 'Vis' : 'Skjul';
             }
         }
     }
@@ -2180,12 +2180,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle file select
     function handleFileSelect(file) {
         if (!file || !file.type.startsWith('image/')) {
-            alert('Please select an image');
+            alert('Vælg venligst et billede');
             return;
         }
         
         if (file.size > 10 * 1024 * 1024) {
-            alert('Image is too large. Maximum size is 10MB');
+            alert('Billedet er for stort. Maksimal størrelse er 10MB');
             return;
         }
         
@@ -2216,12 +2216,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle orientation images (right and left)
     function handleOrientationFileSelect(file, orientation) {
         if (!file || !file.type.startsWith('image/')) {
-            alert('Please select an image');
+            alert('Vælg venligst et billede');
             return;
         }
         
         if (file.size > 10 * 1024 * 1024) {
-            alert('Image is too large. Maximum size is 10MB');
+            alert('Billedet er for stort. Maksimal størrelse er 10MB');
             return;
         }
         
@@ -2416,7 +2416,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Additional validation for new products
             if (!editingProductId && !imageFile && !imageReferenceValue) {
-                alert('Please select a product image or enter a filename');
+                alert('Vælg et produktbillede eller indtast et filnavn');
                 return;
             }
             
@@ -2435,12 +2435,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     // Validate required fields
                     if (!formData.name || !formData.category || !formData.sku) {
-                        alert('Please fill in all required fields (Name, Category, SKU)');
+                        alert('Udfyld venligst alle krævede felter (Navn, kategori, SKU)');
                         return;
                     }
                     
                     if (!mainImageUrl) {
-                        alert('Product image is required');
+                        alert('Produktbillede er påkrævet');
                         return;
                     }
                     
@@ -2508,7 +2508,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             console.log('Product updated:', productData);
                         } else {
                             console.error('Product not found for editing:', editingProductId);
-                            alert('Error: Product not found');
+                            alert('Fejl: Produkt ikke fundet');
                             return;
                         }
                     } else {
@@ -2545,7 +2545,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         editingProductId: editingProductId,
                         productsLength: products ? products.length : 'products is not defined'
                     });
-                    alert('An error occurred while saving the product. Please try again. Check the console for details.');
+                    alert('Der opstod en fejl under gemning af produktet. Prøv igen. Se konsollen for detaljer.');
                 }
             }
             
@@ -2691,7 +2691,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // If new main image is selected, convert it
             if (!imageFile && !imageReferenceValue && !editingProductId) {
-                alert('Please select a product image or enter a filename');
+                alert('Vælg et produktbillede eller indtast et filnavn');
                 return;
             }
             
@@ -2759,14 +2759,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 };
                 
                 reader.onerror = function() {
-                    alert('Error loading image. Please try again.');
+                    alert('Fejl ved indlæsning af billede. Prøv igen.');
                 };
                 
                 reader.readAsDataURL(imageFile);
             } else {
                 // This should not happen for new products, but handle it just in case
                 console.error('No image file found for new product');
-                alert('Please select a product image or enter a filename');
+                alert('Vælg et produktbillede eller indtast et filnavn');
             }
         });
     }
