@@ -4,6 +4,7 @@ from whitenoise import WhiteNoise
 import os
 import uuid
 import smtplib
+import json
 from email.message import EmailMessage
 from datetime import datetime
 from werkzeug.utils import secure_filename
@@ -23,6 +24,7 @@ load_dotenv(dotenv_path)
 # Configuration
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+PRODUCTS_FILE = os.path.join(os.path.dirname(__file__), 'products.json')
 
 # Create uploads directory if it doesn't exist
 if not os.path.exists(UPLOAD_FOLDER):
@@ -30,6 +32,25 @@ if not os.path.exists(UPLOAD_FOLDER):
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def read_products():
+    if not os.path.exists(PRODUCTS_FILE):
+        return []
+    try:
+        with open(PRODUCTS_FILE, 'r', encoding='utf-8') as handle:
+            data = json.load(handle)
+        return data if isinstance(data, list) else []
+    except Exception as e:
+        print(f'Error reading products file: {e}')
+        return []
+
+def write_products(products):
+    try:
+        with open(PRODUCTS_FILE, 'w', encoding='utf-8') as handle:
+            json.dump(products, handle, ensure_ascii=True, indent=2)
+    except Exception as e:
+        print(f'Error writing products file: {e}')
+        raise
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
@@ -58,6 +79,23 @@ def upload_file():
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
     return send_from_directory(UPLOAD_FOLDER, filename)
+
+@app.route('/products', methods=['GET'])
+def get_products():
+    products = read_products()
+    return jsonify({'products': products}), 200
+
+@app.route('/products', methods=['POST'])
+def save_products():
+    data = request.json or {}
+    products = data.get('products')
+    if not isinstance(products, list):
+        return jsonify({'error': 'Invalid products payload'}), 400
+    try:
+        write_products(products)
+        return jsonify({'success': True, 'count': len(products)}), 200
+    except Exception as e:
+        return jsonify({'error': 'Server error during product save', 'detail': str(e)}), 500
 
 @app.route('/delete', methods=['POST'])
 def delete_file():

@@ -1,16 +1,99 @@
 // Product storage and management
 let products = [];
 
-// Load products from localStorage on page load
-function loadProducts() {
-    const stored = localStorage.getItem('products');
-    if (stored) {
-        products = JSON.parse(stored);
+function getBackendBaseUrl() {
+    const meta = document.querySelector('meta[name="backend-base-url"]');
+    const fromMeta = meta ? (meta.getAttribute('content') || '').trim() : '';
+    if (fromMeta) {
+        return fromMeta.replace(/\/+$/, '');
     }
+    return window.location.origin;
+}
+
+function getProductApiCandidates() {
+    const host = window.location.hostname || 'localhost';
+    const candidates = new Set();
+    candidates.add(getBackendBaseUrl());
+    candidates.add(`http://${host}:5001`);
+    candidates.add('http://localhost:5001');
+    candidates.add('http://127.0.0.1:5001');
+    candidates.add(`http://${host}:5000`);
+    candidates.add('http://localhost:5000');
+    candidates.add('http://127.0.0.1:5000');
+    return Array.from(candidates);
+}
+
+function readProductsFromLocalStorage() {
+    const stored = localStorage.getItem('products');
+    if (!stored) return [];
+    try {
+        const parsed = JSON.parse(stored);
+        return Array.isArray(parsed) ? parsed : [];
+    } catch (error) {
+        console.error('Error parsing products from localStorage:', error);
+        return [];
+    }
+}
+
+async function fetchProductsFromServer() {
+    const candidates = getProductApiCandidates();
+    for (const baseUrl of candidates) {
+        try {
+            const response = await fetch(`${baseUrl}/products`, { cache: 'no-store' });
+            if (!response.ok) continue;
+            const data = await response.json().catch(() => ({}));
+            if (data && Array.isArray(data.products)) {
+                return data.products;
+            }
+        } catch (error) {
+            console.warn('Failed to fetch products from server:', error);
+        }
+    }
+    return null;
+}
+
+async function saveProductsToServer(nextProducts) {
+    const candidates = getProductApiCandidates();
+    for (const baseUrl of candidates) {
+        try {
+            const response = await fetch(`${baseUrl}/products`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ products: nextProducts })
+            });
+            if (response.ok) {
+                return true;
+            }
+        } catch (error) {
+            console.warn('Failed to save products to server:', error);
+        }
+    }
+    return false;
+}
+
+// Load products from server (fallback to localStorage)
+async function loadProducts() {
+    const serverProducts = await fetchProductsFromServer();
+    if (serverProducts) {
+        if (serverProducts.length === 0) {
+            const localProducts = readProductsFromLocalStorage();
+            if (localProducts.length > 0) {
+                products = localProducts;
+                displayProducts();
+                await saveProductsToServer(localProducts);
+                return;
+            }
+        }
+        products = serverProducts;
+        displayProducts();
+        return;
+    }
+
+    products = readProductsFromLocalStorage();
     displayProducts();
 }
 
-// Save products to localStorage
+// Save products to server (fallback to localStorage)
 function saveProducts() {
     try {
         const productsJson = JSON.stringify(products);
@@ -18,14 +101,15 @@ function saveProducts() {
         displayProducts();
     } catch (error) {
         console.error('Error saving products to localStorage:', error);
-        // Check if it's a quota exceeded error
         if (error.name === 'QuotaExceededError' || error.code === 22) {
             alert('There is not enough space in browser storage. Try deleting some old products or images.');
         } else {
             alert('An error occurred while saving products. Please try again.');
         }
-        throw error; // Re-throw to let caller handle it
+        throw error;
     }
+
+    saveProductsToServer(products);
 }
 
 // Global function to edit product (will be defined in DOMContentLoaded)

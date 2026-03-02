@@ -274,15 +274,82 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    function getBackendBaseUrl() {
+        const meta = document.querySelector('meta[name="backend-base-url"]');
+        const fromMeta = meta ? (meta.getAttribute('content') || '').trim() : '';
+        if (fromMeta) {
+            return fromMeta.replace(/\/+$/, '');
+        }
+        return window.location.origin;
+    }
+
+    function getBackendApiCandidates() {
+        const host = window.location.hostname || 'localhost';
+        const candidates = new Set();
+        candidates.add(getBackendBaseUrl());
+        candidates.add(`http://${host}:5001`);
+        candidates.add('http://localhost:5001');
+        candidates.add('http://127.0.0.1:5001');
+        candidates.add(`http://${host}:5000`);
+        candidates.add('http://localhost:5000');
+        candidates.add('http://127.0.0.1:5000');
+        return Array.from(candidates);
+    }
+
+    async function fetchProductsFromServer() {
+        const candidates = getBackendApiCandidates();
+        for (const baseUrl of candidates) {
+            try {
+                const response = await fetch(`${baseUrl}/products`, { cache: 'no-store' });
+                if (!response.ok) continue;
+                const data = await response.json().catch(() => ({}));
+                if (data && Array.isArray(data.products)) {
+                    return data.products;
+                }
+            } catch (error) {
+                console.warn('Failed to fetch products from server:', error);
+            }
+        }
+        return null;
+    }
+
     // Load products for builder
-    function loadProductsForBuilder() {
-        const stored = localStorage.getItem('products');
-        if (!stored) {
+    async function loadProductsForBuilder() {
+        let products = await fetchProductsFromServer();
+        if (products && products.length === 0) {
+            const stored = localStorage.getItem('products');
+            if (stored) {
+                try {
+                    const localProducts = JSON.parse(stored);
+                    if (Array.isArray(localProducts) && localProducts.length > 0) {
+                        products = localProducts;
+                    }
+                } catch (error) {
+                    console.error('Error parsing local products:', error);
+                }
+            }
+        }
+
+        if (!products) {
+            const stored = localStorage.getItem('products');
+            if (!stored) {
+                document.getElementById('productsGrid').innerHTML = '<p>There are no products yet. The range must be agreed upon, as well as rental guidelines.</p>';
+                return;
+            }
+            try {
+                products = JSON.parse(stored);
+            } catch (error) {
+                console.error('Error parsing local products:', error);
+                document.getElementById('productsGrid').innerHTML = '<p>There are no products yet. The range must be agreed upon, as well as rental guidelines.</p>';
+                return;
+            }
+        }
+
+        if (!Array.isArray(products) || products.length === 0) {
             document.getElementById('productsGrid').innerHTML = '<p>There are no products yet. The range must be agreed upon, as well as rental guidelines.</p>';
             return;
         }
 
-        const products = JSON.parse(stored);
         displayCategories(products);
         
         // Show all products initially or first category
@@ -1358,16 +1425,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const totals = calculateOrderTotals(order);
 
         try {
-            const host = window.location.hostname || 'localhost';
-            const candidates = [
-                '', // Relative path for Railway
-                `http://${host}:5001`,
-                'http://localhost:5001',
-                'http://127.0.0.1:5001',
-                `http://${host}:5000`,
-                'http://localhost:5000',
-                'http://127.0.0.1:5000'
-            ];
+            const candidates = getBackendApiCandidates();
             const tried = new Set();
             let lastError = null;
 
