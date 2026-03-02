@@ -190,17 +190,48 @@ def build_order_email(order, totals):
         except ValueError:
             created_at_text = created_at
 
+    customer_name = order.get('name', '').strip()
+    greeting_name = customer_name or 'kunde'
+    address = order.get('address', '').strip() or 'Ikke angivet'
+    startup_total = totals.get('startup', '0.00')
+    monthly_total = totals.get('month1to4', '0.00')
+
     body_lines = [
-        "Tak for at have valgt",
+        f"Kære {greeting_name},",
+        "",
+        "Tak for din bestilling hos LivingFlex i samarbejde med Nimastay.",
+        "",
+        "Din møbelpakke er nu sat i gang, og vi er i gang med at planlægge levering og opsætning af din bolig.",
+        "",
+        "Overblik over din bestilling",
+        "",
+        "Installationsadresse",
+        address,
+        "",
+        "Setup & levering (engangsbetaling)",
+        f"{startup_total} DKK",
+        "(Inkl. levering, indbæring og montering)",
+        "",
+        "Månedlig leje",
+        f"{monthly_total} DKK",
+        "",
+        "Følgende elementer indgår i indretningen:",
         "",
         format_order_items(order),
         "",
-        f"Dit ordre nummer er {order_id}",
+        f"Dit ordrenummer er: {order_id}",
         "",
-        "Du vil blive kontaktet snarest af en fra vores team",
         "",
-        "Med vennelig hilsen",
-        "LivingFlex"
+        "Næste skridt",
+        "",
+        "En fra LivingFlex-teamet kontakter dig snarest for at bekræfte leveringsdato, adgang og de sidste praktiske detaljer.",
+        "",
+        "Du kan trygt læne dig tilbage.",
+        "Vi sørger for levering, indbæring og montering – og en bolig, der står klar og præsentabel til udlejning fra dag ét.",
+        "",
+        "Har du spørgsmål i mellemtiden, er du altid velkommen til at svare direkte på denne mail.",
+        "",
+        "Vi glæder os til at gøre din bolig klar."
     ]
     body = "\n".join(body_lines)
     return subject, body
