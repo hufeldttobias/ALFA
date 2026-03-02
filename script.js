@@ -193,17 +193,16 @@ document.addEventListener('DOMContentLoaded', function() {
             removal: 2500,
             image: 'B1H.jpg',
             items: [
-                { name: 'Dining table for at least 4 people', quantity: 1 },
-                { name: 'Matching dining chair', quantity: 4 },
-                { name: 'Sofa bed', quantity: 1 },
-                { name: 'Coffee table', quantity: 1 },
-                { name: '90x200 bed with top mattress', quantity: 2 },
-                { name: 'Pillow/duvet set', quantity: 2 },
-                { name: 'Side table', quantity: 2 },
-                { name: 'Bedside lamp', quantity: 2 },
-                { name: 'Lighting type', quantity: 2 },
-                { name: '55" TV plus TV stand', quantity: 1 },
-                { name: 'Cordless vacuum cleaner', quantity: 1 }
+                { name: 'Spisebord til mindst 4 personer', quantity: 1 },
+                { name: 'Matchende spisebordsstol', quantity: 4 },
+                { name: 'Sovesofa', quantity: 1 },
+                { name: 'Sofabord', quantity: 1 },
+                { name: '90x200 seng med topmadras', quantity: 2 },
+                { name: 'Pude-/dynesæt', quantity: 2 },
+                { name: 'Sidebord', quantity: 2 },
+                { name: 'Sengebordslampe', quantity: 2 },
+                { name: 'Belysningstype', quantity: 2 },
+                { name: '55" TV samt TV-bord', quantity: 1 }
             ]
         },
         package2: {
@@ -213,17 +212,16 @@ document.addEventListener('DOMContentLoaded', function() {
             removal: 3125,
             image: 'B3G.jpg',
             items: [
-                { name: 'Dining table for at least 6 people', quantity: 1 },
-                { name: 'Matching dining chair', quantity: 6 },
-                { name: 'Sofa bed', quantity: 1 },
-                { name: 'Coffee table', quantity: 1 },
-                { name: '90x200 bed with top mattress', quantity: 4 },
-                { name: 'Pillow/duvet set', quantity: 4 },
-                { name: 'Side table', quantity: 4 },
-                { name: 'Bedside lamp', quantity: 4 },
-                { name: 'Lighting type', quantity: 2 },
-                { name: '55" TV plus TV stand', quantity: 1 },
-                { name: 'Cordless vacuum cleaner', quantity: 1 }
+                { name: 'Spisebord til mindst 6 personer', quantity: 1 },
+                { name: 'Matchende spisebordsstol', quantity: 6 },
+                { name: 'Sovesofa', quantity: 1 },
+                { name: 'Sofabord', quantity: 1 },
+                { name: '90x200 seng med topmadras', quantity: 4 },
+                { name: 'Pude-/dynesæt', quantity: 4 },
+                { name: 'Sidebord', quantity: 4 },
+                { name: 'Sengebordslampe', quantity: 4 },
+                { name: 'Belysningstype', quantity: 2 },
+                { name: '55" TV samt TV-bord', quantity: 1 }
             ]
         }
     };
@@ -997,17 +995,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     return name;
                 }
 
-                if (name.startsWith('90x200 bed')) {
-                    const pluralized = name.replace('90x200 bed', '90x200 beds');
+                if (name.startsWith('90x200 seng')) {
+                    const pluralized = name.replace('90x200 seng', '90x200 senge');
                     return `${quantity} x ${pluralized}`;
                 }
 
                 const pluralMap = {
-                    'Matching dining chair': 'matching dining chairs',
-                    'Pillow/duvet set': 'pillow/duvet sets',
-                    'Side table': 'side tables',
-                    'Bedside lamp': 'bedside lamps',
-                    'Lighting type': 'types of lighting'
+                    'Matchende spisebordsstol': 'matchende spisebordsstole',
+                    'Pude-/dynesæt': 'pude-/dynesæt',
+                    'Sidebord': 'sideborde',
+                    'Sengebordslampe': 'sengebordslamper',
+                    'Belysningstype': 'belysningstyper'
                 };
 
                 if (pluralMap[name]) {
