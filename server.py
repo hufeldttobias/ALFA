@@ -181,7 +181,7 @@ def format_delivery_option(order):
 
 def build_order_email(order, totals):
     order_id = order.get('id', '')
-    subject = f"Order confirmation #{order_id}"
+    subject = f"Ordrebekræftelse - LivingFlex {order_id}"
     created_at = order.get('createdAt') or ''
     created_at_text = ''
     if created_at:
@@ -193,6 +193,7 @@ def build_order_email(order, totals):
     customer_name = order.get('name', '').strip()
     greeting_name = customer_name or 'kunde'
     address = order.get('address', '').strip() or 'Ikke angivet'
+    installation_week = order.get('installationWeek', '').strip() or 'Ikke angivet'
     startup_total = totals.get('startup', '0.00')
     monthly_total = totals.get('month1to4', '0.00')
 
@@ -207,6 +208,9 @@ def build_order_email(order, totals):
         "",
         "Installationsadresse",
         address,
+        "",
+        "Ønsket installationsuge",
+        installation_week,
         "",
         "Setup & levering (engangsbetaling)",
         f"{startup_total} DKK",
@@ -231,7 +235,10 @@ def build_order_email(order, totals):
         "",
         "Har du spørgsmål i mellemtiden, er du altid velkommen til at svare direkte på denne mail.",
         "",
-        "Vi glæder os til at gøre din bolig klar."
+        "Vi glæder os til at gøre din bolig klar.",
+        "",
+        "Venlig hilsen",
+        "- LivingFlex"
     ]
     body = "\n".join(body_lines)
     return subject, body
