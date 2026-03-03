@@ -6,6 +6,8 @@ import uuid
 import smtplib
 import json
 import base64
+import psycopg2
+from psycopg2 import extras, sql
 from email.message import EmailMessage
 from datetime import datetime
 from werkzeug.utils import secure_filename
@@ -28,6 +30,24 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 PRODUCTS_FILE = os.path.join(os.path.dirname(__file__), 'products.json')
 ORDERS_FILE = os.path.join(os.path.dirname(__file__), 'orders.json')
 COMPLETED_ORDERS_FILE = os.path.join(os.path.dirname(__file__), 'completed_orders.json')
+ORDERS_TABLE = 'orders'
+COMPLETED_ORDERS_TABLE = 'completed_orders'
+
+def get_db_url():
+    return os.environ.get('DATABASE_URL', '').strip()
+
+def ensure_orders_table(cursor, table_name):
+    cursor.execute(
+        sql.SQL(
+            """
+            CREATE TABLE IF NOT EXISTS {table} (
+                id BIGINT PRIMARY KEY,
+                data JSONB NOT NULL,
+                updated_at TIMESTAMPTZ DEFAULT now()
+            )
+            """
+        ).format(table=sql.Identifier(table_name))
+    )
 
 # Create uploads directory if it doesn't exist
 if not os.path.exists(UPLOAD_FOLDER):
@@ -55,7 +75,23 @@ def write_products(products):
         print(f'Error writing products file: {e}')
         raise
 
-def read_orders(path):
+def read_orders(path, table_name):
+    db_url = get_db_url()
+    if db_url:
+        try:
+            with psycopg2.connect(db_url) as conn:
+                with conn.cursor() as cursor:
+                    ensure_orders_table(cursor, table_name)
+                    cursor.execute(
+                        sql.SQL("SELECT data FROM {table} ORDER BY id ASC")
+                        .format(table=sql.Identifier(table_name))
+                    )
+                    rows = cursor.fetchall()
+                    return [row[0] for row in rows]
+        except Exception as e:
+            print(f'Error reading orders from database: {e}')
+            return []
+
     if not os.path.exists(path):
         return []
     try:
@@ -66,7 +102,36 @@ def read_orders(path):
         print(f'Error reading orders file: {e}')
         return []
 
-def write_orders(path, orders):
+def write_orders(path, table_name, orders):
+    db_url = get_db_url()
+    if db_url:
+        try:
+            with psycopg2.connect(db_url) as conn:
+                with conn.cursor() as cursor:
+                    ensure_orders_table(cursor, table_name)
+                    cursor.execute(
+                        sql.SQL("DELETE FROM {table}")
+                        .format(table=sql.Identifier(table_name))
+                    )
+                    rows = []
+                    base_id = int(datetime.utcnow().timestamp() * 1000)
+                    for index, order in enumerate(orders):
+                        order_id = order.get('id') if isinstance(order, dict) else None
+                        if not order_id:
+                            order_id = base_id + index
+                        rows.append((int(order_id), extras.Json(order)))
+                    if rows:
+                        cursor.executemany(
+                            sql.SQL("INSERT INTO {table} (id, data) VALUES (%s, %s)")
+                            .format(table=sql.Identifier(table_name)),
+                            rows
+                        )
+                conn.commit()
+            return
+        except Exception as e:
+            print(f'Error writing orders to database: {e}')
+            raise
+
     try:
         with open(path, 'w', encoding='utf-8') as handle:
             json.dump(orders, handle, ensure_ascii=True, indent=2)
@@ -121,7 +186,7 @@ def save_products():
 
 @app.route('/orders', methods=['GET'])
 def get_orders():
-    orders = read_orders(ORDERS_FILE)
+    orders = read_orders(ORDERS_FILE, ORDERS_TABLE)
     return jsonify({'orders': orders}), 200
 
 @app.route('/orders', methods=['POST'])
@@ -131,14 +196,14 @@ def save_orders():
     if not isinstance(orders, list):
         return jsonify({'error': 'Invalid orders payload'}), 400
     try:
-        write_orders(ORDERS_FILE, orders)
+        write_orders(ORDERS_FILE, ORDERS_TABLE, orders)
         return jsonify({'success': True, 'count': len(orders)}), 200
     except Exception as e:
         return jsonify({'error': 'Server error during orders save', 'detail': str(e)}), 500
 
 @app.route('/completed-orders', methods=['GET'])
 def get_completed_orders():
-    orders = read_orders(COMPLETED_ORDERS_FILE)
+    orders = read_orders(COMPLETED_ORDERS_FILE, COMPLETED_ORDERS_TABLE)
     return jsonify({'orders': orders}), 200
 
 @app.route('/completed-orders', methods=['POST'])
@@ -148,7 +213,7 @@ def save_completed_orders():
     if not isinstance(orders, list):
         return jsonify({'error': 'Invalid completed orders payload'}), 400
     try:
-        write_orders(COMPLETED_ORDERS_FILE, orders)
+        write_orders(COMPLETED_ORDERS_FILE, COMPLETED_ORDERS_TABLE, orders)
         return jsonify({'success': True, 'count': len(orders)}), 200
     except Exception as e:
         return jsonify({'error': 'Server error during completed orders save', 'detail': str(e)}), 500
