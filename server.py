@@ -5,6 +5,7 @@ import os
 import uuid
 import smtplib
 import json
+import base64
 from email.message import EmailMessage
 from datetime import datetime
 from werkzeug.utils import secure_filename
@@ -302,6 +303,38 @@ def build_order_email(order, totals):
     body = "\n".join(body_lines)
     return subject, body
 
+def build_floor_plan_email(name, address):
+    subject = "LivingFlex - Indretning"
+    display_name = name.strip() if name else 'kunde'
+    address_text = address.strip() if address else 'Ikke angivet'
+    body_lines = [
+        f"Kære {display_name}",
+        "",
+        f"Vi takker for din henvendelse vedrørende en møblering på {address_text}",
+        "",
+        "Vores team har modtaget din plantegning og går nu i gang med en indretning specifikt til dig.",
+        "",
+        "Du hører fra os snarest.",
+        "Skulle der være nogle spørgsmål eller rettelser er du altid mere end velkommen til at kontakte os på rr@livingflex.dk.",
+        "",
+        "Venlig hilsen",
+        "LivingFlex"
+    ]
+    body = "\n".join(body_lines)
+    return subject, body
+
+def build_floor_plan_admin_email(name, email, phone, address, notes):
+    subject = "LivingFlex - Indretning"
+    body_lines = [
+        name or 'Ikke angivet',
+        email or 'Ikke angivet',
+        phone or 'Ikke angivet',
+        address or 'Ikke angivet',
+        notes or 'Ikke angivet'
+    ]
+    body = "\n".join(body_lines)
+    return subject, body
+
 def send_via_brevo_api(customer_email, subject, body):
     api_key = get_brevo_api_key()
     if not api_key:
@@ -380,6 +413,102 @@ def send_order_confirmation():
         return jsonify({'success': True, 'provider': 'smtp'}), 200
     except Exception as e:
         print(f'Error sending order confirmation: {e}')
+        return jsonify({'error': 'Server error during email send', 'detail': str(e)}), 500
+
+@app.route('/send-floor-plan-confirmation', methods=['POST'])
+def send_floor_plan_confirmation():
+    try:
+        data = request.json or {}
+        name = (data.get('name') or '').strip()
+        email = (data.get('email') or '').strip()
+        address = (data.get('address') or '').strip()
+        phone = (data.get('phone') or '').strip()
+        notes = (data.get('notes') or '').strip()
+        image_base64 = (data.get('imageBase64') or '').strip()
+        image_filename = (data.get('imageFilename') or '').strip() or 'plantegning'
+
+        if not email:
+            return jsonify({'error': 'Missing customer email'}), 400
+
+        subject, body = build_floor_plan_email(name, address)
+        admin_subject, admin_body = build_floor_plan_admin_email(
+            name=name,
+            email=email,
+            phone=phone,
+            address=address,
+            notes=notes
+        )
+
+        brevo_success, brevo_error = send_via_brevo_api(email, subject, body)
+        if brevo_success:
+            # Continue to send admin email via SMTP
+            pass
+
+        smtp_config = get_smtp_config()
+        if smtp_config['missing']:
+            return jsonify({
+                'error': 'Missing SMTP configuration',
+                'missing': smtp_config['missing'],
+                'detail': brevo_error or 'Brevo API failed'
+            }), 500
+
+        # Customer confirmation (SMTP fallback)
+        if not brevo_success:
+            message = EmailMessage()
+            message['Subject'] = subject
+            message['From'] = smtp_config['smtp_from']
+            message['To'] = email
+            message.set_content(body)
+
+            if smtp_config['smtp_use_ssl']:
+                server = smtplib.SMTP_SSL(smtp_config['smtp_host'], smtp_config['smtp_port'])
+            else:
+                server = smtplib.SMTP(smtp_config['smtp_host'], smtp_config['smtp_port'])
+
+            with server:
+                if smtp_config['smtp_use_tls'] and not smtp_config['smtp_use_ssl']:
+                    server.starttls()
+                server.login(smtp_config['smtp_user'], smtp_config['smtp_password'])
+                server.send_message(message)
+
+        # Admin email with attachment
+        admin_message = EmailMessage()
+        admin_message['Subject'] = admin_subject
+        admin_message['From'] = smtp_config['smtp_from']
+        admin_message['To'] = 'rr@livingflex.dk'
+        admin_message.set_content(admin_body)
+
+        if image_base64:
+            try:
+                header, encoded = image_base64.split(',', 1) if ',' in image_base64 else ('', image_base64)
+                mime_type = 'application/octet-stream'
+                if header.startswith('data:') and ';base64' in header:
+                    mime_type = header[5:].split(';', 1)[0]
+                maintype, subtype = mime_type.split('/', 1) if '/' in mime_type else ('application', 'octet-stream')
+                image_bytes = base64.b64decode(encoded)
+                admin_message.add_attachment(
+                    image_bytes,
+                    maintype=maintype,
+                    subtype=subtype,
+                    filename=image_filename
+                )
+            except Exception as e:
+                print(f'Error attaching floor plan image: {e}')
+
+        if smtp_config['smtp_use_ssl']:
+            admin_server = smtplib.SMTP_SSL(smtp_config['smtp_host'], smtp_config['smtp_port'])
+        else:
+            admin_server = smtplib.SMTP(smtp_config['smtp_host'], smtp_config['smtp_port'])
+
+        with admin_server:
+            if smtp_config['smtp_use_tls'] and not smtp_config['smtp_use_ssl']:
+                admin_server.starttls()
+            admin_server.login(smtp_config['smtp_user'], smtp_config['smtp_password'])
+            admin_server.send_message(admin_message)
+
+        return jsonify({'success': True, 'provider': 'smtp'}), 200
+    except Exception as e:
+        print(f'Error sending floor plan confirmation: {e}')
         return jsonify({'error': 'Server error during email send', 'detail': str(e)}), 500
 
 if __name__ == '__main__':

@@ -1887,8 +1887,46 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Handle form submission
+    async function sendFloorPlanConfirmation(formData, imageBase64, imageFilename) {
+        const candidates = getBackendApiCandidates();
+        let lastError = null;
+
+        for (const baseUrl of candidates) {
+            try {
+                const response = await fetch(`${baseUrl}/send-floor-plan-confirmation`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: formData.name,
+                        email: formData.email,
+                        phone: formData.phone,
+                        address: formData.address,
+                        notes: formData.notes || '',
+                        imageBase64: imageBase64 || '',
+                        imageFilename: imageFilename || ''
+                    })
+                });
+
+                if (response.ok) {
+                    return true;
+                }
+
+                const error = await response.json().catch(() => ({}));
+                lastError = error;
+                console.error('Floor plan confirmation failed:', error);
+            } catch (error) {
+                lastError = error;
+                console.error('Floor plan confirmation error:', error);
+            }
+        }
+
+        const detail = lastError && lastError.detail ? `\n${lastError.detail}` : '';
+        alert(`Vi kunne ikke sende bekræftelsen.${detail}`);
+        return false;
+    }
+
     if (floorPlanForm) {
-        floorPlanForm.addEventListener('submit', function(e) {
+        floorPlanForm.addEventListener('submit', async function(e) {
             e.preventDefault();
 
             // Validate image
@@ -1907,33 +1945,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 image: selectedFloorPlanFile
             };
 
-            // Convert image to base64 for email
             const reader = new FileReader();
-            reader.onload = function(e) {
-                const imageBase64 = e.target.result;
-                
-                // Create email content
-                const subject = encodeURIComponent('Plantegningsforespørgsel - ' + formData.name);
-                const body = encodeURIComponent(
-                    'Ny plantegningsforespørgsel\n\n' +
-                    'Kundeoplysninger:\n' +
-                    'Name: ' + formData.name + '\n' +
-                    'Email: ' + formData.email + '\n' +
-                    'Phone: ' + formData.phone + '\n' +
-                    'Address: ' + formData.address + '\n\n' +
-                    'Additional Notes:\n' + (formData.notes || 'None') + '\n\n' +
-                    'Se venligst vedhæftet billede af plantegningen.'
-                );
+            reader.onload = async function(loadEvent) {
+                const imageBase64 = loadEvent.target.result;
+                const imageFilename = selectedFloorPlanFile ? selectedFloorPlanFile.name : 'plantegning';
+                const wasSent = await sendFloorPlanConfirmation(formData, imageBase64, imageFilename);
+                if (!wasSent) {
+                    return;
+                }
 
-                // For now, we'll use mailto with a note about the image
-                // In a production environment, you would send this to a backend service
-                const mailtoLink = `mailto:info@livingflex.com?subject=${subject}&body=${body}`;
-                
-                // Open email client
-                window.location.href = mailtoLink;
-
-                // Show success message
-                alert('Tak! Din plantegningsforespørgsel er klar. Vedhæft plantegningen til e-mailen der åbner, og send den. Vores team gennemgår din forespørgsel og vender tilbage med et personligt indretningsforslag.');
+                alert('Tak! Vi har sendt en bekræftelse til din e-mail. Vores team gennemgår din plantegning og vender tilbage snarest.');
 
                 // Reset form
                 floorPlanForm.reset();
