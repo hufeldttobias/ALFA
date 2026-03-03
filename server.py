@@ -251,7 +251,7 @@ def send_via_brevo_api(customer_email, subject, body):
     payload = {
         "sender": {
             "email": os.environ.get('SMTP_FROM', 'order@livingflex.dk').strip(),
-            "name": "Flexliving"
+            "name": "LivingFlex"
         },
         "to": [{"email": customer_email}],
         "subject": subject,
