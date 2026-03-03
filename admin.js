@@ -23,6 +23,78 @@ function getProductApiCandidates() {
     return Array.from(candidates);
 }
 
+async function fetchOrdersFromServer() {
+    const candidates = getProductApiCandidates();
+    for (const baseUrl of candidates) {
+        try {
+            const response = await fetch(`${baseUrl}/orders`, { cache: 'no-store' });
+            if (!response.ok) continue;
+            const data = await response.json().catch(() => ({}));
+            if (data && Array.isArray(data.orders)) {
+                return data.orders;
+            }
+        } catch (error) {
+            console.warn('Failed to fetch orders from server:', error);
+        }
+    }
+    return null;
+}
+
+async function saveOrdersToServer(orders) {
+    const candidates = getProductApiCandidates();
+    for (const baseUrl of candidates) {
+        try {
+            const response = await fetch(`${baseUrl}/orders`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ orders })
+            });
+            if (response.ok) {
+                return true;
+            }
+        } catch (error) {
+            console.warn('Failed to save orders to server:', error);
+        }
+    }
+    return false;
+}
+
+async function fetchCompletedOrdersFromServer() {
+    const candidates = getProductApiCandidates();
+    for (const baseUrl of candidates) {
+        try {
+            const response = await fetch(`${baseUrl}/completed-orders`, { cache: 'no-store' });
+            if (!response.ok) continue;
+            const data = await response.json().catch(() => ({}));
+            if (data && Array.isArray(data.orders)) {
+                return data.orders;
+            }
+        } catch (error) {
+            console.warn('Failed to fetch completed orders from server:', error);
+        }
+    }
+    return null;
+}
+
+async function saveCompletedOrdersToServer(orders) {
+    const candidates = getProductApiCandidates();
+    for (const baseUrl of candidates) {
+        try {
+            const response = await fetch(`${baseUrl}/completed-orders`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ orders })
+            });
+            if (response.ok) {
+                return true;
+            }
+        } catch (error) {
+            console.warn('Failed to save completed orders to server:', error);
+        }
+    }
+    return false;
+}
+
 function readProductsFromLocalStorage() {
     const stored = localStorage.getItem('products');
     if (!stored) return [];
@@ -472,7 +544,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Load and display orders
-    function loadOrders() {
+    async function loadOrders() {
         const container = document.getElementById('ordersContainer');
         const cancelledPendingTasksContainer = document.getElementById('cancelledPendingTasksContainer');
         const cancelledPendingTasksSection = document.getElementById('cancelledPendingTasksSection');
@@ -482,14 +554,18 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        const storedOrders = localStorage.getItem('orders');
         let orders = [];
-        
-        if (storedOrders) {
-            orders = JSON.parse(storedOrders);
-            console.log('Loaded orders from localStorage:', orders.length);
+        const serverOrders = await fetchOrdersFromServer();
+        if (serverOrders) {
+            orders = serverOrders;
         } else {
-            console.log('No orders found in localStorage');
+            const storedOrders = localStorage.getItem('orders');
+            if (storedOrders) {
+                orders = JSON.parse(storedOrders);
+                console.log('Loaded orders from localStorage:', orders.length);
+            } else {
+                console.log('No orders found in localStorage');
+            }
         }
         
         // Check if there are example orders before filtering
@@ -551,6 +627,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Save filtered orders back to localStorage if any were removed
         if (orders.length !== originalCount) {
             localStorage.setItem('orders', JSON.stringify(orders));
+            saveOrdersToServer(orders);
         }
         
         // Get filter value
@@ -632,12 +709,16 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Load and display cancelled pending orders from completedOrders
-        const storedCompletedOrders = localStorage.getItem('completedOrders');
         let cancelledPendingOrders = [];
-        
-        if (storedCompletedOrders) {
-            const completedOrders = JSON.parse(storedCompletedOrders);
-            cancelledPendingOrders = completedOrders.filter(order => order.status === 'cancelled_pending');
+        const serverCompletedOrders = await fetchCompletedOrdersFromServer();
+        if (serverCompletedOrders) {
+            cancelledPendingOrders = serverCompletedOrders.filter(order => order.status === 'cancelled_pending');
+        } else {
+            const storedCompletedOrders = localStorage.getItem('completedOrders');
+            if (storedCompletedOrders) {
+                const completedOrders = JSON.parse(storedCompletedOrders);
+                cancelledPendingOrders = completedOrders.filter(order => order.status === 'cancelled_pending');
+            }
         }
         
         // Display cancelled pending orders section
@@ -692,24 +773,30 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Calculate and update badge count for Opgaver menu item
-    function updateOpgaverBadge() {
+    async function updateOpgaverBadge() {
         const badge = document.getElementById('opgaverBadge');
         if (!badge) return;
         
         let count = 0;
         
         // Count cancelled pending orders
-        const storedCompletedOrders = localStorage.getItem('completedOrders');
-        if (storedCompletedOrders) {
-            const completedOrders = JSON.parse(storedCompletedOrders);
-            const cancelledPendingOrders = completedOrders.filter(order => order.status === 'cancelled_pending');
+        const serverCompletedOrders = await fetchCompletedOrdersFromServer();
+        if (serverCompletedOrders) {
+            const cancelledPendingOrders = serverCompletedOrders.filter(order => order.status === 'cancelled_pending');
             count += cancelledPendingOrders.length;
+        } else {
+            const storedCompletedOrders = localStorage.getItem('completedOrders');
+            if (storedCompletedOrders) {
+                const completedOrders = JSON.parse(storedCompletedOrders);
+                const cancelledPendingOrders = completedOrders.filter(order => order.status === 'cancelled_pending');
+                count += cancelledPendingOrders.length;
+            }
         }
         
         // Count orders that need to be completed within 2 weeks
-        const storedOrders = localStorage.getItem('orders');
-        if (storedOrders) {
-            const orders = JSON.parse(storedOrders);
+        const serverOrders = await fetchOrdersFromServer();
+        if (serverOrders) {
+            const orders = serverOrders;
             const today = new Date();
             today.setHours(0, 0, 0, 0);
             const twoWeeksFromNow = new Date(today);
@@ -736,6 +823,35 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             
             count += urgentOrders.length;
+        } else {
+            const storedOrders = localStorage.getItem('orders');
+            if (storedOrders) {
+                const orders = JSON.parse(storedOrders);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const twoWeeksFromNow = new Date(today);
+                twoWeeksFromNow.setDate(twoWeeksFromNow.getDate() + 14);
+
+                const urgentOrders = orders.filter(order => {
+                    if (!order.name || !order.address || !order.email || !order.phoneNumber) {
+                        return false;
+                    }
+                    const testNames = ['test', 'example', 'eksempel', 'demo', 'sample'];
+                    const nameLower = (order.name || '').toLowerCase();
+                    if (testNames.some(test => nameLower.includes(test))) {
+                        return false;
+                    }
+
+                    if (order.installationDate) {
+                        const installationDate = new Date(order.installationDate);
+                        installationDate.setHours(0, 0, 0, 0);
+                        return installationDate >= today && installationDate <= twoWeeksFromNow;
+                    }
+                    return false;
+                });
+
+                count += urgentOrders.length;
+            }
         }
         
         // Update badge
@@ -748,11 +864,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Clear example orders
-    function clearExampleOrders() {
-        const storedOrders = localStorage.getItem('orders');
-        if (!storedOrders) return;
-        
-        let orders = JSON.parse(storedOrders);
+    async function clearExampleOrders() {
+        let orders = [];
+        const serverOrders = await fetchOrdersFromServer();
+        if (serverOrders) {
+            orders = serverOrders;
+        } else {
+            const storedOrders = localStorage.getItem('orders');
+            if (!storedOrders) return;
+            orders = JSON.parse(storedOrders);
+        }
         const originalCount = orders.length;
         
         // Filter out example/test orders
@@ -772,6 +893,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Save filtered orders
         localStorage.setItem('orders', JSON.stringify(orders));
+        saveOrdersToServer(orders);
         
         // Reload orders display
         loadOrders();
@@ -785,28 +907,44 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Show order detail modal
-    function showOrderDetail(orderId) {
+    async function showOrderDetail(orderId) {
         // Check both orders and completedOrders
         let order = null;
         let isFromOrders = false;
         let isCancelledPending = false;
-        
-        const storedOrders = localStorage.getItem('orders');
-        if (storedOrders) {
-            const orders = JSON.parse(storedOrders);
-            order = orders.find(o => o.id === orderId);
+
+        const serverOrders = await fetchOrdersFromServer();
+        if (serverOrders) {
+            order = serverOrders.find(o => o.id === orderId);
             if (order) {
                 isFromOrders = true;
             }
+        } else {
+            const storedOrders = localStorage.getItem('orders');
+            if (storedOrders) {
+                const orders = JSON.parse(storedOrders);
+                order = orders.find(o => o.id === orderId);
+                if (order) {
+                    isFromOrders = true;
+                }
+            }
         }
-        
+
         if (!order) {
-            const storedCompletedOrders = localStorage.getItem('completedOrders');
-            if (storedCompletedOrders) {
-                const completedOrders = JSON.parse(storedCompletedOrders);
-                order = completedOrders.find(o => o.id === orderId);
+            const serverCompletedOrders = await fetchCompletedOrdersFromServer();
+            if (serverCompletedOrders) {
+                order = serverCompletedOrders.find(o => o.id === orderId);
                 if (order && order.status === 'cancelled_pending') {
                     isCancelledPending = true;
+                }
+            } else {
+                const storedCompletedOrders = localStorage.getItem('completedOrders');
+                if (storedCompletedOrders) {
+                    const completedOrders = JSON.parse(storedCompletedOrders);
+                    order = completedOrders.find(o => o.id === orderId);
+                    if (order && order.status === 'cancelled_pending') {
+                        isCancelledPending = true;
+                    }
                 }
             }
         }
@@ -988,14 +1126,26 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Complete order - move from Opgaver to Oversigt
-    function completeOrder(orderId) {
-        const storedOrders = localStorage.getItem('orders');
-        const storedCompletedOrders = localStorage.getItem('completedOrders');
-        
-        if (!storedOrders) return;
-        
-        let orders = JSON.parse(storedOrders);
-        let completedOrders = storedCompletedOrders ? JSON.parse(storedCompletedOrders) : [];
+    async function completeOrder(orderId) {
+        let orders = [];
+        let completedOrders = [];
+        const serverOrders = await fetchOrdersFromServer();
+        const serverCompletedOrders = await fetchCompletedOrdersFromServer();
+
+        if (serverOrders) {
+            orders = serverOrders;
+        } else {
+            const storedOrders = localStorage.getItem('orders');
+            if (!storedOrders) return;
+            orders = JSON.parse(storedOrders);
+        }
+
+        if (serverCompletedOrders) {
+            completedOrders = serverCompletedOrders;
+        } else {
+            const storedCompletedOrders = localStorage.getItem('completedOrders');
+            completedOrders = storedCompletedOrders ? JSON.parse(storedCompletedOrders) : [];
+        }
         
         // Find the order
         const orderIndex = orders.findIndex(o => o.id === orderId);
@@ -1010,9 +1160,11 @@ document.addEventListener('DOMContentLoaded', function() {
         orders.splice(orderIndex, 1);
         completedOrders.push(order);
         
-        // Save to localStorage
+        // Save to localStorage and server
         localStorage.setItem('orders', JSON.stringify(orders));
         localStorage.setItem('completedOrders', JSON.stringify(completedOrders));
+        saveOrdersToServer(orders);
+        saveCompletedOrdersToServer(completedOrders);
         
         // Close modal
         closeOrderDetailModal();
@@ -1034,18 +1186,22 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Load and display completed orders (now called "Aktive")
-    function loadCompletedOrders() {
+    async function loadCompletedOrders() {
         const activeContainer = document.getElementById('activeOrdersContainer');
         const cancelledPendingContainer = document.getElementById('cancelledPendingOrdersContainer');
         const cancelledCollectedContainer = document.getElementById('cancelledCollectedOrdersContainer');
         
         if (!activeContainer || !cancelledPendingContainer || !cancelledCollectedContainer) return;
         
-        const storedCompletedOrders = localStorage.getItem('completedOrders');
         let completedOrders = [];
-        
-        if (storedCompletedOrders) {
-            completedOrders = JSON.parse(storedCompletedOrders);
+        const serverCompletedOrders = await fetchCompletedOrdersFromServer();
+        if (serverCompletedOrders) {
+            completedOrders = serverCompletedOrders;
+        } else {
+            const storedCompletedOrders = localStorage.getItem('completedOrders');
+            if (storedCompletedOrders) {
+                completedOrders = JSON.parse(storedCompletedOrders);
+            }
         }
         
         // Filter orders by status
@@ -1062,7 +1218,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Keep the header row and only replace the content after it
         const activeHeader = activeContainer.querySelector('.overview-order-header');
         const activeContent = activeOrders.length === 0 
-            ? '<p style="color: #6b7280; text-align: center; padding: 2rem;">No active orders.</p>'
+            ? '<p style="color: #6b7280; text-align: center; padding: 2rem;">Ingen aktive ordrer.</p>'
             : activeOrders.map(order => {
                 // Calculate current monthly rent based on installation date
                 const monthlyRent = calculateCurrentMonthlyRent(order);
@@ -1278,11 +1434,16 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Cancel order - move to "Opsagt, mangler afhentning" group
-    function cancelOrderPending(orderId) {
-        const storedCompletedOrders = localStorage.getItem('completedOrders');
-        if (!storedCompletedOrders) return;
-        
-        let completedOrders = JSON.parse(storedCompletedOrders);
+    async function cancelOrderPending(orderId) {
+        let completedOrders = [];
+        const serverCompletedOrders = await fetchCompletedOrdersFromServer();
+        if (serverCompletedOrders) {
+            completedOrders = serverCompletedOrders;
+        } else {
+            const storedCompletedOrders = localStorage.getItem('completedOrders');
+            if (!storedCompletedOrders) return;
+            completedOrders = JSON.parse(storedCompletedOrders);
+        }
         
         // Find the order
         const orderIndex = completedOrders.findIndex(o => o.id === orderId);
@@ -1296,8 +1457,9 @@ document.addEventListener('DOMContentLoaded', function() {
         // Update order in array
         completedOrders[orderIndex] = order;
         
-        // Save to localStorage
+        // Save to localStorage and server
         localStorage.setItem('completedOrders', JSON.stringify(completedOrders));
+        saveCompletedOrdersToServer(completedOrders);
         
         // Close modal
         closeOrderDetailModal();
@@ -1319,11 +1481,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Cancel order - move to "Opsagt og hentet" group
-    function cancelOrderCollected(orderId) {
-        const storedCompletedOrders = localStorage.getItem('completedOrders');
-        if (!storedCompletedOrders) return;
-        
-        let completedOrders = JSON.parse(storedCompletedOrders);
+    async function cancelOrderCollected(orderId) {
+        let completedOrders = [];
+        const serverCompletedOrders = await fetchCompletedOrdersFromServer();
+        if (serverCompletedOrders) {
+            completedOrders = serverCompletedOrders;
+        } else {
+            const storedCompletedOrders = localStorage.getItem('completedOrders');
+            if (!storedCompletedOrders) return;
+            completedOrders = JSON.parse(storedCompletedOrders);
+        }
         
         // Find the order
         const orderIndex = completedOrders.findIndex(o => o.id === orderId);
@@ -1337,8 +1504,9 @@ document.addEventListener('DOMContentLoaded', function() {
         // Update order in array
         completedOrders[orderIndex] = order;
         
-        // Save to localStorage
+        // Save to localStorage and server
         localStorage.setItem('completedOrders', JSON.stringify(completedOrders));
+        saveCompletedOrdersToServer(completedOrders);
         
         // Close modal
         closeOrderDetailModal();

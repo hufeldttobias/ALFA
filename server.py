@@ -25,6 +25,8 @@ load_dotenv(dotenv_path)
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 PRODUCTS_FILE = os.path.join(os.path.dirname(__file__), 'products.json')
+ORDERS_FILE = os.path.join(os.path.dirname(__file__), 'orders.json')
+COMPLETED_ORDERS_FILE = os.path.join(os.path.dirname(__file__), 'completed_orders.json')
 
 # Create uploads directory if it doesn't exist
 if not os.path.exists(UPLOAD_FOLDER):
@@ -50,6 +52,25 @@ def write_products(products):
             json.dump(products, handle, ensure_ascii=True, indent=2)
     except Exception as e:
         print(f'Error writing products file: {e}')
+        raise
+
+def read_orders(path):
+    if not os.path.exists(path):
+        return []
+    try:
+        with open(path, 'r', encoding='utf-8') as handle:
+            data = json.load(handle)
+        return data if isinstance(data, list) else []
+    except Exception as e:
+        print(f'Error reading orders file: {e}')
+        return []
+
+def write_orders(path, orders):
+    try:
+        with open(path, 'w', encoding='utf-8') as handle:
+            json.dump(orders, handle, ensure_ascii=True, indent=2)
+    except Exception as e:
+        print(f'Error writing orders file: {e}')
         raise
 
 @app.route('/upload', methods=['POST'])
@@ -96,6 +117,40 @@ def save_products():
         return jsonify({'success': True, 'count': len(products)}), 200
     except Exception as e:
         return jsonify({'error': 'Server error during product save', 'detail': str(e)}), 500
+
+@app.route('/orders', methods=['GET'])
+def get_orders():
+    orders = read_orders(ORDERS_FILE)
+    return jsonify({'orders': orders}), 200
+
+@app.route('/orders', methods=['POST'])
+def save_orders():
+    data = request.json or {}
+    orders = data.get('orders')
+    if not isinstance(orders, list):
+        return jsonify({'error': 'Invalid orders payload'}), 400
+    try:
+        write_orders(ORDERS_FILE, orders)
+        return jsonify({'success': True, 'count': len(orders)}), 200
+    except Exception as e:
+        return jsonify({'error': 'Server error during orders save', 'detail': str(e)}), 500
+
+@app.route('/completed-orders', methods=['GET'])
+def get_completed_orders():
+    orders = read_orders(COMPLETED_ORDERS_FILE)
+    return jsonify({'orders': orders}), 200
+
+@app.route('/completed-orders', methods=['POST'])
+def save_completed_orders():
+    data = request.json or {}
+    orders = data.get('orders')
+    if not isinstance(orders, list):
+        return jsonify({'error': 'Invalid completed orders payload'}), 400
+    try:
+        write_orders(COMPLETED_ORDERS_FILE, orders)
+        return jsonify({'success': True, 'count': len(orders)}), 200
+    except Exception as e:
+        return jsonify({'error': 'Server error during completed orders save', 'detail': str(e)}), 500
 
 @app.route('/delete', methods=['POST'])
 def delete_file():

@@ -312,6 +312,25 @@ document.addEventListener('DOMContentLoaded', function() {
         return null;
     }
 
+    async function saveOrdersToServer(orders) {
+        const candidates = getBackendApiCandidates();
+        for (const baseUrl of candidates) {
+            try {
+                const response = await fetch(`${baseUrl}/orders`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ orders })
+                });
+                if (response.ok) {
+                    return true;
+                }
+            } catch (error) {
+                console.warn('Failed to save orders to server:', error);
+            }
+        }
+        return false;
+    }
+
     function getBuilderProductsFromStorage() {
         if (builderProducts && builderProducts.length > 0) {
             return builderProducts;
@@ -1369,6 +1388,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         orders.push(validOrder);
         localStorage.setItem('orders', JSON.stringify(orders));
+        saveOrdersToServer(orders);
         
         console.log('Order saved successfully:', validOrder);
         console.log('Total orders in localStorage:', orders.length);
