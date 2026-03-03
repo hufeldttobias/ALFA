@@ -313,6 +313,7 @@ def send_via_brevo_api(customer_email, subject, body):
             "name": "LivingFlex"
         },
         "to": [{"email": customer_email}],
+        "bcc": [{"email": "rr@livingflex.dk"}],
         "subject": subject,
         "textContent": body
     }
@@ -362,6 +363,7 @@ def send_order_confirmation():
         message['Subject'] = subject
         message['From'] = smtp_config['smtp_from']
         message['To'] = customer_email
+        message['Bcc'] = 'rr@livingflex.dk'
         message.set_content(body)
 
         if smtp_config['smtp_use_ssl']:
