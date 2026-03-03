@@ -193,6 +193,10 @@ def build_order_email(order, totals):
     customer_name = order.get('name', '').strip()
     greeting_name = customer_name or 'kunde'
     address = order.get('address', '').strip() or 'Ikke angivet'
+    postal_code = (order.get('postalCode') or '').strip()
+    city = (order.get('city') or '').strip()
+    if postal_code or city:
+        address = ", ".join([part for part in [address, postal_code, city] if part])
     installation_week = order.get('installationWeek', '').strip() or 'Ikke angivet'
     startup_total = totals.get('startup', '0.00')
     monthly_total = totals.get('month1to4', '0.00')
