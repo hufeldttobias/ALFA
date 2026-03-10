@@ -206,11 +206,13 @@ body {
 .hero-content {
     position: relative;
     z-index: 2;
+    max-width: 50%;
+    margin: 0 auto;
 }
 
 
 .hero-content h1 {
-    font-size: 3.5rem;
+    font-size: 3rem;
     font-weight: 700;
     margin-bottom: 1.5rem;
     line-height: 1.2;
@@ -492,7 +494,7 @@ body {
 }
 
 .hero-content p {
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     margin-bottom: 2rem;
     opacity: 0.95;
 }
