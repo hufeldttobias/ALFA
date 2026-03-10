@@ -168,6 +168,15 @@ body {
     opacity: 0.9;
 }
 
+.footer-quote {
+    width: 100%;
+    text-align: center;
+    font-size: 0.95rem;
+    font-weight: 500;
+    opacity: 0.9;
+    margin-top: 0.75rem;
+}
+
 /* Page Navigation */
 .page {
     display: none;
