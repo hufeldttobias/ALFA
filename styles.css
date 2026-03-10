@@ -154,6 +154,7 @@ body {
     gap: 0.25rem;
     font-size: 1rem;
     font-weight: 600;
+    order: 1;
 }
 
 .footer-cvr {
@@ -166,6 +167,8 @@ body {
     font-size: 0.95rem;
     font-weight: 500;
     opacity: 0.9;
+    order: 3;
+    text-align: right;
 }
 
 .footer-quote {
@@ -173,9 +176,9 @@ body {
     font-size: 0.95rem;
     font-weight: 500;
     opacity: 0.9;
-    flex: 1 1 360px;
-    max-width: 520px;
-    margin: 0 auto;
+    order: 2;
+    flex: 1 1 auto;
+    margin: 0 1.5rem;
 }
 
 /* Page Navigation */
