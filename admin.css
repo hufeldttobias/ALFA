@@ -18,7 +18,7 @@ body {
 /* Sidebar */
 .sidebar {
     width: 250px;
-    background-color: #00482b;
+    background-color: #004595;
     color: #ffffff;
     display: flex;
     flex-direction: column;
@@ -118,14 +118,14 @@ body {
 }
 
 .back-link {
-    color: #00482b;
+    color: #004595;
     text-decoration: none;
     font-weight: 500;
     transition: color 0.2s ease;
 }
 
 .back-link:hover {
-    color: #003b24;
+    color: #004595;
 }
 
 .admin-content {
@@ -174,13 +174,13 @@ body {
 }
 
 .order-filter:hover {
-    border-color: #00482b;
+    border-color: #004595;
 }
 
 .order-filter:focus {
     outline: none;
-    border-color: #00482b;
-    box-shadow: 0 0 0 3px rgba(0, 72, 43, 0.1);
+    border-color: #004595;
+    box-shadow: 0 0 0 3px rgba(0, 69, 149, 0.1);
 }
 
 /* Overview Groups */
@@ -242,7 +242,7 @@ body {
 .overview-order-number {
     font-size: 0.875rem;
     font-weight: 600;
-    color: #00482b;
+    color: #004595;
 }
 
 .overview-order-name {
@@ -259,7 +259,7 @@ body {
 .overview-order-rent {
     font-size: 0.875rem;
     font-weight: 600;
-    color: #00482b;
+    color: #004595;
     text-align: right;
 }
 
@@ -321,7 +321,7 @@ body {
 .order-id {
     font-size: 0.875rem;
     font-weight: 600;
-    color: #00482b;
+    color: #004595;
 }
 
 .order-date {
@@ -358,7 +358,7 @@ body {
 
 .order-price {
     font-weight: 600;
-    color: #00482b;
+    color: #004595;
     font-size: 1rem;
 }
 
@@ -389,7 +389,7 @@ body {
 .order-installation-week {
     font-size: 1.25rem;
     font-weight: 600;
-    color: #00482b;
+    color: #004595;
 }
 
 .order-delivery-type {
@@ -526,7 +526,7 @@ body {
 .pricing-value {
     font-size: 1rem;
     font-weight: 600;
-    color: #00482b;
+    color: #004595;
 }
 
 .order-actions {
@@ -640,7 +640,7 @@ body {
 
 .add-product-btn,
 .clear-examples-btn {
-    background-color: #00482b;
+    background-color: #004595;
     color: #ffffff;
     border: none;
     padding: 0.5rem 1rem;
@@ -672,7 +672,7 @@ body {
 }
 
 .add-product-btn:hover {
-    background-color: #003b24;
+    background-color: #004595;
     transform: scale(1.05);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
@@ -722,7 +722,7 @@ body {
 .product-card:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     transform: translateY(-2px);
-    border-color: #00482b;
+    border-color: #004595;
 }
 
 .product-image-container {
@@ -913,7 +913,7 @@ body {
 .form-group input:focus,
 .form-group select:focus {
     outline: none;
-    border-color: #00482b;
+    border-color: #004595;
 }
 
 .form-group select {
@@ -957,8 +957,8 @@ body {
 }
 
 .option-tab.active {
-    color: #00482b;
-    border-bottom-color: #00482b;
+    color: #004595;
+    border-bottom-color: #004595;
 }
 
 .upload-option-content {
@@ -993,7 +993,7 @@ body {
 
 .image-reference-area input[type="text"]:focus {
     outline: none;
-    border-color: #00482b;
+    border-color: #004595;
 }
 
 .image-reference-preview {
@@ -1028,12 +1028,12 @@ body {
 }
 
 .drop-zone:hover {
-    border-color: #00482b;
+    border-color: #004595;
     background-color: #eef5f1;
 }
 
 .drop-zone.drag-over {
-    border-color: #00482b;
+    border-color: #004595;
     background-color: #d9ebe2;
 }
 
@@ -1048,7 +1048,7 @@ body {
 }
 
 .browse-link {
-    color: #00482b;
+    color: #004595;
     text-decoration: underline;
     cursor: pointer;
 }
@@ -1157,7 +1157,7 @@ body {
 
 .submit-btn {
     padding: 0.75rem 1.5rem;
-    background-color: #00482b;
+    background-color: #004595;
     color: #ffffff;
     border: none;
     border-radius: 8px;
@@ -1168,7 +1168,7 @@ body {
 }
 
 .submit-btn:hover {
-    background-color: #003b24;
+    background-color: #004595;
 }
 
 .delete-btn {

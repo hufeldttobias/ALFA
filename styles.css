@@ -13,7 +13,7 @@ body {
 
 /* Header Styles */
 .header {
-    background-color: #00482b;
+    background-color: #004595;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     position: sticky;
     top: 0;
@@ -269,7 +269,7 @@ body {
 }
 
 .category-card:hover {
-    border-color: #00482b;
+    border-color: #004595;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
     transform: translateY(-2px);
 }
@@ -379,7 +379,7 @@ body {
 
 .ready-package-pricing .pricing-item span:last-child {
     font-weight: 600;
-    color: #00482b;
+    color: #004595;
 }
 
 .choose-package-btn {
@@ -387,7 +387,7 @@ body {
     padding: 0.75rem 1.5rem;
     border: none;
     border-radius: 8px;
-    background-color: #00482b;
+    background-color: #004595;
     color: #ffffff;
     font-size: 1rem;
     font-weight: 600;
@@ -396,7 +396,7 @@ body {
 }
 
 .choose-package-btn:hover {
-    background-color: #003b24;
+    background-color: #004595;
     transform: translateY(-1px);
 }
 
@@ -426,7 +426,7 @@ body {
 }
 
 .faq-item:hover {
-    border-color: #00482b;
+    border-color: #004595;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
@@ -443,7 +443,7 @@ body {
     right: 1.5rem;
     font-size: 1.25rem;
     font-weight: 700;
-    color: #00482b;
+    color: #004595;
 }
 
 .faq-answer {
@@ -483,7 +483,7 @@ body {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     max-width: 720px;
     margin: 0 auto;
-    border: 1px solid rgba(0, 72, 43, 0.2);
+    border: 1px solid rgba(0, 69, 149, 0.2);
     position: relative;
 }
 
@@ -494,8 +494,8 @@ body {
     border-radius: 16px;
     background: linear-gradient(
         135deg,
-        rgba(0, 72, 43, 0.12) 0%,
-        rgba(0, 72, 43, 0) 55%
+        rgba(0, 69, 149, 0.12) 0%,
+        rgba(0, 69, 149, 0) 55%
     );
     z-index: -1;
 }
@@ -537,7 +537,7 @@ body {
 
 .cta-button {
     background-color: #ffffff;
-    color: #00482b;
+    color: #004595;
     border: none;
     padding: 1rem 2.5rem;
     border-radius: 8px;
@@ -696,12 +696,12 @@ body {
 
 .form-group input:focus {
     outline: none;
-    border-color: #00482b;
+    border-color: #004595;
 }
 
 .submit-btn {
     width: 100%;
-    background-color: #00482b;
+    background-color: #004595;
     color: #ffffff;
     border: none;
     padding: 0.75rem;
@@ -713,7 +713,7 @@ body {
 }
 
 .submit-btn:hover {
-    background-color: #003b24;
+    background-color: #004595;
 }
 
 .error-message {
@@ -776,8 +776,8 @@ body {
 #get-started-page .builder-section {
     background: linear-gradient(
         180deg,
-        rgba(0, 72, 43, 0.2) 0%,
-        rgba(0, 72, 43, 0.1) 25%,
+        rgba(0, 69, 149, 0.2) 0%,
+        rgba(0, 69, 149, 0.1) 25%,
         rgba(255, 255, 255, 0.95) 55%,
         #ffffff 100%
     );
@@ -854,13 +854,13 @@ body {
 
 .category-btn:hover {
     background-color: #f9fafb;
-    border-color: #00482b;
+    border-color: #004595;
 }
 
 .category-btn.active {
-    background-color: #00482b;
+    background-color: #004595;
     color: #ffffff;
-    border-color: #00482b;
+    border-color: #004595;
 }
 
 .products-area {
@@ -958,7 +958,7 @@ body {
 .builder-product-price {
     font-size: 0.875rem;
     font-weight: 600;
-    color: #00482b;
+    color: #004595;
     margin-bottom: 0.75rem;
 }
 
@@ -969,7 +969,7 @@ body {
 .add-to-package-btn {
     width: 100%;
     padding: 0.5rem;
-    background-color: #00482b;
+    background-color: #004595;
     color: #ffffff;
     border: none;
     border-radius: 6px;
@@ -980,7 +980,7 @@ body {
 }
 
 .add-to-package-btn:hover {
-    background-color: #003b24;
+    background-color: #004595;
 }
 
 .package-summary {
@@ -1055,7 +1055,7 @@ body {
     border-radius: 4px;
     font-size: 0.75rem;
     font-weight: 500;
-    background-color: #00482b;
+    background-color: #004595;
     color: #ffffff;
     margin-top: 0.25rem;
 }
@@ -1133,7 +1133,7 @@ body {
     color: #1f2937;
     margin-bottom: 0.75rem;
     padding-bottom: 0.5rem;
-    border-bottom: 2px solid #00482b;
+    border-bottom: 2px solid #004595;
 }
 
 .package-category-items {
@@ -1173,7 +1173,7 @@ body {
 .submit-package-btn {
     width: 100%;
     padding: 0.75rem;
-    background-color: #00482b;
+    background-color: #004595;
     color: #ffffff;
     border: none;
     border-radius: 8px;
@@ -1184,7 +1184,7 @@ body {
 }
 
 .submit-package-btn:hover:not(:disabled) {
-    background-color: #003b24;
+    background-color: #004595;
 }
 
 .submit-package-btn:disabled {
@@ -1256,7 +1256,7 @@ body {
 
 .quantity-input-section input[type="number"]:focus {
     outline: none;
-    border-color: #00482b;
+    border-color: #004595;
 }
 
 .quantity-modal-actions {
@@ -1287,12 +1287,12 @@ body {
 }
 
 .quantity-modal-actions .submit-btn {
-    background-color: #00482b;
+    background-color: #004595;
     color: #ffffff;
 }
 
 .quantity-modal-actions .submit-btn:hover {
-    background-color: #003b24;
+    background-color: #004595;
 }
 
 /* Package Review Modal */
@@ -1410,13 +1410,13 @@ body {
 }
 
 .delivery-option-btn:hover {
-    border-color: #00482b;
+    border-color: #004595;
     background-color: #f9fafb;
 }
 
 .delivery-option-btn.active {
-    border-color: #00482b;
-    background-color: #00482b;
+    border-color: #004595;
+    background-color: #004595;
     color: #ffffff;
 }
 
@@ -1470,7 +1470,7 @@ body {
     position: absolute;
     bottom: 0.5rem;
     right: 0.5rem;
-    background-color: #00482b;
+    background-color: #004595;
     color: #ffffff;
     padding: 0.25rem 0.5rem;
     border-radius: 4px;
@@ -1507,7 +1507,7 @@ body {
 
 .review-total-row span:last-child {
     font-weight: 600;
-    color: #00482b;
+    color: #004595;
 }
 
 .package-review-actions {
@@ -1539,12 +1539,12 @@ body {
 }
 
 .package-review-actions .submit-btn {
-    background-color: #00482b;
+    background-color: #004595;
     color: #ffffff;
 }
 
 .package-review-actions .submit-btn:hover {
-    background-color: #003b24;
+    background-color: #004595;
 }
 
 /* Package Form Step */
@@ -1589,7 +1589,7 @@ body {
 .package-form-left input[type="email"]:focus,
 .package-form-left input[type="date"]:focus {
     outline: none;
-    border-color: #00482b;
+    border-color: #004595;
 }
 
 .date-input-container {
@@ -1652,12 +1652,12 @@ body {
 }
 
 .package-form-actions .submit-btn {
-    background-color: #00482b;
+    background-color: #004595;
     color: #ffffff;
 }
 
 .package-form-actions .submit-btn:hover {
-    background-color: #003b24;
+    background-color: #004595;
 }
 
 /* Responsive for package form */
@@ -1874,12 +1874,12 @@ body {
 }
 
 .drop-zone:hover {
-    border-color: #00482b;
+    border-color: #004595;
     background-color: #eef5f1;
 }
 
 .drop-zone.drag-over {
-    border-color: #00482b;
+    border-color: #004595;
     background-color: #d9ebe2;
 }
 
@@ -1894,13 +1894,13 @@ body {
 }
 
 .browse-link {
-    color: #00482b;
+    color: #004595;
     text-decoration: underline;
     cursor: pointer;
 }
 
 .browse-link:hover {
-    color: #003b24;
+    color: #004595;
 }
 
 .file-info {
@@ -1961,7 +1961,7 @@ body {
 
 .form-group textarea:focus {
     outline: none;
-    border-color: #00482b;
+    border-color: #004595;
 }
 
 .form-actions {
@@ -2006,7 +2006,7 @@ body {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background-color: #00482b;
+    background-color: #004595;
     color: #ffffff;
     display: flex;
     align-items: center;
@@ -2099,7 +2099,7 @@ body {
     display: block;
     font-size: 2rem;
     font-weight: 700;
-    color: #00482b;
+    color: #004595;
     letter-spacing: 0.05em;
 }
 
@@ -2196,7 +2196,7 @@ body {
 .confirmation-order-item-quantity {
     font-size: 0.9375rem;
     font-weight: 600;
-    color: #00482b;
+    color: #004595;
     min-width: 40px;
     text-align: right;
 }
@@ -2227,7 +2227,7 @@ body {
 .confirmation-price-value {
     font-size: 1.125rem;
     font-weight: 600;
-    color: #00482b;
+    color: #004595;
 }
 
 .order-confirmation-footer {
@@ -2318,13 +2318,13 @@ body {
 .terms-pdf-link {
     display: inline-block;
     margin-top: 0.75rem;
-    color: #00482b;
+    color: #004595;
     font-weight: 600;
     text-decoration: underline;
 }
 
 .terms-pdf-link:hover {
-    color: #003b24;
+    color: #004595;
 }
 
 @media (max-width: 768px) {
@@ -2425,7 +2425,7 @@ body {
 .order-found-number .order-value {
     font-size: 1.5rem;
     font-weight: 700;
-    color: #00482b;
+    color: #004595;
     letter-spacing: 0.05em;
 }
 
