@@ -20,7 +20,7 @@
 
             'login.aria': 'Log ind',
 
-            'hero.title': 'Møbler din bolig – klar til udlejning via Nimastay',
+            'hero.title': 'Møbler din bolig – klar til udlejning via Alfa Mobility',
             'hero.lead': 'LivingFlex leverer en komplet møbelpakke til din bolig, så den fremstår skarp på billeder og fungerer perfekt for dine lejere. Levering, indbæring og opsætning er inkluderet.',
             'hero.b1': 'Designet til udlejning',
             'hero.b2': 'Professionel opsætning',
@@ -141,7 +141,7 @@
             'terms.summaryTitle': 'Vilkår i korte træk',
             'terms.summaryLead': 'Her finder du de vigtigste punkter samlet, så det er nemt at få overblik. Har du spørgsmål, er du altid velkommen til at kontakte os.',
             'terms.general': 'Generelt',
-            'terms.general1': 'Disse vilkår gælder for alle abonnementer hos Nimastay - Living Flex.',
+            'terms.general1': 'Disse vilkår gælder for alle abonnementer hos Alfa Mobility - Living Flex.',
             'terms.general2': 'Vi forbeholder os retten til at opdatere vilkårene med rimeligt varsel.',
             'terms.subTitle': 'Abonnement',
             'terms.sub1': 'Du vælger en pakke og kan tilpasse den over tid efter behov.',
@@ -218,7 +218,7 @@
 
             'footer.brand': 'LivingFlex ApS',
             'footer.powered': 'Powered by Agent360 Group ApS',
-            'footer.quote': 'Anbefalet møbelløsning til boliger udlejet via Nimastay',
+            'footer.quote': 'Anbefalet møbelløsning til boliger udlejet via Alfa Mobility',
 
             'js.startup': 'Opstart',
             'js.addToPackage': 'Tilføj til pakke',
@@ -283,7 +283,7 @@
 
             'login.aria': 'Log in',
 
-            'hero.title': 'Furnish your home – ready for rental via Nimastay',
+            'hero.title': 'Furnish your home – ready for rental via Alfa Mobility',
             'hero.lead': 'LivingFlex delivers a complete furniture package for your home so it looks sharp in photos and works perfectly for your tenants. Delivery, carrying in and assembly are included.',
             'hero.b1': 'Designed for rental',
             'hero.b2': 'Professional setup',
@@ -404,7 +404,7 @@
             'terms.summaryTitle': 'Terms at a glance',
             'terms.summaryLead': 'Here are the main points in one place for easy overview. If you have questions, you are always welcome to contact us.',
             'terms.general': 'General',
-            'terms.general1': 'These terms apply to all subscriptions with Nimastay - Living Flex.',
+            'terms.general1': 'These terms apply to all subscriptions with Alfa Mobility - Living Flex.',
             'terms.general2': 'We reserve the right to update the terms with reasonable notice.',
             'terms.subTitle': 'Subscription',
             'terms.sub1': 'You choose a package and can adapt it over time as needed.',
@@ -481,7 +481,7 @@
 
             'footer.brand': 'LivingFlex ApS',
             'footer.powered': 'Powered by Agent360 Group ApS',
-            'footer.quote': 'Recommended furniture solution for homes rented via Nimastay',
+            'footer.quote': 'Recommended furniture solution for homes rented via Alfa Mobility',
 
             'js.startup': 'Startup',
             'js.addToPackage': 'Add to package',

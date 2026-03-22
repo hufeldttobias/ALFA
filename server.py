@@ -325,7 +325,7 @@ def build_order_email(order, totals):
     body_lines = [
         f"Kære {greeting_name},",
         "",
-        "Tak for din bestilling hos LivingFlex i samarbejde med Nimastay.",
+        "Tak for din bestilling hos LivingFlex i samarbejde med Alfa Mobility.",
         "",
         "Din møbelpakke er nu sat i gang, og vi er i gang med at planlægge levering og opsætning af din bolig.",
         "",

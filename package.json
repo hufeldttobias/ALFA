@@ -1,5 +1,5 @@
 {
-  "name": "nimastay-living-flex",
+  "name": "alfa-mobility-living-flex",
   "private": true,
   "scripts": {
     "dev": "python3 -m http.server 3011",

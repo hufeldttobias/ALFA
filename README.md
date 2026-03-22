@@ -1,4 +1,4 @@
-# Nimastay - Living Flex
+# Alfa Mobility - Living Flex
 
 ## Setup Instructions
 
@@ -46,7 +46,7 @@ npm run dev
 ### 4. Access the Application
 
 - Alfa page (unchanged): `http://localhost:3011/index.html`
-- Nimastay page: `http://localhost:3011/nimastay.html`
+- Alternate page: `http://localhost:3011/nimastay.html`
 - Admin panel: Log in with username `RT` and password `RTAMLF`
 
 ## File Structure
