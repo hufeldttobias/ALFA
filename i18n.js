@@ -214,6 +214,7 @@
             'footer.brand': 'LivingFlex ApS',
             'footer.powered': 'Powered by Agent360 Group ApS',
             'footer.quote': 'Anbefalet møbelløsning til boliger udlejet via Alfa Mobility',
+            'footer.contactHtml': 'I forbindelse med spørgsmål klik <a href="#" class="footer-contact-cta">her</a> eller skriv på nummeret <a href="tel:+4531211300">+4531211300</a>',
 
             'js.startup': 'Opstart',
             'js.addToPackage': 'Tilføj til pakke',
@@ -472,6 +473,7 @@
             'footer.brand': 'LivingFlex ApS',
             'footer.powered': 'Powered by Agent360 Group ApS',
             'footer.quote': 'Recommended furniture solution for homes rented via Alfa Mobility',
+            'footer.contactHtml': 'If you have questions, click <a href="#" class="footer-contact-cta">here</a> or call <a href="tel:+4531211300">+4531211300</a>',
 
             'js.startup': 'Startup',
             'js.addToPackage': 'Add to package',

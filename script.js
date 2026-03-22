@@ -67,6 +67,21 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Footer: "her/here" → Kom i gang-siden med kontaktformular
+    document.querySelector('.site-footer')?.addEventListener('click', function(e) {
+        const cta = e.target.closest('.footer-contact-cta');
+        if (!cta) return;
+        e.preventDefault();
+        showPage('get-started-page');
+        navLinks.forEach(l => l.classList.remove('active'));
+        requestAnimationFrame(function() {
+            const contactEl = document.getElementById('contact-section');
+            if (contactEl) {
+                contactEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+
     // Get Started category cards navigation
     const categoryCards = document.querySelectorAll('.category-card[data-target]');
     categoryCards.forEach(card => {
