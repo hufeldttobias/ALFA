@@ -15,15 +15,19 @@
             </div>
             
             <nav class="nav-menu">
-                <a href="#" class="nav-link">Byg dit eget hjem</a>
-                <a href="#" class="nav-link">Færdige pakker</a>
-                <a href="#" class="nav-link">Send plantegning</a>
-                <a href="#" class="nav-link">Opsig abonnement</a>
-                <a href="#" class="nav-link">Vilkår og betingelser</a>
+                <a href="#" class="nav-link" data-nav-target="build-your-own-home-page" data-i18n="nav.build">Byg dit eget hjem</a>
+                <a href="#" class="nav-link" data-nav-target="ready-packages-page" data-i18n="nav.ready">Færdige pakker</a>
+                <a href="#" class="nav-link" data-nav-target="send-floor-plan-page" data-i18n="nav.floor">Send plantegning</a>
+                <a href="#" class="nav-link" data-nav-target="cancel-subscription-page" data-i18n="nav.cancel">Opsig abonnement</a>
+                <a href="#" class="nav-link" data-nav-target="terms-page" data-i18n="nav.terms">Vilkår og betingelser</a>
             </nav>
             
             <div class="header-actions">
-                <button class="login-btn" aria-label="Log ind">
+                <div class="lang-switch" role="group" data-i18n-aria="lang.switchAria" aria-label="Vælg sprog">
+                    <button type="button" class="lang-btn active" data-lang="da" data-i18n="lang.da" aria-pressed="true">DA</button>
+                    <button type="button" class="lang-btn" data-lang="en" data-i18n="lang.en" aria-pressed="false">EN</button>
+                </div>
+                <button class="login-btn" data-i18n-aria="login.aria" aria-label="Log ind">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         <path d="M20.59 22C20.59 18.13 16.74 15 12 15C7.26 15 3.41 18.13 3.41 22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -38,14 +42,14 @@
         <section id="home-page" class="page active">
             <section class="hero">
                 <div class="hero-content">
-                    <h1>Møbler din bolig – klar til udlejning via Nimastay</h1>
-                    <p>LivingFlex leverer en komplet møbelpakke til din bolig, så den fremstår skarp på billeder og fungerer perfekt for dine lejere. Levering, indbæring og opsætning er inkluderet.</p>
+                    <h1 data-i18n="hero.title">Møbler din bolig – klar til udlejning via Nimastay</h1>
+                    <p data-i18n="hero.lead">LivingFlex leverer en komplet møbelpakke til din bolig, så den fremstår skarp på billeder og fungerer perfekt for dine lejere. Levering, indbæring og opsætning er inkluderet.</p>
                     <div class="hero-bullets">
-                        <span>Designet til udlejning</span>
-                        <span>Professionel opsætning</span>
-                        <span>Ingen stor investering</span>
+                        <span data-i18n="hero.b1">Designet til udlejning</span>
+                        <span data-i18n="hero.b2">Professionel opsætning</span>
+                        <span data-i18n="hero.b3">Ingen stor investering</span>
                     </div>
-                    <button class="cta-button">Kom i gang</button>
+                    <button class="cta-button" data-i18n="hero.cta">Kom i gang</button>
                 </div>
             </section>
         </section>
@@ -54,74 +58,74 @@
         <section id="get-started-page" class="page">
             <div class="builder-section">
                 <div class="container">
-                    <p class="section-description section-description-center">Vælg hvor du vil starte, og udforsk mulighederne der passer til dine behov.</p>
+                    <p class="section-description section-description-center" data-i18n="getStarted.desc">Vælg hvor du vil starte, og udforsk mulighederne der passer til dine behov.</p>
 
                     <div class="category-buttons">
                         <button type="button" class="category-card" data-target="build-your-own-home-page">
                             <div class="category-card-image" style="background-image: url('B1H.jpg');" aria-hidden="true"></div>
                             <div class="category-card-content">
-                                <h3>Byg dit eget hjem</h3>
-                                <p>Sammensæt din egen pakke og tilpas den til din bolig.</p>
+                                <h3 data-i18n="getStarted.card1Title">Byg dit eget hjem</h3>
+                                <p data-i18n="getStarted.card1Text">Sammensæt din egen pakke og tilpas den til din bolig.</p>
                             </div>
                         </button>
                         <button type="button" class="category-card" data-target="ready-packages-page">
                             <div class="category-card-image" style="background-image: url('B3G.jpg');" aria-hidden="true"></div>
                             <div class="category-card-content">
-                                <h3>Færdige pakker</h3>
-                                <p>Se kuraterede pakker, der er klar til indflytning.</p>
+                                <h3 data-i18n="getStarted.card2Title">Færdige pakker</h3>
+                                <p data-i18n="getStarted.card2Text">Se kuraterede pakker, der er klar til indflytning.</p>
                             </div>
                         </button>
                         <button type="button" class="category-card" data-target="send-floor-plan-page">
                             <div class="category-card-image" style="background-image: url('B2P.jpg');" aria-hidden="true"></div>
                             <div class="category-card-content">
-                                <h3>Skræddersyet</h3>
-                                <p>Send din plantegning og få et skræddersyet forslag.</p>
+                                <h3 data-i18n="getStarted.card3Title">Skræddersyet</h3>
+                                <p data-i18n="getStarted.card3Text">Send din plantegning og få et skræddersyet forslag.</p>
                             </div>
                         </button>
                     </div>
 
                     <div class="faq-section">
-                        <h2 class="section-title section-title-center">Spørgsmål &amp; svar</h2>
+                        <h2 class="section-title section-title-center" data-i18n="faq.title">Spørgsmål &amp; svar</h2>
                         <div class="faq-grid">
                             <button type="button" class="faq-item">
-                                <span class="faq-question">Hvordan fungerer abonnementet?</span>
+                                <span class="faq-question" data-i18n="faq.q1">Hvordan fungerer abonnementet?</span>
                                 <span class="faq-icon">+</span>
-                                <div class="faq-answer">
+                                <div class="faq-answer" data-i18n="faq.a1">
                                     Du vælger en pakke og kan justere den over tid, når dine behov ændrer sig.
                                 </div>
                             </button>
                             <button type="button" class="faq-item">
-                                <span class="faq-question">Hvad er inkluderet i leveringen?</span>
+                                <span class="faq-question" data-i18n="faq.q2">Hvad er inkluderet i leveringen?</span>
                                 <span class="faq-icon">+</span>
-                                <div class="faq-answer">
+                                <div class="faq-answer" data-i18n="faq.a2">
                                     Vi koordinerer levering og opsætning ud fra dit valg.
                                 </div>
                             </button>
                             <button type="button" class="faq-item">
-                                <span class="faq-question">Kan jeg ændre produkter senere?</span>
+                                <span class="faq-question" data-i18n="faq.q3">Kan jeg ændre produkter senere?</span>
                                 <span class="faq-icon">+</span>
-                                <div class="faq-answer">
+                                <div class="faq-answer" data-i18n="faq.a3">
                                     Ja, du kan bytte produkter, når dit behov ændrer sig.
                                 </div>
                             </button>
                             <button type="button" class="faq-item">
-                                <span class="faq-question">Er der en minimumsperiode?</span>
+                                <span class="faq-question" data-i18n="faq.q4">Er der en minimumsperiode?</span>
                                 <span class="faq-icon">+</span>
-                                <div class="faq-answer">
+                                <div class="faq-answer" data-i18n="faq.a4">
                                     Fleksible vilkår gør det muligt at skalere op eller ned uden lange bindinger.
                                 </div>
                             </button>
                             <button type="button" class="faq-item">
-                                <span class="faq-question">Hvad hvis jeg flytter?</span>
+                                <span class="faq-question" data-i18n="faq.q5">Hvad hvis jeg flytter?</span>
                                 <span class="faq-icon">+</span>
-                                <div class="faq-answer">
+                                <div class="faq-answer" data-i18n="faq.a5">
                                     Giv os besked, så planlægger vi logistikken til din nye adresse.
                                 </div>
                             </button>
                             <button type="button" class="faq-item">
-                                <span class="faq-question">Hvordan får jeg support?</span>
+                                <span class="faq-question" data-i18n="faq.q6">Hvordan får jeg support?</span>
                                 <span class="faq-icon">+</span>
-                                <div class="faq-answer">
+                                <div class="faq-answer" data-i18n="faq.a6">
                                     Brug kontaktformularen nedenfor, så vender vi hurtigt tilbage.
                                 </div>
                             </button>
@@ -129,22 +133,22 @@
                     </div>
 
                     <div class="contact-section">
-                        <h2 class="section-title">Kontakt os</h2>
+                        <h2 class="section-title" data-i18n="contact.title">Kontakt os</h2>
                         <form class="contact-form">
                             <div class="form-group">
-                                <label for="contactName">Fulde navn</label>
+                                <label for="contactName" data-i18n="contact.name">Fulde navn</label>
                                 <input type="text" id="contactName" name="contactName" required>
                             </div>
                             <div class="form-group">
-                                <label for="contactEmail">E-mail</label>
+                                <label for="contactEmail" data-i18n="contact.email">E-mail</label>
                                 <input type="email" id="contactEmail" name="contactEmail" required>
                             </div>
                             <div class="form-group">
-                                <label for="contactMessage">Besked</label>
+                                <label for="contactMessage" data-i18n="contact.message">Besked</label>
                                 <textarea id="contactMessage" name="contactMessage" rows="4" required></textarea>
                             </div>
                             <div class="form-actions">
-                                <button type="submit" class="submit-btn">Send besked</button>
+                                <button type="submit" class="submit-btn" data-i18n="contact.submit">Send besked</button>
                             </div>
                         </form>
                     </div>
@@ -156,14 +160,14 @@
         <section id="build-your-own-home-page" class="page">
             <div class="page-hero" style="background-image: url('BI2.jpg');">
                 <div class="page-hero-content">
-                    <h1>Byg dit eget hjem</h1>
+                    <h1 data-i18n="build.heroTitle">Byg dit eget hjem</h1>
                 </div>
             </div>
             
             <div class="builder-section">
                 <div class="builder-container">
                     <div class="categories-sidebar">
-                        <h3>Kategorier</h3>
+                        <h3 data-i18n="build.categories">Kategorier</h3>
                         <div id="categoriesList"></div>
                     </div>
                     
@@ -172,38 +176,38 @@
                     </div>
                     
                     <div class="package-summary">
-                        <h3>Din pakke</h3>
+                        <h3 data-i18n="build.yourPackage">Din pakke</h3>
                         <div id="packageItems"></div>
                         <div class="package-totals">
                             <div class="total-item">
-                                <span>Opstartspris:</span>
+                                <span data-i18n="build.startupPrice">Opstartspris:</span>
                                 <span id="totalStartup">0 DKK</span>
                             </div>
                             <div class="total-item">
-                                <span>Måned 1-4:</span>
+                                <span data-i18n="build.month14">Måned 1-4:</span>
                                 <span id="totalMonth1to4">0 DKK</span>
                             </div>
                             <div class="total-item">
-                                <span>Måned 5-12:</span>
+                                <span data-i18n="build.month512">Måned 5-12:</span>
                                 <span id="totalMonth5to12">0 DKK</span>
                             </div>
                             <div class="total-item">
-                                <span>Måned 13+:</span>
+                                <span data-i18n="build.month13p">Måned 13+:</span>
                                 <span id="totalMonth13plus">0 DKK</span>
                             </div>
                         </div>
                         <div class="logistics-fee-info">
                             <button type="button" class="logistics-fee-toggle" id="logisticsFeeToggle">
-                                <span>Hvorfor er der et gebyr på 3.000 DKK?</span>
+                                <span data-i18n="build.logisticsQ">Hvorfor er der et gebyr på 3.000 DKK?</span>
                                 <svg class="logistics-fee-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
                             </button>
                             <div class="logistics-fee-content" id="logisticsFeeContent" style="display: none;">
-                                <p>Opstartsgebyret på 3.000 DKK dækker logistik, koordinering og ordrebehandling. Det omfatter behandling af din ordre, koordinering af levering og administrativ håndtering af dit abonnement.</p>
+                                <p data-i18n="build.logisticsA">Opstartsgebyret på 3.000 DKK dækker logistik, koordinering og ordrebehandling. Det omfatter behandling af din ordre, koordinering af levering og administrativ håndtering af dit abonnement.</p>
                             </div>
                         </div>
-                        <button class="submit-package-btn" id="submitPackageBtn">Se pakke</button>
+                        <button class="submit-package-btn" id="submitPackageBtn" data-i18n="build.reviewPackage">Se pakke</button>
                     </div>
                 </div>
             </div>
@@ -213,78 +217,78 @@
         <section id="ready-packages-page" class="page">
             <div class="page-hero" style="background-image: url('BI2.jpg');">
                 <div class="page-hero-content">
-                    <h1>Færdige pakker</h1>
-                    <p>Vælg en komplet pakke og flyt ind med lethed.</p>
+                    <h1 data-i18n="ready.heroTitle">Færdige pakker</h1>
+                    <p data-i18n="ready.heroLead">Vælg en komplet pakke og flyt ind med lethed.</p>
                 </div>
             </div>
 
             <div class="builder-section">
                 <div class="container">
                     <div class="ready-packages-hero">
-                        <img src="ProduktB/ReadyP.jpg" alt="Forhåndsvisning af færdige pakker">
+                        <img src="ProduktB/ReadyP.jpg" alt="Forhåndsvisning af færdige pakker" data-i18n-alt="ready.previewAlt">
                     </div>
-                    <p class="ready-packages-note">Billedet ovenfor er vejledende og viser ikke nødvendigvis de præcise produkter.</p>
+                    <p class="ready-packages-note" data-i18n="ready.note">Billedet ovenfor er vejledende og viser ikke nødvendigvis de præcise produkter.</p>
                     <div class="ready-packages-grid">
                         <div class="ready-package-card">
-                            <h2>Pakke 1</h2>
+                            <h2 data-i18n="ready.pkg1">Pakke 1</h2>
                             <ul class="ready-package-list">
-                                <li>Spisebord til mindst 4 personer</li>
-                                <li>4 matchende spisebordsstole</li>
-                                <li>Sovesofa</li>
-                                <li>Sofabord</li>
-                                <li>2 x 90x200 senge med topmadras</li>
-                                <li>2 sæt pude/dyne</li>
-                                <li>2 sideborde</li>
-                                <li>2 sengebordslamper</li>
-                                <li>2 typer belysning</li>
-                                <li>55&quot; TV samt TV-bord</li>
+                                <li data-i18n="ready.p1.1">Spisebord til mindst 4 personer</li>
+                                <li data-i18n="ready.p1.2">4 matchende spisebordsstole</li>
+                                <li data-i18n="ready.p1.3">Sovesofa</li>
+                                <li data-i18n="ready.p1.4">Sofabord</li>
+                                <li data-i18n="ready.p1.5">2 x 90x200 senge med topmadras</li>
+                                <li data-i18n="ready.p1.6">2 sæt pude/dyne</li>
+                                <li data-i18n="ready.p1.7">2 sideborde</li>
+                                <li data-i18n="ready.p1.8">2 sengebordslamper</li>
+                                <li data-i18n="ready.p1.9">2 typer belysning</li>
+                                <li data-i18n="ready.p1.10">55&quot; TV samt TV-bord</li>
                             </ul>
                             <div class="ready-package-pricing">
                                 <div class="pricing-item">
-                                    <span>Opsætning &amp; logistik (inkl. moms)</span>
+                                    <span data-i18n="ready.setupLogistics">Opsætning &amp; logistik (inkl. moms)</span>
                                     <span>6,250 DKK</span>
                                 </div>
                                 <div class="pricing-item">
-                                    <span>Månedlig leje pr. påbegyndt måned (inkl. moms)</span>
+                                    <span data-i18n="ready.monthlyRent">Månedlig leje pr. påbegyndt måned (inkl. moms)</span>
                                     <span>2,000 DKK</span>
                                 </div>
                                 <div class="pricing-item">
-                                    <span>Afhentning (inkl. moms)</span>
+                                    <span data-i18n="ready.removal">Afhentning (inkl. moms)</span>
                                     <span>2,500 DKK</span>
                                 </div>
                             </div>
-                            <button type="button" class="choose-package-btn" data-ready-package="package1">Vælg pakke</button>
+                            <button type="button" class="choose-package-btn" data-ready-package="package1" data-i18n="ready.choose">Vælg pakke</button>
                         </div>
 
                         <div class="ready-package-card">
-                            <h2>Pakke 2</h2>
+                            <h2 data-i18n="ready.pkg2">Pakke 2</h2>
                             <ul class="ready-package-list">
-                                <li>Spisebord til mindst 6 personer</li>
-                                <li>6 matchende spisebordsstole</li>
-                                <li>Sovesofa</li>
-                                <li>Sofabord</li>
-                                <li>4 x 90x200 senge med topmadras</li>
-                                <li>4 sæt pude/dyne</li>
-                                <li>4 sideborde</li>
-                                <li>4 sengebordslamper</li>
-                                <li>2 typer belysning</li>
-                                <li>55&quot; TV samt TV-bord</li>
+                                <li data-i18n="ready.p2.1">Spisebord til mindst 6 personer</li>
+                                <li data-i18n="ready.p2.2">6 matchende spisebordsstole</li>
+                                <li data-i18n="ready.p2.3">Sovesofa</li>
+                                <li data-i18n="ready.p2.4">Sofabord</li>
+                                <li data-i18n="ready.p2.5">4 x 90x200 senge med topmadras</li>
+                                <li data-i18n="ready.p2.6">4 sæt pude/dyne</li>
+                                <li data-i18n="ready.p2.7">4 sideborde</li>
+                                <li data-i18n="ready.p2.8">4 sengebordslamper</li>
+                                <li data-i18n="ready.p2.9">2 typer belysning</li>
+                                <li data-i18n="ready.p2.10">55&quot; TV samt TV-bord</li>
                             </ul>
                             <div class="ready-package-pricing">
                                 <div class="pricing-item">
-                                    <span>Opsætning &amp; logistik (inkl. moms)</span>
+                                    <span data-i18n="ready.setupLogistics">Opsætning &amp; logistik (inkl. moms)</span>
                                     <span>7,500 DKK</span>
                                 </div>
                                 <div class="pricing-item">
-                                    <span>Månedlig leje pr. påbegyndt måned (inkl. moms)</span>
+                                    <span data-i18n="ready.monthlyRent">Månedlig leje pr. påbegyndt måned (inkl. moms)</span>
                                     <span>2,750 DKK</span>
                                 </div>
                                 <div class="pricing-item">
-                                    <span>Afhentning (inkl. moms)</span>
+                                    <span data-i18n="ready.removal">Afhentning (inkl. moms)</span>
                                     <span>3,125 DKK</span>
                                 </div>
                             </div>
-                            <button type="button" class="choose-package-btn" data-ready-package="package2">Vælg pakke</button>
+                            <button type="button" class="choose-package-btn" data-ready-package="package2" data-i18n="ready.choose">Vælg pakke</button>
                         </div>
                     </div>
                 </div>
@@ -295,8 +299,8 @@
         <section id="send-floor-plan-page" class="page">
             <div class="page-hero" style="background-image: url('BI2.jpg');">
                 <div class="page-hero-content">
-                    <h1>Send plantegning</h1>
-                    <p>Upload din plantegning, så laver vi et personligt indretningsforslag til dig</p>
+                    <h1 data-i18n="floor.heroTitle">Send plantegning</h1>
+                    <p data-i18n="floor.heroLead">Upload din plantegning, så laver vi et personligt indretningsforslag til dig</p>
                 </div>
             </div>
             
@@ -304,12 +308,12 @@
                 <div class="container">
                     <div class="floor-plan-container">
                         <div class="floor-plan-form-section">
-                            <h2>Upload din plantegning</h2>
-                            <p class="section-description">Send os et foto eller billede af din plantegning, så vender vores team tilbage med et personligt indretningsforslag til din bolig.</p>
+                            <h2 data-i18n="floor.uploadTitle">Upload din plantegning</h2>
+                            <p class="section-description" data-i18n="floor.uploadDesc">Send os et foto eller billede af din plantegning, så vender vores team tilbage med et personligt indretningsforslag til din bolig.</p>
                             
                             <form id="floorPlanForm" class="floor-plan-form">
                                 <div class="form-group">
-                                    <label for="floorPlanImage">Plantegning (billede)</label>
+                                    <label for="floorPlanImage" data-i18n="floor.imageLabel">Plantegning (billede)</label>
                                     <div class="image-upload-area">
                                         <input type="file" id="floorPlanImage" name="floorPlanImage" accept="image/*" style="display: none;">
                                         <div class="drop-zone" id="floorPlanDropZone">
@@ -318,77 +322,77 @@
                                                 <path d="M17 8L12 3L7 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                                 <path d="M12 3V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                             </svg>
-                                            <p>Træk og slip din plantegning her, eller <span class="browse-link">vælg fil</span></p>
-                                            <p class="file-info">PNG, JPG op til 10MB</p>
+                                            <p data-i18n-html="floor.dropzoneHtml">Træk og slip din plantegning her, eller <span class="browse-link">vælg fil</span></p>
+                                            <p class="file-info" data-i18n="floor.fileInfo">PNG, JPG op til 10MB</p>
                                         </div>
                                         <div class="image-preview" id="floorPlanPreview" style="display: none;">
-                                            <img id="floorPlanPreviewImg" src="" alt="Forhåndsvisning af plantegning">
+                                            <img id="floorPlanPreviewImg" src="" alt="Forhåndsvisning af plantegning" data-i18n-alt="floor.previewAlt">
                                             <button type="button" class="remove-image" id="removeFloorPlanImage">×</button>
                                         </div>
                                     </div>
                                 </div>
                                 
                                 <div class="form-group">
-                                <label for="customerName">Fulde navn</label>
+                                <label for="customerName" data-i18n="contact.name">Fulde navn</label>
                                     <input type="text" id="customerName" name="customerName" required>
                                 </div>
                                 
                                 <div class="form-group">
-                                <label for="customerEmail">E-mail</label>
+                                <label for="customerEmail" data-i18n="contact.email">E-mail</label>
                                     <input type="email" id="customerEmail" name="customerEmail" required>
                                 </div>
                                 
                                 <div class="form-group">
-                                <label for="customerPhone">Telefonnummer</label>
+                                <label for="customerPhone" data-i18n="floor.phone">Telefonnummer</label>
                                     <input type="tel" id="customerPhone" name="customerPhone" required>
                                 </div>
                                 
                                 <div class="form-group">
-                                <label for="customerAddress">Adresse</label>
+                                <label for="customerAddress" data-i18n="floor.address">Adresse</label>
                                     <input type="text" id="customerAddress" name="customerAddress" required>
                                 </div>
                                 
                                 <div class="form-group">
-                                <label for="additionalNotes">Yderligere noter (valgfrit)</label>
-                                <textarea id="additionalNotes" name="additionalNotes" rows="4" placeholder="Eventuelle særlige ønsker eller præferencer til din indretning..."></textarea>
+                                <label for="additionalNotes" data-i18n="floor.notesLabel">Yderligere noter (valgfrit)</label>
+                                <textarea id="additionalNotes" name="additionalNotes" rows="4" data-i18n-placeholder="floor.notesPlaceholder" placeholder="Eventuelle særlige ønsker eller præferencer til din indretning..."></textarea>
                                 </div>
                                 
                                 <div class="form-actions">
-                                    <button type="submit" class="submit-btn" id="submitFloorPlanBtn">Send plantegning</button>
+                                    <button type="submit" class="submit-btn" id="submitFloorPlanBtn" data-i18n="floor.submit">Send plantegning</button>
                                 </div>
                             </form>
                         </div>
                         
                         <div class="floor-plan-info-section">
                             <div class="info-card">
-                                <h3>Sådan fungerer det</h3>
+                                <h3 data-i18n="floor.howTitle">Sådan fungerer det</h3>
                                 <div class="info-steps">
                                     <div class="info-step">
                                         <div class="step-number">1</div>
                                         <div class="step-content">
-                                            <h4>Upload din plantegning</h4>
-                                            <p>Tag et billede eller upload en plantegning af din bolig</p>
+                                            <h4 data-i18n="floor.s1Title">Upload din plantegning</h4>
+                                            <p data-i18n="floor.s1Text">Tag et billede eller upload en plantegning af din bolig</p>
                                         </div>
                                     </div>
                                     <div class="info-step">
                                         <div class="step-number">2</div>
                                         <div class="step-content">
-                                            <h4>Udfyld dine oplysninger</h4>
-                                            <p>Angiv dine kontaktoplysninger og eventuelle særlige ønsker</p>
+                                            <h4 data-i18n="floor.s2Title">Udfyld dine oplysninger</h4>
+                                            <p data-i18n="floor.s2Text">Angiv dine kontaktoplysninger og eventuelle særlige ønsker</p>
                                         </div>
                                     </div>
                                     <div class="info-step">
                                         <div class="step-number">3</div>
                                         <div class="step-content">
-                                            <h4>Vi gennemgår og designer</h4>
-                                            <p>Vores team gennemgår din plantegning og laver et personligt forslag</p>
+                                            <h4 data-i18n="floor.s3Title">Vi gennemgår og designer</h4>
+                                            <p data-i18n="floor.s3Text">Vores team gennemgår din plantegning og laver et personligt forslag</p>
                                         </div>
                                     </div>
                                     <div class="info-step">
                                         <div class="step-number">4</div>
                                         <div class="step-content">
-                                            <h4>Modtag dit forslag</h4>
-                                            <p>Vi sender et detaljeret indretningsforslag pr. e-mail</p>
+                                            <h4 data-i18n="floor.s4Title">Modtag dit forslag</h4>
+                                            <p data-i18n="floor.s4Text">Vi sender et detaljeret indretningsforslag pr. e-mail</p>
                                         </div>
                                     </div>
                                 </div>
@@ -403,8 +407,8 @@
         <section id="cancel-subscription-page" class="page">
             <div class="page-hero" style="background-image: url('BI2.jpg');">
                 <div class="page-hero-content">
-                    <h1>Opsig abonnement</h1>
-                    <p>Find og opsig dit abonnement med dit ordrenummer og navn</p>
+                    <h1 data-i18n="cancel.heroTitle">Opsig abonnement</h1>
+                    <p data-i18n="cancel.heroLead">Find og opsig dit abonnement med dit ordrenummer og navn</p>
                 </div>
             </div>
             
@@ -412,22 +416,22 @@
                 <div class="container">
                     <div class="cancel-subscription-container">
                         <div class="cancel-search-section">
-                            <h2>Find din ordre</h2>
-                            <p class="section-description">Indtast dit ordrenummer og det navn, der blev brugt ved bestilling, for at finde og opsige dit abonnement.</p>
+                            <h2 data-i18n="cancel.findTitle">Find din ordre</h2>
+                            <p class="section-description" data-i18n="cancel.findDesc">Indtast dit ordrenummer og det navn, der blev brugt ved bestilling, for at finde og opsige dit abonnement.</p>
                             
                             <form id="cancelSearchForm" class="cancel-search-form">
                                 <div class="form-group">
-                                    <label for="orderNumberSearch">Ordrenummer</label>
-                                    <input type="text" id="orderNumberSearch" name="orderNumberSearch" placeholder="Indtast ordrenummer (fx 1234567890)" required>
+                                    <label for="orderNumberSearch" data-i18n="cancel.orderNo">Ordrenummer</label>
+                                    <input type="text" id="orderNumberSearch" name="orderNumberSearch" data-i18n-placeholder="cancel.orderNoPh" placeholder="Indtast ordrenummer (fx 1234567890)" required>
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label for="orderNameSearch">Navn</label>
-                                    <input type="text" id="orderNameSearch" name="orderNameSearch" placeholder="Indtast navnet der blev brugt ved bestilling" required>
+                                    <label for="orderNameSearch" data-i18n="cancel.orderName">Navn</label>
+                                    <input type="text" id="orderNameSearch" name="orderNameSearch" data-i18n-placeholder="cancel.orderNamePh" placeholder="Indtast navnet der blev brugt ved bestilling" required>
                                 </div>
                                 
                                 <div class="form-actions">
-                                    <button type="submit" class="submit-btn" id="searchOrderBtn">Søg ordre</button>
+                                    <button type="submit" class="submit-btn" id="searchOrderBtn" data-i18n="cancel.search">Søg ordre</button>
                                 </div>
                             </form>
                             
@@ -435,11 +439,11 @@
                         </div>
                         
                         <div id="orderFoundSection" class="order-found-section" style="display: none;">
-                            <h2>Ordre fundet</h2>
+                            <h2 data-i18n="cancel.foundTitle">Ordre fundet</h2>
                             <div class="order-found-card">
                                 <div class="order-found-header">
                                     <div class="order-found-number">
-                                        <span class="order-label">Ordrenummer:</span>
+                                        <span class="order-label" data-i18n="cancel.labelOrderNo">Ordrenummer:</span>
                                         <span class="order-value" id="foundOrderNumber"></span>
                                     </div>
                                 </div>
@@ -448,16 +452,16 @@
                                 </div>
                                 <div class="order-found-details">
                                     <div class="order-found-detail-row">
-                                        <span class="order-label">Navn:</span>
+                                        <span class="order-label" data-i18n="cancel.labelName">Navn:</span>
                                         <span class="order-value" id="foundOrderName"></span>
                                     </div>
                                     <div class="order-found-detail-row">
-                                        <span class="order-label">Adresse:</span>
+                                        <span class="order-label" data-i18n="cancel.labelAddress">Adresse:</span>
                                         <span class="order-value" id="foundOrderAddress"></span>
                                     </div>
                                 </div>
                                 <div class="order-found-actions">
-                                    <button type="button" class="cancel-subscription-btn" id="cancelSubscriptionBtn">Afslut abonnement</button>
+                                    <button type="button" class="cancel-subscription-btn" id="cancelSubscriptionBtn" data-i18n="cancel.endSub">Afslut abonnement</button>
                                 </div>
                             </div>
                         </div>
@@ -470,70 +474,70 @@
         <section id="terms-page" class="page">
             <div class="page-hero" style="background-image: url('BI2.jpg');">
                 <div class="page-hero-content">
-                    <h1>Vilkår og betingelser</h1>
-                    <p>Overblik over vilkår og rammer for dit abonnement.</p>
+                    <h1 data-i18n="terms.heroTitle">Vilkår og betingelser</h1>
+                    <p data-i18n="terms.heroLead">Overblik over vilkår og rammer for dit abonnement.</p>
                 </div>
             </div>
 
             <div class="builder-section terms-section">
                 <div class="container">
                     <div class="terms-intro">
-                        <h2>Vilkår i korte træk</h2>
-                        <p class="section-description">Her finder du de vigtigste punkter samlet, så det er nemt at få overblik. Har du spørgsmål, er du altid velkommen til at kontakte os.</p>
+                        <h2 data-i18n="terms.summaryTitle">Vilkår i korte træk</h2>
+                        <p class="section-description" data-i18n="terms.summaryLead">Her finder du de vigtigste punkter samlet, så det er nemt at få overblik. Har du spørgsmål, er du altid velkommen til at kontakte os.</p>
                     </div>
 
                     <div class="terms-grid">
                         <article class="terms-card">
-                            <h3>Generelt</h3>
+                            <h3 data-i18n="terms.general">Generelt</h3>
                             <ul class="terms-list">
-                                <li>Disse vilkår gælder for alle abonnementer hos Nimastay - Living Flex.</li>
-                                <li>Vi forbeholder os retten til at opdatere vilkårene med rimeligt varsel.</li>
+                                <li data-i18n="terms.general1">Disse vilkår gælder for alle abonnementer hos Nimastay - Living Flex.</li>
+                                <li data-i18n="terms.general2">Vi forbeholder os retten til at opdatere vilkårene med rimeligt varsel.</li>
                             </ul>
                         </article>
 
                         <article class="terms-card">
-                            <h3>Abonnement</h3>
+                            <h3 data-i18n="terms.subTitle">Abonnement</h3>
                             <ul class="terms-list">
-                                <li>Du vælger en pakke og kan tilpasse den over tid efter behov.</li>
-                                <li>Din løsning er fleksibel, så du kan op- eller nedskalere, hvis behovet ændrer sig.</li>
+                                <li data-i18n="terms.sub1">Du vælger en pakke og kan tilpasse den over tid efter behov.</li>
+                                <li data-i18n="terms.sub2">Din løsning er fleksibel, så du kan op- eller nedskalere, hvis behovet ændrer sig.</li>
                             </ul>
                         </article>
 
                         <article class="terms-card">
-                            <h3>Levering og opsætning</h3>
+                            <h3 data-i18n="terms.deliveryTitle">Levering og opsætning</h3>
                             <ul class="terms-list">
-                                <li>Levering planlægges i samarbejde med dig, så det passer til din indflytning.</li>
-                                <li>Vi informerer om levering, opsætning og eventuelle logistikgebyrer på forhånd.</li>
+                                <li data-i18n="terms.delivery1">Levering planlægges i samarbejde med dig, så det passer til din indflytning.</li>
+                                <li data-i18n="terms.delivery2">Vi informerer om levering, opsætning og eventuelle logistikgebyrer på forhånd.</li>
                             </ul>
                         </article>
 
                         <article class="terms-card">
-                            <h3>Betaling</h3>
+                            <h3 data-i18n="terms.paymentTitle">Betaling</h3>
                             <ul class="terms-list">
-                                <li>Betaling sker månedligt for den valgte periode og pakke.</li>
-                                <li>Alle priser vises inkl. moms, medmindre andet er angivet.</li>
+                                <li data-i18n="terms.payment1">Betaling sker månedligt for den valgte periode og pakke.</li>
+                                <li data-i18n="terms.payment2">Alle priser vises inkl. moms, medmindre andet er angivet.</li>
                             </ul>
                         </article>
 
                         <article class="terms-card">
-                            <h3>Skader og ansvar</h3>
+                            <h3 data-i18n="terms.damageTitle">Skader og ansvar</h3>
                             <ul class="terms-list">
-                                <li>Normal slitage er forventet og dækket.</li>
-                                <li>Skader ud over almindelig brug kan medføre ekstra omkostninger.</li>
+                                <li data-i18n="terms.damage1">Normal slitage er forventet og dækket.</li>
+                                <li data-i18n="terms.damage2">Skader ud over almindelig brug kan medføre ekstra omkostninger.</li>
                             </ul>
                         </article>
 
                         <article class="terms-card">
-                            <h3>Opsigelse</h3>
+                            <h3 data-i18n="terms.cancelTitle">Opsigelse</h3>
                             <ul class="terms-list">
-                                <li>Du kan opsige abonnementet via siden “Opsig abonnement”.</li>
-                                <li>Vi koordinerer afhentning og afslutter abonnementet, når møblerne er returneret.</li>
+                                <li data-i18n="terms.cancel1">Du kan opsige abonnementet via siden “Opsig abonnement”.</li>
+                                <li data-i18n="terms.cancel2">Vi koordinerer afhentning og afslutter abonnementet, når møblerne er returneret.</li>
                             </ul>
                         </article>
                     </div>
 
                     <div class="terms-footer-note">
-                        <p>
+                        <p data-i18n-html="terms.footerHtml">
                             Spørgsmål? Kontakt os via kontaktformularen eller skriv til <strong>info@livingflex.com</strong>.<br>
                             <a class="terms-pdf-link" href="LivingFlex%20Rental%20-%20NIMASTAY%20-%20Terms%26Conditions.pdf" target="_blank" rel="noopener">
                                 Download det komplette vilkår (PDF)
@@ -553,34 +557,34 @@
             
             <!-- Review Step -->
             <div id="packageReviewStep" class="package-review-step">
-                <h2>Din pakke</h2>
+                <h2 data-i18n="modal.review.title">Din pakke</h2>
                 <div class="package-review-content">
                     <div id="packageReviewItems" class="package-review-items">
                         <!-- Products will be inserted here -->
                     </div>
                     <div class="delivery-options">
-                        <h3>Leveringsmuligheder</h3>
+                        <h3 data-i18n="modal.review.deliveryTitle">Leveringsmuligheder</h3>
                         <div class="delivery-options-buttons">
                             <button type="button" class="delivery-option-btn" data-delivery="curbside" data-price="0">
-                                <span class="delivery-option-title">Kantstenslevering</span>
+                                <span class="delivery-option-title" data-i18n="modal.review.curbside">Kantstenslevering</span>
                                 <span class="delivery-option-price">0 DKK</span>
                             </button>
                             <button type="button" class="delivery-option-btn active" data-delivery="setup" data-price="2000">
-                                <span class="delivery-option-title">Levering og opsætning</span>
+                                <span class="delivery-option-title" data-i18n="modal.review.setup">Levering og opsætning</span>
                                 <span class="delivery-option-price">2,000 DKK</span>
                             </button>
                         </div>
                     </div>
                     <div class="extra-room-options" style="display: none;">
-                        <h3>Ekstra rum</h3>
+                        <h3 data-i18n="modal.review.extraRoomTitle">Ekstra rum</h3>
                         <div class="delivery-options-buttons">
                             <button type="button" class="delivery-option-btn extra-room-option-btn active" data-extra-room="no" data-price="0">
-                                <span class="delivery-option-title">Intet ekstra rum</span>
-                                <span class="delivery-option-price">0 DKK / måned</span>
+                                <span class="delivery-option-title" data-i18n="modal.review.noExtraRoom">Intet ekstra rum</span>
+                                <span class="delivery-option-price" data-i18n="modal.review.price0month">0 DKK / måned</span>
                             </button>
                             <button type="button" class="delivery-option-btn extra-room-option-btn" data-extra-room="yes" data-price="1250">
-                                <span class="delivery-option-title">Tilføj ekstra rum</span>
-                                <span class="delivery-option-price">+1.250 DKK / måned</span>
+                                <span class="delivery-option-title" data-i18n="modal.review.addExtraRoom">Tilføj ekstra rum</span>
+                                <span class="delivery-option-price" data-i18n="modal.review.priceExtraMonth">+1.250 DKK / måned</span>
                             </button>
                         </div>
                     </div>
@@ -588,36 +592,36 @@
                         <!-- Totals will be inserted here -->
                     </div>
                     <div class="package-review-actions">
-                        <button class="cancel-btn" id="closePackageReviewBtn">Luk</button>
-                        <button class="submit-btn" id="submitPackageFromReviewBtn">Indsend pakke</button>
+                        <button class="cancel-btn" id="closePackageReviewBtn" data-i18n="modal.review.close">Luk</button>
+                        <button class="submit-btn" id="submitPackageFromReviewBtn" data-i18n="modal.review.submitPkg">Indsend pakke</button>
                     </div>
                 </div>
             </div>
             
             <!-- Form Step -->
             <div id="packageFormStep" class="package-form-step" style="display: none;">
-                <h2>Indsend pakke</h2>
+                <h2 data-i18n="modal.form.title">Indsend pakke</h2>
                 <div class="package-form-container">
                     <div class="package-form-left">
                         <form id="packageSubmitForm">
                             <div class="form-group">
-                                <label for="fullName">Fulde navn</label>
+                                <label for="fullName" data-i18n="contact.name">Fulde navn</label>
                                 <input type="text" id="fullName" name="fullName" required>
                             </div>
                             <div class="form-group">
-                                <label for="phoneNumber">Telefonnummer</label>
+                                <label for="phoneNumber" data-i18n="floor.phone">Telefonnummer</label>
                                 <input type="tel" id="phoneNumber" name="phoneNumber" required>
                             </div>
                             <div class="form-group">
-                                <label for="email">E-mail</label>
+                                <label for="email" data-i18n="contact.email">E-mail</label>
                                 <input type="email" id="email" name="email" required>
                             </div>
                             <div class="form-group">
-                                <label for="address">Flytteadresse</label>
+                                <label for="address" data-i18n="modal.form.moveAddress">Flytteadresse</label>
                                 <input type="text" id="address" name="address" required>
                             </div>
                             <div class="form-group">
-                                <label for="installationDate">Ønsket installationsdato</label>
+                                <label for="installationDate" data-i18n="modal.form.installDate">Ønsket installationsdato</label>
                                 <div class="date-input-container">
                                     <input type="date" id="installationDate" name="installationDate" required>
                                     <div class="week-display" id="weekDisplay">
@@ -626,8 +630,8 @@
                                 </div>
                             </div>
                             <div class="package-form-actions">
-                                <button type="button" class="cancel-btn" id="backToReviewBtn">Tilbage</button>
-                                <button type="submit" class="submit-btn" id="finalSubmitBtn">Indsend</button>
+                                <button type="button" class="cancel-btn" id="backToReviewBtn" data-i18n="modal.form.back">Tilbage</button>
+                                <button type="submit" class="submit-btn" id="finalSubmitBtn" data-i18n="modal.form.submit">Indsend</button>
                             </div>
                         </form>
                     </div>
@@ -645,17 +649,17 @@
     <div id="quantityModal" class="modal">
         <div class="modal-content quantity-modal">
             <span class="close-modal" id="closeQuantityModal">&times;</span>
-            <h2>Vælg antal</h2>
+            <h2 data-i18n="modal.qty.title">Vælg antal</h2>
             <div class="quantity-modal-content">
                 <div class="quantity-product-image" id="quantityProductImage">
-                    <img id="quantityImage" src="" alt="Produkt">
+                    <img id="quantityImage" src="" alt="Produkt" data-i18n-alt="img.product">
                 </div>
                 <div class="quantity-input-section">
-                    <label for="quantityInput">Antal:</label>
+                    <label for="quantityInput" data-i18n="modal.qty.label">Antal:</label>
                     <input type="number" id="quantityInput" min="1" value="1" step="1">
                     <div class="quantity-modal-actions">
-                        <button class="cancel-btn" id="cancelQuantityBtn">Annuller</button>
-                        <button class="submit-btn" id="confirmQuantityBtn">Tilføj til pakke</button>
+                        <button class="cancel-btn" id="cancelQuantityBtn" data-i18n="modal.qty.cancel">Annuller</button>
+                        <button class="submit-btn" id="confirmQuantityBtn" data-i18n="modal.qty.add">Tilføj til pakke</button>
                     </div>
                 </div>
             </div>
@@ -670,33 +674,33 @@
                 <div class="product-detail-info">
                     <h2 id="detailProductName"></h2>
                     <div class="product-detail-section">
-                        <h3>Priser</h3>
+                        <h3 data-i18n="modal.detail.prices">Priser</h3>
                         <div class="detail-prices">
                             <div class="detail-price-item">
-                                <span>Opstart:</span>
+                                <span data-i18n="modal.detail.startup">Opstart:</span>
                                 <span id="detailStartup"></span>
                             </div>
                             <div class="detail-price-item">
-                                <span>Måned 1-4:</span>
+                                <span data-i18n="modal.detail.m14">Måned 1-4:</span>
                                 <span id="detailMonth1to4"></span>
                             </div>
                             <div class="detail-price-item">
-                                <span>Måned 5-12:</span>
+                                <span data-i18n="modal.detail.m512">Måned 5-12:</span>
                                 <span id="detailMonth5to12"></span>
                             </div>
                             <div class="detail-price-item">
-                                <span>Måned 13+:</span>
+                                <span data-i18n="modal.detail.m13">Måned 13+:</span>
                                 <span id="detailMonth13plus"></span>
                             </div>
                         </div>
                     </div>
                     <div class="product-detail-section">
-                        <h3>Størrelse</h3>
+                        <h3 data-i18n="modal.detail.size">Størrelse</h3>
                         <div class="detail-sizes">
                             <span id="detailSize"></span>
                         </div>
                     </div>
-                    <button class="add-to-package-btn" id="detailAddToPackageBtn">Tilføj til pakke</button>
+                    <button class="add-to-package-btn" id="detailAddToPackageBtn" data-i18n="modal.detail.add">Tilføj til pakke</button>
                 </div>
             </div>
         </div>
@@ -706,17 +710,17 @@
     <div id="loginModal" class="modal">
         <div class="modal-content">
             <span class="close-modal">&times;</span>
-            <h2>Log ind</h2>
+            <h2 data-i18n="modal.login.title">Log ind</h2>
             <form id="loginForm">
                 <div class="form-group">
-                    <label for="username">Navn</label>
+                    <label for="username" data-i18n="modal.login.user">Navn</label>
                     <input type="text" id="username" name="username" required>
                 </div>
                 <div class="form-group">
-                    <label for="password">Adgangskode</label>
+                    <label for="password" data-i18n="modal.login.pass">Adgangskode</label>
                     <input type="password" id="password" name="password" required>
                 </div>
-                <button type="submit" class="submit-btn">Log ind</button>
+                <button type="submit" class="submit-btn" data-i18n="modal.login.submit">Log ind</button>
                 <div id="loginError" class="error-message"></div>
             </form>
         </div>
@@ -732,70 +736,70 @@
                     <path d="M9 12L11 14L15 10" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     <circle cx="12" cy="12" r="10" stroke="#10b981" stroke-width="2"/>
                 </svg>
-                <h2>Ordrebekræftelse</h2>
-                <p class="confirmation-subtitle">Tak for din ordre!</p>
+                <h2 data-i18n="modal.order.title">Ordrebekræftelse</h2>
+                <p class="confirmation-subtitle" data-i18n="modal.order.subtitle">Tak for din ordre!</p>
             </div>
             
             <div class="order-confirmation-body">
                 <div class="order-number-section">
-                    <span class="order-number-label">Ordrenummer</span>
+                    <span class="order-number-label" data-i18n="modal.order.orderNo">Ordrenummer</span>
                     <span class="order-number-value" id="confirmationOrderNumber"></span>
                 </div>
                 
                 <div class="confirmation-section">
-                    <h3>Kundeoplysninger</h3>
+                    <h3 data-i18n="modal.order.customerInfo">Kundeoplysninger</h3>
                     <div class="confirmation-info-grid">
                         <div class="confirmation-info-item">
-                            <span class="confirmation-label">Navn:</span>
+                            <span class="confirmation-label" data-i18n="modal.order.name">Navn:</span>
                             <span class="confirmation-value" id="confirmationCustomerName"></span>
                         </div>
                         <div class="confirmation-info-item">
-                            <span class="confirmation-label">E-mail:</span>
+                            <span class="confirmation-label" data-i18n="modal.order.email">E-mail:</span>
                             <span class="confirmation-value" id="confirmationCustomerEmail"></span>
                         </div>
                         <div class="confirmation-info-item">
-                            <span class="confirmation-label">Telefon:</span>
+                            <span class="confirmation-label" data-i18n="modal.order.phone">Telefon:</span>
                             <span class="confirmation-value" id="confirmationCustomerPhone"></span>
                         </div>
                         <div class="confirmation-info-item">
-                            <span class="confirmation-label">Adresse:</span>
+                            <span class="confirmation-label" data-i18n="modal.order.address">Adresse:</span>
                             <span class="confirmation-value" id="confirmationCustomerAddress"></span>
                         </div>
                         <div class="confirmation-info-item">
-                            <span class="confirmation-label">Installationsuge:</span>
+                            <span class="confirmation-label" data-i18n="modal.order.installWeek">Installationsuge:</span>
                             <span class="confirmation-value" id="confirmationInstallationWeek"></span>
                         </div>
                         <div class="confirmation-info-item">
-                            <span class="confirmation-label">Leveringsmulighed:</span>
+                            <span class="confirmation-label" data-i18n="modal.order.deliveryOpt">Leveringsmulighed:</span>
                             <span class="confirmation-value" id="confirmationDeliveryOption"></span>
                         </div>
                     </div>
                 </div>
                 
                 <div class="confirmation-section">
-                    <h3>Ordrelinjer</h3>
+                    <h3 data-i18n="modal.order.lines">Ordrelinjer</h3>
                     <div id="confirmationOrderItems" class="confirmation-order-items">
                         <!-- Order items will be inserted here -->
                     </div>
                 </div>
                 
                 <div class="confirmation-section">
-                    <h3>Prissammenfatning</h3>
+                    <h3 data-i18n="modal.order.priceSummary">Prissammenfatning</h3>
                     <div class="confirmation-pricing">
                         <div class="confirmation-price-row">
-                            <span class="confirmation-price-label">Opstartspris:</span>
+                            <span class="confirmation-price-label" data-i18n="modal.order.startupLbl">Opstartspris:</span>
                             <span class="confirmation-price-value" id="confirmationStartupCost"></span>
                         </div>
                         <div class="confirmation-price-row">
-                            <span class="confirmation-price-label">Måned 1-4:</span>
+                            <span class="confirmation-price-label" data-i18n="modal.order.m14">Måned 1-4:</span>
                             <span class="confirmation-price-value" id="confirmationMonth1to4"></span>
                         </div>
                         <div class="confirmation-price-row">
-                            <span class="confirmation-price-label">Måned 5-12:</span>
+                            <span class="confirmation-price-label" data-i18n="modal.order.m512">Måned 5-12:</span>
                             <span class="confirmation-price-value" id="confirmationMonth5to12"></span>
                         </div>
                         <div class="confirmation-price-row">
-                            <span class="confirmation-price-label">Måned 13+:</span>
+                            <span class="confirmation-price-label" data-i18n="modal.order.m13">Måned 13+:</span>
                             <span class="confirmation-price-value" id="confirmationMonth13plus"></span>
                         </div>
                     </div>
@@ -803,8 +807,8 @@
             </div>
             
             <div class="order-confirmation-footer">
-                <p class="confirmation-message">Din ordre er modtaget og vil blive behandlet snarest. Du kan se din ordre i adminpanelet.</p>
-                <button class="submit-btn" id="closeConfirmationBtn">Luk</button>
+                <p class="confirmation-message" data-i18n="modal.order.footerMsg">Din ordre er modtaget og vil blive behandlet snarest. Du kan se din ordre i adminpanelet.</p>
+                <button class="submit-btn" id="closeConfirmationBtn" data-i18n="modal.order.close">Luk</button>
             </div>
         </div>
     </div>
@@ -812,14 +816,15 @@
     <footer class="site-footer">
         <div class="footer-container">
             <div class="footer-brand">
-                <span class="footer-name">LivingFlex ApS</span>
+                <span class="footer-name" data-i18n="footer.brand">LivingFlex ApS</span>
                 <span class="footer-cvr">45288323</span>
             </div>
-            <div class="footer-powered">Powered by Agent360 Group ApS</div>
-            <div class="footer-quote">Anbefalet møbelløsning til boliger udlejet via Nimastay</div>
+            <div class="footer-powered" data-i18n="footer.powered">Powered by Agent360 Group ApS</div>
+            <div class="footer-quote" data-i18n="footer.quote">Anbefalet møbelløsning til boliger udlejet via Nimastay</div>
         </div>
     </footer>
 
+    <script src="i18n.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

@@ -1,5 +1,11 @@
 // Simple interactivity for navigation and login
 document.addEventListener('DOMContentLoaded', function() {
+    function t(key) {
+        return window.LF_i18n && window.LF_i18n.t ? window.LF_i18n.t(key) : key;
+    }
+
+    let lastConfirmationOrder = null;
+
     // Initialize quantity modal
     initQuantityModal();
     
@@ -25,18 +31,17 @@ document.addEventListener('DOMContentLoaded', function() {
             navLinks.forEach(l => l.classList.remove('active'));
             this.classList.add('active');
             
-            // Navigate to appropriate page
-            const linkText = this.textContent.trim();
-            if (linkText === 'Byg dit eget hjem') {
+            const target = this.getAttribute('data-nav-target');
+            if (target === 'build-your-own-home-page') {
                 showPage('build-your-own-home-page');
                 loadProductsForBuilder();
-            } else if (linkText === 'Færdige pakker') {
+            } else if (target === 'ready-packages-page') {
                 showPage('ready-packages-page');
-            } else if (linkText === 'Send plantegning') {
+            } else if (target === 'send-floor-plan-page') {
                 showPage('send-floor-plan-page');
-            } else if (linkText === 'Opsig abonnement') {
+            } else if (target === 'cancel-subscription-page') {
                 showPage('cancel-subscription-page');
-            } else if (linkText === 'Vilkår og betingelser') {
+            } else if (target === 'terms-page') {
                 showPage('terms-page');
             } else {
                 showPage('home-page');
@@ -73,19 +78,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 loadProductsForBuilder();
             }
             navLinks.forEach(l => l.classList.remove('active'));
-            const navMap = {
-                'build-your-own-home-page': 'Byg dit eget hjem',
-                'ready-packages-page': 'Færdige pakker',
-                'send-floor-plan-page': 'Send plantegning'
-            };
-            const targetLabel = navMap[targetPage];
-            if (targetLabel) {
-                const targetLink = Array.from(navLinks).find(
-                    link => link.textContent.trim() === targetLabel
-                );
-                if (targetLink) {
-                    targetLink.classList.add('active');
-                }
+            const targetLink = document.querySelector('.nav-link[data-nav-target="' + targetPage + '"]');
+            if (targetLink) {
+                targetLink.classList.add('active');
             }
         });
     });
@@ -170,7 +165,7 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 // Show error message
                 if (loginError) {
-                    loginError.textContent = 'Ugyldigt brugernavn eller adgangskode';
+                    loginError.textContent = t('js.loginError');
                 }
             }
         });
@@ -366,20 +361,20 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!products) {
             const stored = localStorage.getItem('products');
             if (!stored) {
-                document.getElementById('productsGrid').innerHTML = '<p>Der er endnu ingen produkter. Sortimentet og lejevilkår skal først aftales.</p>';
+                document.getElementById('productsGrid').innerHTML = '<p data-i18n="js.noProductsAssortment">' + t('js.noProductsAssortment') + '</p>';
                 return;
             }
             try {
                 products = JSON.parse(stored);
             } catch (error) {
                 console.error('Error parsing local products:', error);
-                document.getElementById('productsGrid').innerHTML = '<p>Der er endnu ingen produkter. Sortimentet og lejevilkår skal først aftales.</p>';
+                document.getElementById('productsGrid').innerHTML = '<p data-i18n="js.noProductsAssortment">' + t('js.noProductsAssortment') + '</p>';
                 return;
             }
         }
 
         if (!Array.isArray(products) || products.length === 0) {
-            document.getElementById('productsGrid').innerHTML = '<p>Der er endnu ingen produkter. Sortimentet og lejevilkår skal først aftales.</p>';
+            document.getElementById('productsGrid').innerHTML = '<p data-i18n="js.noProductsAssortment">' + t('js.noProductsAssortment') + '</p>';
             return;
         }
 
@@ -440,7 +435,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const productsGrid = document.getElementById('productsGrid');
         
         if (products.length === 0) {
-            productsGrid.innerHTML = '<p>Ingen produkter i denne kategori.</p>';
+            productsGrid.innerHTML = '<p data-i18n="js.noProductsCategory">' + t('js.noProductsCategory') + '</p>';
             return;
         }
         
@@ -486,8 +481,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                     <div class="builder-product-info">
                         <h4>${product.name}</h4>
-                        <div class="builder-product-price">Opstart: ${startupCost} DKK</div>
-                        <button class="add-to-package-btn" data-product-id="${product.id}">Tilføj til pakke</button>
+                        <div class="builder-product-price">${t('js.startup')}: ${startupCost} DKK</div>
+                        <button class="add-to-package-btn" data-product-id="${product.id}">${t('js.addToPackage')}</button>
                     </div>
                 </div>
             `;
@@ -651,7 +646,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('detailMonth13plus').textContent = `${parseFloat(product.month13plus).toFixed(2)} DKK`;
         
         const sizeText = [product.length, product.width, product.height].filter(s => s).join(' × ');
-        document.getElementById('detailSize').textContent = sizeText || 'N/A';
+        document.getElementById('detailSize').textContent = sizeText || t('js.na');
 
         const addToPackageBtn = document.getElementById('detailAddToPackageBtn');
         if (addToPackageBtn) {
@@ -860,13 +855,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const products = getBuilderProductsFromStorage();
         if (!products.length) {
             console.error('Ingen produkter fundet til builder');
-            alert('Ingen produkter tilgængelige. Tilføj produkter i adminpanelet.');
+            alert(t('js.adminNoProducts'));
             return;
         }
         const product = products.find(p => p.id === productId);
         if (!product) {
             console.error('Product not found:', productId);
-            alert('Product not found');
+            alert(t('js.productNotFound'));
             return;
         }
         
@@ -915,7 +910,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!packageItems) return;
         
         if (selectedPackage.length === 0) {
-            packageItems.innerHTML = '<p style="color: #6b7280; text-align: center; padding: 1rem;">No items in package</p>';
+            packageItems.innerHTML = '<p data-i18n="js.noItemsPackage" style="color: #6b7280; text-align: center; padding: 1rem;">' + t('js.noItemsPackage') + '</p>';
             updateTotals();
             return;
         }
@@ -924,9 +919,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const orientation = product.selectedOrientation || 'main';
             let orientationText = '';
             if (orientation === 'right') {
-                orientationText = '<span class="orientation-badge">Højreorienteret</span>';
+                orientationText = '<span class="orientation-badge">' + t('js.orientationRight') + '</span>';
             } else if (orientation === 'left') {
-                orientationText = '<span class="orientation-badge">Venstreorienteret</span>';
+                orientationText = '<span class="orientation-badge">' + t('js.orientationLeft') + '</span>';
             }
             
             const quantity = product.quantity || 1;
@@ -1057,9 +1052,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
             packageReviewItems.innerHTML = `
                 <div class="ready-package-summary">
-                    <div class="ready-package-summary-note">This image is for reference only.</div>
+                    <div class="ready-package-summary-note">${t('js.review.readyNote')}</div>
                     <div class="ready-package-summary-image">
-                        <img src="ProduktB/ReadyP.jpg" alt="Ready package">
+                        <img src="ProduktB/ReadyP.jpg" alt="${t('js.review.readyImgAlt')}">
                     </div>
                     <ul class="ready-package-summary-list">
                         ${listItems}
@@ -1095,7 +1090,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Show package review modal
     function showPackageReviewModal() {
         if (selectedPackage.length === 0) {
-            alert('Din pakke er tom. Tilføj produkter først.');
+            alert(t('js.packageEmpty'));
             return;
         }
 
@@ -1145,25 +1140,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
             packageReviewTotals.innerHTML = `
                 <div class="package-review-total-section">
-                    <h3>Total</h3>
+                    <h3>${t('js.total')}</h3>
                     <div class="review-total-row">
-                        <span>Opsætning &amp; logistik (inkl. moms):</span>
+                        <span>${t('js.review.setupLogistics')}</span>
                         <span>${readyPackagePricing.startup.toFixed(2)} DKK</span>
                     </div>
                     <div class="review-total-row">
-                        <span>Måned 1-4:</span>
+                        <span>${t('js.review.month14')}</span>
                         <span>${monthlyTotal.toFixed(2)} DKK</span>
                     </div>
                     <div class="review-total-row">
-                        <span>Måned 5-12:</span>
+                        <span>${t('js.review.month512')}</span>
                         <span>${monthlyTotal.toFixed(2)} DKK</span>
                     </div>
                     <div class="review-total-row">
-                        <span>Måned 13+:</span>
+                        <span>${t('js.review.month13')}</span>
                         <span>${monthlyTotal.toFixed(2)} DKK</span>
                     </div>
                     <div class="review-total-row">
-                        <span>Afhentning (inkl. moms):</span>
+                        <span>${t('js.review.removal')}</span>
                         <span>${readyPackagePricing.removal.toFixed(2)} DKK</span>
                     </div>
                 </div>
@@ -1195,21 +1190,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
         packageReviewTotals.innerHTML = `
             <div class="package-review-total-section">
-                <h3>Total</h3>
+                <h3>${t('js.total')}</h3>
                 <div class="review-total-row">
-                    <span>Opstart (inkl. levering &amp; logistik, koordinering &amp; håndtering):</span>
+                    <span>${t('js.review.startupFull')}</span>
                     <span>${totalStartup.toFixed(2)} DKK</span>
                 </div>
                 <div class="review-total-row">
-                    <span>Måned 1-4:</span>
+                    <span>${t('js.review.month14')}</span>
                     <span>${totalMonth1to4.toFixed(2)} DKK</span>
                 </div>
                 <div class="review-total-row">
-                    <span>Måned 5-12:</span>
+                    <span>${t('js.review.month512')}</span>
                     <span>${totalMonth5to12.toFixed(2)} DKK</span>
                 </div>
                 <div class="review-total-row">
-                    <span>Måned 13+:</span>
+                    <span>${t('js.review.month13')}</span>
                     <span>${totalMonth13plus.toFixed(2)} DKK</span>
                 </div>
             </div>
@@ -1320,7 +1315,7 @@ document.addEventListener('DOMContentLoaded', function() {
             id: Date.now(), // Unique ID based on timestamp
             name: formData.fullName,
             address: formData.address,
-            installationWeek: weekNumber ? `Uge ${weekNumber}` : '',
+            installationWeek: weekNumber ? `${t('js.week')} ${weekNumber}` : '',
             installationDate: installationDate,
             firstPayment: totalStartup.toFixed(2),
             phoneNumber: formData.phoneNumber,
@@ -1348,7 +1343,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 formData: formData,
                 order: order
             });
-            alert('Fejl: Ordren mangler påkrævede oplysninger. Prøv igen.');
+            alert(t('js.orderMissingFields'));
             return;
         }
         
@@ -1488,11 +1483,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
 
-            const detail = lastError && lastError.detail ? `\n${lastError.detail}` : '';
-            alert(`Ordrebekræftelse kunne ikke sendes.${detail}`);
+            const detail = lastError && lastError.detail ? '\n' + lastError.detail : '';
+            alert(t('js.orderEmailFail') + detail);
         } catch (error) {
             console.error('Order confirmation email error:', error);
-            alert('Ordrebekræftelse kunne ikke sendes. Tjek at e-mailserveren kører.');
+            alert(t('js.orderEmailFailServer'));
         }
     }
 
@@ -1500,6 +1495,8 @@ document.addEventListener('DOMContentLoaded', function() {
     function showOrderConfirmationModal(order) {
         const modal = document.getElementById('orderConfirmationModal');
         if (!modal) return;
+
+        lastConfirmationOrder = order;
         
         // Set order number (same format as in admin panel)
         const orderNumberEl = document.getElementById('confirmationOrderNumber');
@@ -1508,23 +1505,23 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Set customer information
-        document.getElementById('confirmationCustomerName').textContent = order.name || 'N/A';
-        document.getElementById('confirmationCustomerEmail').textContent = order.email || 'N/A';
-        document.getElementById('confirmationCustomerPhone').textContent = order.phoneNumber || 'N/A';
-        document.getElementById('confirmationCustomerAddress').textContent = order.address || 'N/A';
-        document.getElementById('confirmationInstallationWeek').textContent = order.installationWeek || 'Ikke angivet';
+        document.getElementById('confirmationCustomerName').textContent = order.name || t('js.na');
+        document.getElementById('confirmationCustomerEmail').textContent = order.email || t('js.na');
+        document.getElementById('confirmationCustomerPhone').textContent = order.phoneNumber || t('js.na');
+        document.getElementById('confirmationCustomerAddress').textContent = order.address || t('js.na');
+        document.getElementById('confirmationInstallationWeek').textContent = order.installationWeek || t('js.confirm.notSpecified');
         
         // Set delivery option / extra room
         const deliveryOptionEl = document.getElementById('confirmationDeliveryOption');
         if (deliveryOptionEl) {
             if (order.packageType === 'ready') {
                 deliveryOptionEl.textContent = order.extraRoomSelected
-                    ? 'Ekstra rum - 500 DKK / måned'
-                    : 'Intet ekstra rum - 0 DKK / måned';
+                    ? t('js.confirm.extraRoom')
+                    : t('js.confirm.noExtraRoom');
             } else if (order.deliveryOption && order.deliveryOption.type === 'setup') {
-                deliveryOptionEl.textContent = 'Levering og opsætning - 2.000 DKK';
+                deliveryOptionEl.textContent = t('js.confirm.setup');
             } else {
-                deliveryOptionEl.textContent = 'Kantstenslevering - 0 DKK';
+                deliveryOptionEl.textContent = t('js.confirm.curbside');
             }
         }
         
@@ -1539,8 +1536,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     ? product.leftOrientedImage
                     : product.imageUrl;
                 
-                const orientationText = product.selectedOrientation === 'right' ? ' (Right-Oriented)' : 
-                                      product.selectedOrientation === 'left' ? ' (Left-Oriented)' : '';
+                const orientationText = product.selectedOrientation === 'right' ? ' ' + t('js.orientationRightShort') :
+                    product.selectedOrientation === 'left' ? ' ' + t('js.orientationLeftShort') : '';
                 
                 return `
                     <div class="confirmation-order-item">
@@ -1549,7 +1546,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                         <div class="confirmation-order-item-info">
                             <div class="confirmation-order-item-name">${product.name}${orientationText}</div>
-                            <div class="confirmation-order-item-details">SKU: ${product.sku || 'N/A'}</div>
+                            <div class="confirmation-order-item-details">${t('js.sku')}: ${product.sku || t('js.na')}</div>
                         </div>
                         <div class="confirmation-order-item-quantity">x${quantity}</div>
                     </div>
@@ -1672,7 +1669,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 minAllowedDate.setHours(0, 0, 0, 0);
                 
                 if (selectedDate < minAllowedDate) {
-                    alert('Installationsdatoen skal være mindst 14 dage ude i fremtiden.');
+                    alert(t('js.installDateMin'));
                     this.value = '';
                     updateWeekDisplay('');
                     setInstallationDateMin(this); // Re-set min date
@@ -1697,7 +1694,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const weekDisplay = document.getElementById('weekNumber');
         if (weekDisplay && dateString) {
             const weekNumber = getWeekNumber(dateString);
-            weekDisplay.textContent = `Uge ${weekNumber}`;
+            weekDisplay.textContent = `${t('js.week')} ${weekNumber}`;
         } else if (weekDisplay) {
             weekDisplay.textContent = '';
         }
@@ -1723,7 +1720,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 minDate.setHours(0, 0, 0, 0);
                 
                 if (selectedDate < minDate) {
-                    alert('Installationsdatoen skal være mindst 14 dage ude i fremtiden.');
+                    alert(t('js.installDateMin'));
                     return;
                 }
             }
@@ -1854,12 +1851,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle file selection
     function handleFloorPlanFileSelect(file) {
         if (!file || !file.type.startsWith('image/')) {
-            alert('Vælg venligst en billedfil');
+            alert(t('js.pickImageFile'));
             return;
         }
 
         if (file.size > 10 * 1024 * 1024) {
-            alert('Image is too large. Maximum size is 10MB');
+            alert(t('js.imageTooLarge'));
             return;
         }
 
@@ -1920,8 +1917,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
-        const detail = lastError && lastError.detail ? `\n${lastError.detail}` : '';
-        alert(`Vi kunne ikke sende bekræftelsen.${detail}`);
+        const detail = lastError && lastError.detail ? '\n' + lastError.detail : '';
+        alert(t('js.floorConfirmFail') + detail);
         return false;
     }
 
@@ -1931,7 +1928,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Validate image
             if (!selectedFloorPlanFile) {
-                alert('Upload venligst et billede af plantegningen');
+                alert(t('js.floorUploadImage'));
                 return;
             }
 
@@ -1954,7 +1951,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     return;
                 }
 
-                alert('Tak! Vi har sendt en bekræftelse til din e-mail. Vores team gennemgår din plantegning og vender tilbage snarest.');
+                alert(t('js.floorThanks'));
 
                 // Reset form
                 floorPlanForm.reset();
@@ -1984,7 +1981,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Validate inputs
             if (!orderNumber || !orderName) {
-                showOrderSearchError('Indtast både ordrenummer og navn.');
+                showOrderSearchError(t('js.cancelEnterBoth'));
                 return;
             }
             
@@ -2017,7 +2014,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 hideOrderSearchError();
             } else {
                 // Show error
-                showOrderSearchError('Ordre ikke fundet. Tjek ordrenummer og navn og prøv igen.');
+                showOrderSearchError(t('js.cancelNotFound'));
                 hideFoundOrder();
             }
         });
@@ -2026,8 +2023,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Display found order
     function displayFoundOrder(order) {
         document.getElementById('foundOrderNumber').textContent = `#${order.id}`;
-        document.getElementById('foundOrderName').textContent = order.name || 'N/A';
-        document.getElementById('foundOrderAddress').textContent = order.address || 'N/A';
+        document.getElementById('foundOrderName').textContent = order.name || t('js.na');
+        document.getElementById('foundOrderAddress').textContent = order.address || t('js.na');
         
         // Display products
         const productsContainer = document.getElementById('foundOrderProducts');
@@ -2048,7 +2045,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 `;
             }).join('');
         } else if (productsContainer) {
-            productsContainer.innerHTML = '<p style="color: #6b7280; font-size: 0.875rem;">Ingen produkter fundet i denne ordre.</p>';
+            productsContainer.innerHTML = '<p data-i18n="js.cancelNoProducts" style="color: #6b7280; font-size: 0.875rem;">' + t('js.cancelNoProducts') + '</p>';
         }
         
         orderFoundSection.style.display = 'block';
@@ -2084,12 +2081,12 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             
             if (!foundOrder) {
-                alert('Ingen ordre fundet. Søg efter din ordre først.');
+                alert(t('js.cancelSearchFirst'));
                 return;
             }
             
             // Confirm cancellation
-            if (confirm('Er du sikker på, at du vil opsige dette abonnement? Denne handling kan ikke fortrydes.')) {
+            if (confirm(t('js.cancelConfirm'))) {
                 cancelOrderSubscription(foundOrder);
             }
         });
@@ -2122,7 +2119,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (orderInCompleted.status === 'active') {
                 // Order is active in Overview - move to Cancelled, Pending Pickup
                 newStatus = 'cancelled_pending';
-                statusMessage = 'Annulleret, afventer afhentning';
+                statusMessage = t('js.statusPending');
                 
                 // Remove order from completedOrders
                 completedOrders = completedOrders.filter(o => o.id !== order.id);
@@ -2133,7 +2130,7 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 // Order is already cancelled, just update it
                 newStatus = orderInCompleted.status;
-                statusMessage = newStatus === 'cancelled_pending' ? 'Annulleret, afventer afhentning' : 'Annulleret og afhentet';
+                statusMessage = newStatus === 'cancelled_pending' ? t('js.statusPending') : t('js.statusCollected');
                 
                 // Order is already in the right place, nothing to do
                 // But we'll refresh it to ensure consistency
@@ -2143,7 +2140,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Order is only in Tasks (orders array) - never been activated
             // Move to Cancelled and Collected
             newStatus = 'cancelled_collected';
-            statusMessage = 'Annulleret og afhentet';
+            statusMessage = t('js.statusCollected');
             
             // Remove order from active orders (Tasks)
             orders = orders.filter(o => o.id !== order.id);
@@ -2158,12 +2155,38 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.setItem('completedOrders', JSON.stringify(completedOrders));
         
         // Show success message
-        alert(`Your subscription has been cancelled successfully. The order has been moved to "${statusMessage}" status in the Admin Panel.`);
+        alert(t('js.cancelSuccess').replace('{status}', statusMessage));
         
         // Reset form and hide found order
         cancelSearchForm.reset();
         hideFoundOrder();
         hideOrderSearchError();
     }
+
+    window.addEventListener('lf-lang-changed', function() {
+        const buildPage = document.getElementById('build-your-own-home-page');
+        if (buildPage && buildPage.classList.contains('active') && builderProducts && builderProducts.length > 0) {
+            const cat = selectedCategory || builderProducts[0].category;
+            displayCategories(builderProducts);
+            selectCategory(cat, builderProducts);
+        }
+        updatePackageSummary();
+        const prModal = document.getElementById('packageReviewModal');
+        if (prModal && prModal.style.display === 'flex') {
+            renderPackageReviewItems();
+            updatePackageReviewTotals();
+        }
+        const inst = document.getElementById('installationDate');
+        if (inst && inst.value) {
+            updateWeekDisplay(inst.value);
+        }
+        const ocModal = document.getElementById('orderConfirmationModal');
+        if (ocModal && ocModal.style.display === 'flex' && lastConfirmationOrder) {
+            showOrderConfirmationModal(lastConfirmationOrder);
+        }
+        if (orderFoundSection && orderFoundSection.style.display !== 'none' && foundOrder) {
+            displayFoundOrder(foundOrder);
+        }
+    });
 });
 
