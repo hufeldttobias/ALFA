@@ -2535,9 +2535,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (basePrice > 0) {
             // Calculate prices
             const startupCost = basePrice * 0.10; // 10%
-            const month1to4 = basePrice * 0.0325; // 3.25%
-            const month5to12 = basePrice * 0.02; // 2%
-            const month13plus = basePrice * 0.01; // 1%
+            const month1to4 = basePrice * 0.04; // 4%
+            const month5to12 = basePrice * 0.03; // 3%
+            const month13plus = basePrice * 0.02; // 2%
             
             // Update fields (round to 2 decimal places)
             startupCostInput.value = startupCost.toFixed(2);
