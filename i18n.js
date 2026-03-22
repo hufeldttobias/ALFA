@@ -153,7 +153,7 @@
             'terms.orderTitle': 'Ordregyldighed',
             'terms.order1': 'Bestillinger online er kun reservationer',
             'terms.order2': 'Bindende aftale kræver underskrevet kontrakt og godkendelse',
-            'terms.footerHtml': 'Spørgsmål? Kontakt os via kontaktformularen eller skriv til <strong>info@livingflex.com</strong>.<br><a class="terms-pdf-link" href="LivingFlex%20Rental%20-%20NIMASTAY%20-%20Terms%26Conditions.pdf" target="_blank" rel="noopener">Download det komplette vilkår (PDF)</a>',
+            'terms.footerHtml': 'Spørgsmål? Kontakt os via kontaktformularen eller skriv til <strong>info@livingflex.com</strong>.<br><a class="terms-pdf-link" href="LivingFlex_Terms_Full.pdf" target="_blank" rel="noopener">Download det komplette vilkår (PDF)</a>',
 
             'modal.review.title': 'Din pakke',
             'modal.review.deliveryTitle': 'Leveringsmuligheder',
@@ -411,7 +411,7 @@
             'terms.orderTitle': 'Order validity',
             'terms.order1': 'Orders placed online are reservations only',
             'terms.order2': 'Binding agreement requires signed contract and approval',
-            'terms.footerHtml': 'Questions? Contact us via the contact form or write to <strong>info@livingflex.com</strong>.<br><a class="terms-pdf-link" href="LivingFlex%20Rental%20-%20NIMASTAY%20-%20Terms%26Conditions.pdf" target="_blank" rel="noopener">Download full terms (PDF)</a>',
+            'terms.footerHtml': 'Questions? Contact us via the contact form or write to <strong>info@livingflex.com</strong>.<br><a class="terms-pdf-link" href="LivingFlex_Terms_Full.pdf" target="_blank" rel="noopener">Download full terms (PDF)</a>',
 
             'modal.review.title': 'Your package',
             'modal.review.deliveryTitle': 'Delivery options',
