@@ -431,6 +431,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const menuItems = document.querySelectorAll('.menu-item');
     const pageContents = document.querySelectorAll('.page-content');
     const pageTitle = document.getElementById('pageTitle');
+    const accessMode = new URLSearchParams(window.location.search).get('access');
     
     // Page titles mapping
     const pageTitles = {
@@ -479,6 +480,28 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    // Limited access: only show "Oversigt"
+    if (accessMode === 'overview') {
+        const productsMenuItem = document.querySelector('.menu-item[data-page="produkter"]');
+        const tasksMenuItem = document.querySelector('.menu-item[data-page="opgaver"]');
+        if (productsMenuItem) productsMenuItem.style.display = 'none';
+        if (tasksMenuItem) tasksMenuItem.style.display = 'none';
+
+        const productsPage = document.getElementById('produkter');
+        const tasksPage = document.getElementById('opgaver');
+        const overviewPage = document.getElementById('oversigt');
+        if (productsPage) productsPage.classList.remove('active');
+        if (tasksPage) tasksPage.classList.remove('active');
+        if (overviewPage) overviewPage.classList.add('active');
+
+        menuItems.forEach(i => i.classList.remove('active'));
+        const overviewMenuItem = document.querySelector('.menu-item[data-page="oversigt"]');
+        if (overviewMenuItem) overviewMenuItem.classList.add('active');
+
+        if (pageTitle) pageTitle.textContent = pageTitles.oversigt;
+        loadCompletedOrders();
+    }
     
     // Update badge count on page load
     updateOpgaverBadge();

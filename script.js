@@ -173,10 +173,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             
-            // Admin login
+            // Full admin login
             if (username === 'RT' && password === 'RTAMLF') {
-                // Redirect to admin page
                 window.location.href = 'admin.html';
+            } else if (username === 'AlfaM' && password === 'Alfa2026') {
+                // Limited login: overview tab only
+                window.location.href = 'admin.html?access=overview';
             } else {
                 // Show error message
                 if (loginError) {
