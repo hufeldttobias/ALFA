@@ -432,6 +432,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const pageContents = document.querySelectorAll('.page-content');
     const pageTitle = document.getElementById('pageTitle');
     const accessMode = new URLSearchParams(window.location.search).get('access');
+    const isOverviewOnly = accessMode === 'overview';
     
     // Page titles mapping
     const pageTitles = {
@@ -482,7 +483,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Limited access: only show "Oversigt"
-    if (accessMode === 'overview') {
+    if (isOverviewOnly) {
         const productsMenuItem = document.querySelector('.menu-item[data-page="produkter"]');
         const tasksMenuItem = document.querySelector('.menu-item[data-page="opgaver"]');
         if (productsMenuItem) productsMenuItem.style.display = 'none';
@@ -500,6 +501,13 @@ document.addEventListener('DOMContentLoaded', function() {
         if (overviewMenuItem) overviewMenuItem.classList.add('active');
 
         if (pageTitle) pageTitle.textContent = pageTitles.oversigt;
+        const contactRequestBtn = document.getElementById('contactRequestBtn');
+        if (contactRequestBtn) {
+            contactRequestBtn.style.display = 'inline-flex';
+            contactRequestBtn.addEventListener('click', function() {
+                // Placeholder: functionality will be implemented later.
+            });
+        }
         loadCompletedOrders();
     }
     
@@ -1247,7 +1255,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const monthlyRent = calculateCurrentMonthlyRent(order);
                 
                 return `
-                    <div class="overview-order-row" data-order-id="${order.id}" style="cursor: pointer;">
+                    <div class="overview-order-row" data-order-id="${order.id}" style="cursor: ${isOverviewOnly ? 'default' : 'pointer'};">
                         <div class="overview-order-number">Ordre #${order.id}</div>
                         <div class="overview-order-name">${order.name}</div>
                         <div class="overview-order-address">${order.address}</div>
@@ -1266,12 +1274,14 @@ document.addEventListener('DOMContentLoaded', function() {
             activeContainer.insertAdjacentHTML('beforeend', activeContent);
             
             // Add click event listeners to active order rows
-            activeContainer.querySelectorAll('.overview-order-row').forEach(row => {
-                row.addEventListener('click', function() {
-                    const orderId = parseInt(this.dataset.orderId);
-                    showOrderDetail(orderId);
+            if (!isOverviewOnly) {
+                activeContainer.querySelectorAll('.overview-order-row').forEach(row => {
+                    row.addEventListener('click', function() {
+                        const orderId = parseInt(this.dataset.orderId);
+                        showOrderDetail(orderId);
+                    });
                 });
-            });
+            }
         } else {
             activeContainer.insertAdjacentHTML('beforeend', activeContent);
         }
@@ -1284,7 +1294,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const monthlyRent = calculateCurrentMonthlyRent(order);
                 
                 return `
-                    <div class="overview-order-row" data-order-id="${order.id}" style="cursor: pointer;">
+                    <div class="overview-order-row" data-order-id="${order.id}" style="cursor: ${isOverviewOnly ? 'default' : 'pointer'};">
                         <div class="overview-order-number">Ordre #${order.id}</div>
                         <div class="overview-order-name">${order.name}</div>
                         <div class="overview-order-address">${order.address}</div>
@@ -1302,13 +1312,15 @@ document.addEventListener('DOMContentLoaded', function() {
         if (cancelledPendingOrders.length > 0) {
             cancelledPendingContainer.insertAdjacentHTML('beforeend', cancelledPendingContent);
             
-            // Add click event listeners
-            cancelledPendingContainer.querySelectorAll('.overview-order-row').forEach(row => {
-                row.addEventListener('click', function() {
-                    const orderId = parseInt(this.dataset.orderId);
-                    showOrderDetail(orderId);
+            // Add click event listeners (disabled for overview-only access)
+            if (!isOverviewOnly) {
+                cancelledPendingContainer.querySelectorAll('.overview-order-row').forEach(row => {
+                    row.addEventListener('click', function() {
+                        const orderId = parseInt(this.dataset.orderId);
+                        showOrderDetail(orderId);
+                    });
                 });
-            });
+            }
         } else {
             cancelledPendingContainer.insertAdjacentHTML('beforeend', cancelledPendingContent);
         }
@@ -1321,7 +1333,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const monthlyRent = calculateCurrentMonthlyRent(order);
                 
                 return `
-                    <div class="overview-order-row" data-order-id="${order.id}" style="cursor: pointer;">
+                    <div class="overview-order-row" data-order-id="${order.id}" style="cursor: ${isOverviewOnly ? 'default' : 'pointer'};">
                         <div class="overview-order-number">Ordre #${order.id}</div>
                         <div class="overview-order-name">${order.name}</div>
                         <div class="overview-order-address">${order.address}</div>
@@ -1339,13 +1351,15 @@ document.addEventListener('DOMContentLoaded', function() {
         if (cancelledCollectedOrders.length > 0) {
             cancelledCollectedContainer.insertAdjacentHTML('beforeend', cancelledCollectedContent);
             
-            // Add click event listeners
-            cancelledCollectedContainer.querySelectorAll('.overview-order-row').forEach(row => {
-                row.addEventListener('click', function() {
-                    const orderId = parseInt(this.dataset.orderId);
-                    showOrderDetail(orderId);
+            // Add click event listeners (disabled for overview-only access)
+            if (!isOverviewOnly) {
+                cancelledCollectedContainer.querySelectorAll('.overview-order-row').forEach(row => {
+                    row.addEventListener('click', function() {
+                        const orderId = parseInt(this.dataset.orderId);
+                        showOrderDetail(orderId);
+                    });
                 });
-            });
+            }
         } else {
             cancelledCollectedContainer.insertAdjacentHTML('beforeend', cancelledCollectedContent);
         }

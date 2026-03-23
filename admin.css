@@ -239,6 +239,22 @@ body {
     border-bottom: none;
 }
 
+.contact-request-btn {
+    background-color: #004595;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.contact-request-btn:hover {
+    opacity: 0.9;
+}
+
 .overview-order-number {
     font-size: 0.875rem;
     font-weight: 600;
