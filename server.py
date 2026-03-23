@@ -302,7 +302,13 @@ def format_delivery_option(order):
 
 def build_order_email(order, totals):
     order_id = order.get('id', '')
-    subject = f"Ordrebekræftelse - LivingFlex {order_id}"
+    lang = (order.get('language') or 'da').strip().lower()
+    is_english = lang.startswith('en')
+    subject = (
+        f"Order confirmation - LivingFlex {order_id}"
+        if is_english
+        else f"Ordrebekræftelse - LivingFlex {order_id}"
+    )
     created_at = order.get('createdAt') or ''
     created_at_text = ''
     if created_at:
@@ -312,59 +318,100 @@ def build_order_email(order, totals):
             created_at_text = created_at
 
     customer_name = order.get('name', '').strip()
-    greeting_name = customer_name or 'kunde'
-    address = order.get('address', '').strip() or 'Ikke angivet'
+    greeting_name = customer_name or ('customer' if is_english else 'kunde')
+    address = order.get('address', '').strip() or ('Not specified' if is_english else 'Ikke angivet')
     postal_code = (order.get('postalCode') or '').strip()
     city = (order.get('city') or '').strip()
     if postal_code or city:
         address = ", ".join([part for part in [address, postal_code, city] if part])
-    installation_week = order.get('installationWeek', '').strip() or 'Ikke angivet'
+    installation_week = order.get('installationWeek', '').strip() or ('Not specified' if is_english else 'Ikke angivet')
     startup_total = totals.get('startup', '0.00')
     monthly_total = totals.get('month1to4', '0.00')
 
-    body_lines = [
-        f"Kære {greeting_name},",
-        "",
-        "Tak for din bestilling hos LivingFlex i samarbejde med Alfa Mobility.",
-        "",
-        "Din møbelpakke er nu sat i gang, og vi er i gang med at planlægge levering og opsætning af din bolig.",
-        "",
-        "Overblik over din bestilling",
-        "",
-        "Installationsadresse",
-        address,
-        "",
-        "Ønsket installationsuge",
-        installation_week,
-        "",
-        "Setup & levering (engangsbetaling)",
-        f"{startup_total} DKK",
-        "(Inkl. levering, indbæring og montering)",
-        "",
-        "Månedlig leje",
-        f"{monthly_total} DKK",
-        "",
-        "Følgende elementer indgår i indretningen:",
-        "",
-        format_order_items(order),
-        "",
-        f"Dit ordrenummer er: {order_id}",
-        "",
-        "",
-        "Næste skridt",
-        "",
-        "En fra LivingFlex-teamet kontakter dig snarest for at bekræfte leveringsdato, adgang og de sidste praktiske detaljer.",
-        "",
-        "Du kan trygt læne dig tilbage.",
-        "Vi sørger for levering, indbæring og montering – og en bolig, der står klar og præsentabel til udlejning fra dag ét.",
-        "",
-        "Har du spørgsmål i mellemtiden, er du altid velkommen til at svare direkte på denne mail.",
-        "",
-        "Vi glæder os til at gøre din bolig klar.",
-        "",
-        "Venlig hilsen",
-        "- LivingFlex"
-    ]
+    if is_english:
+        body_lines = [
+            f"Dear {greeting_name},",
+            "",
+            "Thank you for your order with LivingFlex in collaboration with Alfa Mobility.",
+            "",
+            "Your furniture package is now underway, and we are planning delivery and setup for your home.",
+            "",
+            "Order overview",
+            "",
+            "Installation address",
+            address,
+            "",
+            "Preferred installation week",
+            installation_week,
+            "",
+            "Setup & delivery (one-time payment)",
+            f"{startup_total} DKK",
+            "(Including delivery, carry-in and assembly)",
+            "",
+            "Monthly rental",
+            f"{monthly_total} DKK",
+            "",
+            "The following items are included:",
+            "",
+            format_order_items(order),
+            "",
+            f"Your order number is: {order_id}",
+            "",
+            "Next steps",
+            "",
+            "A member of the LivingFlex team will contact you shortly to confirm delivery date, access and final practical details.",
+            "",
+            "You can sit back and relax.",
+            "We handle delivery, carry-in and assembly — and prepare a home that is ready and presentable for rental from day one.",
+            "",
+            "If you have any questions in the meantime, feel free to reply directly to this email.",
+            "",
+            "Best regards,",
+            "- LivingFlex"
+        ]
+    else:
+        body_lines = [
+            f"Kære {greeting_name},",
+            "",
+            "Tak for din bestilling hos LivingFlex i samarbejde med Alfa Mobility.",
+            "",
+            "Din møbelpakke er nu sat i gang, og vi er i gang med at planlægge levering og opsætning af din bolig.",
+            "",
+            "Overblik over din bestilling",
+            "",
+            "Installationsadresse",
+            address,
+            "",
+            "Ønsket installationsuge",
+            installation_week,
+            "",
+            "Setup & levering (engangsbetaling)",
+            f"{startup_total} DKK",
+            "(Inkl. levering, indbæring og montering)",
+            "",
+            "Månedlig leje",
+            f"{monthly_total} DKK",
+            "",
+            "Følgende elementer indgår i indretningen:",
+            "",
+            format_order_items(order),
+            "",
+            f"Dit ordrenummer er: {order_id}",
+            "",
+            "Næste skridt",
+            "",
+            "En fra LivingFlex-teamet kontakter dig snarest for at bekræfte leveringsdato, adgang og de sidste praktiske detaljer.",
+            "",
+            "Du kan trygt læne dig tilbage.",
+            "Vi sørger for levering, indbæring og montering – og en bolig, der står klar og præsentabel til udlejning fra dag ét.",
+            "",
+            "Har du spørgsmål i mellemtiden, er du altid velkommen til at svare direkte på denne mail.",
+            "",
+            "Vi glæder os til at gøre din bolig klar.",
+            "",
+            "Venlig hilsen",
+            "- LivingFlex"
+        ]
     body = "\n".join(body_lines)
     return subject, body
 
