@@ -416,16 +416,20 @@ def send_via_brevo_api(customer_email, subject, body):
         "textContent": body
     }
 
-    response = requests.post(
-        "https://api.brevo.com/v3/smtp/email",
-        json=payload,
-        headers={
-            "accept": "application/json",
-            "api-key": api_key,
-            "content-type": "application/json"
-        },
-        timeout=15
-    )
+    try:
+        response = requests.post(
+            "https://api.brevo.com/v3/smtp/email",
+            json=payload,
+            headers={
+                "accept": "application/json",
+                "api-key": api_key,
+                "content-type": "application/json"
+            },
+            timeout=15
+        )
+    except requests.RequestException as exc:
+        # Return a soft failure so caller can continue with SMTP fallback.
+        return False, str(exc)
 
     if response.status_code in (200, 201, 202):
         return True, None
