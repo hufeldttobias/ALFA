@@ -311,6 +311,43 @@ body {
     opacity: 0.9;
 }
 
+#oversigt.oversigt--alfam .overview-order-header,
+#oversigt.oversigt--alfam .overview-order-row {
+    grid-template-columns: 120px 1fr 1.5fr 100px 150px;
+}
+
+.overview-order-contact-header {
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #374151;
+    text-align: center;
+}
+
+.overview-order-contact-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.contact-request-btn--row {
+    width: 100%;
+    max-width: 140px;
+    padding: 0.45rem 0.55rem;
+    font-size: 0.8125rem;
+    line-height: 1.2;
+}
+
+.contact-request-btn--sent {
+    background-color: #16a34a;
+    color: #ffffff;
+    cursor: default;
+    opacity: 1;
+}
+
+.contact-request-btn--sent:hover {
+    opacity: 1;
+}
+
 .referrals-container {
     background-color: #ffffff;
     border: 1px solid #e5e7eb;

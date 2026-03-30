@@ -224,6 +224,42 @@ async function mergeReferralsWithServer(serverReferrals) {
     return [];
 }
 
+const ALFAM_CONTACT_SENT_KEY = 'alfamContactRequestSent';
+
+function getAlfamContactSentSet() {
+    try {
+        const raw = localStorage.getItem(ALFAM_CONTACT_SENT_KEY);
+        if (!raw) return new Set();
+        const arr = JSON.parse(raw);
+        return new Set(Array.isArray(arr) ? arr.map(Number) : []);
+    } catch (e) {
+        return new Set();
+    }
+}
+
+function markAlfamContactSent(orderId) {
+    const s = getAlfamContactSentSet();
+    s.add(Number(orderId));
+    localStorage.setItem(ALFAM_CONTACT_SENT_KEY, JSON.stringify([...s]));
+}
+
+async function sendContactRequestNotificationToServer(order) {
+    const candidates = getProductApiCandidates();
+    for (const baseUrl of candidates) {
+        try {
+            const response = await fetch(`${baseUrl}/send-contact-request-notification`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ order })
+            });
+            if (response.ok) return true;
+        } catch (error) {
+            console.warn('Failed to send contact request notification:', error);
+        }
+    }
+    return false;
+}
+
 function readProductsFromLocalStorage() {
     const stored = localStorage.getItem('products');
     if (!stored) return [];
@@ -638,13 +674,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (overviewMenuItem) overviewMenuItem.classList.add('active');
 
         if (pageTitle) pageTitle.textContent = pageTitles.oversigt;
-        const contactRequestBtn = document.getElementById('contactRequestBtn');
-        if (contactRequestBtn) {
-            contactRequestBtn.style.display = 'inline-flex';
-            contactRequestBtn.addEventListener('click', function() {
-                // Placeholder: functionality will be implemented later.
-            });
-        }
+        if (overviewPage) overviewPage.classList.add('oversigt--alfam');
         loadCompletedOrders();
     }
 
@@ -1594,6 +1624,65 @@ document.addEventListener('DOMContentLoaded', function() {
         updateOpgaverBadge();
     }
     
+    function ensureOverviewContactHeaders(isOverview) {
+        const containers = [
+            document.getElementById('activeOrdersContainer'),
+            document.getElementById('cancelledPendingOrdersContainer'),
+            document.getElementById('cancelledCollectedOrdersContainer')
+        ].filter(Boolean);
+        containers.forEach((container) => {
+            const h = container.querySelector('.overview-order-header');
+            if (!h) return;
+            const existing = h.querySelector('.overview-order-contact-header');
+            if (isOverview && !existing) {
+                const d = document.createElement('div');
+                d.className = 'overview-order-contact-header';
+                d.textContent = 'Kontakt';
+                h.appendChild(d);
+            } else if (!isOverview && existing) {
+                existing.remove();
+            }
+        });
+    }
+
+    async function findCompletedOrderById(orderId) {
+        const idNum = Number(orderId);
+        const serverCompleted = await fetchCompletedOrdersFromServer();
+        const merged = await mergeCompletedOrdersWithServer(serverCompleted);
+        return merged.find((o) => Number(o.id) === idNum) || null;
+    }
+
+    async function handleOverviewContactRequest(btn, orderId) {
+        if (!isOverviewOnly) return;
+        if (!btn || btn.disabled) return;
+        const order = await findCompletedOrderById(orderId);
+        if (!order) {
+            alert('Ordre ikke fundet.');
+            return;
+        }
+        const prevText = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = 'Sender…';
+        const ok = await sendContactRequestNotificationToServer(order);
+        if (!ok) {
+            btn.disabled = false;
+            btn.textContent = prevText;
+            alert('Kunne ikke sende mail. Prøv igen senere.');
+            return;
+        }
+        markAlfamContactSent(orderId);
+        btn.classList.add('contact-request-btn--sent');
+        btn.textContent = 'Sendt';
+    }
+
+    function contactRequestRowBtn(order) {
+        const sent = getAlfamContactSentSet().has(Number(order.id));
+        if (sent) {
+            return `<button type="button" class="contact-request-btn contact-request-btn--row contact-request-btn--sent" data-contact-order-id="${order.id}" disabled>Sendt</button>`;
+        }
+        return `<button type="button" class="contact-request-btn contact-request-btn--row" data-contact-order-id="${order.id}">Ønsker kontakt</button>`;
+    }
+
     // Load and display completed orders (now called "Aktive")
     async function loadCompletedOrders() {
         const activeContainer = document.getElementById('activeOrdersContainer');
@@ -1601,6 +1690,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const cancelledCollectedContainer = document.getElementById('cancelledCollectedOrdersContainer');
         
         if (!activeContainer || !cancelledPendingContainer || !cancelledCollectedContainer) return;
+
+        ensureOverviewContactHeaders(isOverviewOnly);
         
         const serverCompletedOrders = await fetchCompletedOrdersFromServer();
         let completedOrders = await mergeCompletedOrdersWithServer(serverCompletedOrders);
@@ -1619,6 +1710,8 @@ document.addEventListener('DOMContentLoaded', function() {
             isOverviewOnly
                 ? ''
                 : `<button type="button" class="overview-order-delete-btn" data-order-id="${id}" aria-label="Slet ordre permanent" title="Slet permanent">×</button>`;
+
+        const rowModClass = isOverviewOnly ? 'overview-order-row--alfam' : 'overview-order-row--deletable';
         
         // Display active orders
         // Keep the header row and only replace the content after it
@@ -1628,14 +1721,18 @@ document.addEventListener('DOMContentLoaded', function() {
             : activeOrders.map(order => {
                 // Calculate current monthly rent based on installation date
                 const monthlyRent = calculateCurrentMonthlyRent(order);
+                const contactCol = isOverviewOnly
+                    ? `<div class="overview-order-contact-cell">${contactRequestRowBtn(order)}</div>`
+                    : '';
                 
                 return `
-                    <div class="overview-order-row ${isOverviewOnly ? '' : 'overview-order-row--deletable'}" data-order-id="${order.id}" style="cursor: ${isOverviewOnly ? 'default' : 'pointer'};">
+                    <div class="overview-order-row ${rowModClass}" data-order-id="${order.id}" style="cursor: ${isOverviewOnly ? 'default' : 'pointer'};">
                         ${overviewDelBtn(order.id)}
                         <div class="overview-order-number">Ordre #${order.id}</div>
                         <div class="overview-order-name">${order.name}</div>
                         <div class="overview-order-address">${order.address}</div>
                         <div class="overview-order-rent">${monthlyRent.toFixed(2)} DKK</div>
+                        ${contactCol}
                     </div>
                 `;
             }).join('');
@@ -1669,14 +1766,18 @@ document.addEventListener('DOMContentLoaded', function() {
             : cancelledPendingOrders.map(order => {
                 // Calculate current monthly rent based on installation date
                 const monthlyRent = calculateCurrentMonthlyRent(order);
+                const contactCol = isOverviewOnly
+                    ? `<div class="overview-order-contact-cell">${contactRequestRowBtn(order)}</div>`
+                    : '';
                 
                 return `
-                    <div class="overview-order-row ${isOverviewOnly ? '' : 'overview-order-row--deletable'}" data-order-id="${order.id}" style="cursor: ${isOverviewOnly ? 'default' : 'pointer'};">
+                    <div class="overview-order-row ${rowModClass}" data-order-id="${order.id}" style="cursor: ${isOverviewOnly ? 'default' : 'pointer'};">
                         ${overviewDelBtn(order.id)}
                         <div class="overview-order-number">Ordre #${order.id}</div>
                         <div class="overview-order-name">${order.name}</div>
                         <div class="overview-order-address">${order.address}</div>
                         <div class="overview-order-rent">${monthlyRent.toFixed(2)} DKK</div>
+                        ${contactCol}
                     </div>
                 `;
             }).join('');
@@ -1710,14 +1811,18 @@ document.addEventListener('DOMContentLoaded', function() {
             : cancelledCollectedOrders.map(order => {
                 // Calculate current monthly rent based on installation date
                 const monthlyRent = calculateCurrentMonthlyRent(order);
+                const contactCol = isOverviewOnly
+                    ? `<div class="overview-order-contact-cell">${contactRequestRowBtn(order)}</div>`
+                    : '';
                 
                 return `
-                    <div class="overview-order-row ${isOverviewOnly ? '' : 'overview-order-row--deletable'}" data-order-id="${order.id}" style="cursor: ${isOverviewOnly ? 'default' : 'pointer'};">
+                    <div class="overview-order-row ${rowModClass}" data-order-id="${order.id}" style="cursor: ${isOverviewOnly ? 'default' : 'pointer'};">
                         ${overviewDelBtn(order.id)}
                         <div class="overview-order-number">Ordre #${order.id}</div>
                         <div class="overview-order-name">${order.name}</div>
                         <div class="overview-order-address">${order.address}</div>
                         <div class="overview-order-rent">${monthlyRent.toFixed(2)} DKK</div>
+                        ${contactCol}
                     </div>
                 `;
             }).join('');
@@ -1749,7 +1854,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const overviewGroupsEl = document.querySelector('.overview-groups');
     if (overviewGroupsEl) {
         overviewGroupsEl.addEventListener('click', function(e) {
-            if (isOverviewOnly) return;
+            if (isOverviewOnly) {
+                const contactBtn = e.target.closest('[data-contact-order-id].contact-request-btn--row');
+                if (contactBtn) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (contactBtn.disabled) return;
+                    const cid = contactBtn.getAttribute('data-contact-order-id');
+                    if (cid) handleOverviewContactRequest(contactBtn, cid);
+                    return;
+                }
+                return;
+            }
             const del = e.target.closest('.overview-order-delete-btn');
             if (!del) return;
             e.stopPropagation();

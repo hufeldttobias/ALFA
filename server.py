@@ -515,6 +515,120 @@ def send_via_brevo_api(customer_email, subject, body):
 
     return False, response.text
 
+
+def send_via_brevo_api_to_recipient(to_email, subject, body):
+    """Send plain text email to a single recipient (no BCC)."""
+    api_key = get_brevo_api_key()
+    if not api_key:
+        return False, 'Missing BREVO_API_KEY'
+
+    payload = {
+        "sender": {
+            "email": os.environ.get('SMTP_FROM', 'order@livingflex.dk').strip(),
+            "name": "LivingFlex"
+        },
+        "to": [{"email": to_email}],
+        "subject": subject,
+        "textContent": body
+    }
+
+    try:
+        response = requests.post(
+            "https://api.brevo.com/v3/smtp/email",
+            json=payload,
+            headers={
+                "accept": "application/json",
+                "api-key": api_key,
+                "content-type": "application/json"
+            },
+            timeout=15
+        )
+    except requests.RequestException as exc:
+        return False, str(exc)
+
+    if response.status_code in (200, 201, 202):
+        return True, None
+
+    return False, response.text
+
+
+def build_contact_request_notification_body(order):
+    """Plain-text body for AlfaM 'Kunde ønsker kontakt' notification to rr@livingflex.dk."""
+    lines = [
+        "Kunde ønsker kontakt",
+        "",
+        f"Ordrenummer: {order.get('id', '')}",
+        f"Navn: {order.get('name', '') or 'Ikke angivet'}",
+        f"E-mail: {order.get('email', '') or 'Ikke angivet'}",
+        f"Telefon: {order.get('phoneNumber', '') or 'Ikke angivet'}",
+    ]
+    address = (order.get('address') or '').strip()
+    postal = (order.get('postalCode') or '').strip()
+    city = (order.get('city') or '').strip()
+    if postal or city:
+        address = ", ".join([p for p in [address, postal, city] if p])
+    lines.append(f"Adresse: {address or 'Ikke angivet'}")
+    lines.append(f"Ordrestatus: {order.get('status', '') or '—'}")
+    lines.append(f"Oprettet: {order.get('createdAt', '') or '—'}")
+    lines.append(f"Installationsuge: {order.get('installationWeek', '') or '—'}")
+    lines.append(f"Installationsdato: {order.get('installationDate', '') or '—'}")
+    lines.append("")
+    lines.append("Produkter:")
+    lines.append(format_order_items(order))
+    lines.append("")
+    lines.append("Levering:")
+    lines.append(format_delivery_option(order))
+    return "\n".join(lines)
+
+
+@app.route('/send-contact-request-notification', methods=['POST'])
+def send_contact_request_notification():
+    """AlfaM: notify rr@livingflex.dk that contact is requested for a completed order."""
+    try:
+        data = request.json or {}
+        order = data.get('order')
+        if not isinstance(order, dict):
+            return jsonify({'error': 'Invalid payload: order object required'}), 400
+
+        subject = "Kunde ønsker kontakt"
+        body = build_contact_request_notification_body(order)
+        target = 'rr@livingflex.dk'
+
+        brevo_success, brevo_error = send_via_brevo_api_to_recipient(target, subject, body)
+        if brevo_success:
+            return jsonify({'success': True, 'provider': 'brevo'}), 200
+
+        smtp_config = get_smtp_config()
+        if smtp_config['missing']:
+            return jsonify({
+                'error': 'Missing SMTP configuration',
+                'missing': smtp_config['missing'],
+                'detail': brevo_error or 'Brevo API failed'
+            }), 500
+
+        message = EmailMessage()
+        message['Subject'] = subject
+        message['From'] = smtp_config['smtp_from']
+        message['To'] = target
+        message.set_content(body)
+
+        if smtp_config['smtp_use_ssl']:
+            server = smtplib.SMTP_SSL(smtp_config['smtp_host'], smtp_config['smtp_port'])
+        else:
+            server = smtplib.SMTP(smtp_config['smtp_host'], smtp_config['smtp_port'])
+
+        with server:
+            if smtp_config['smtp_use_tls'] and not smtp_config['smtp_use_ssl']:
+                server.starttls()
+            server.login(smtp_config['smtp_user'], smtp_config['smtp_password'])
+            server.send_message(message)
+
+        return jsonify({'success': True, 'provider': 'smtp'}), 200
+    except Exception as e:
+        print(f'Error sending contact request notification: {e}')
+        return jsonify({'error': 'Server error during email send', 'detail': str(e)}), 500
+
+
 @app.route('/send-order-confirmation', methods=['POST'])
 def send_order_confirmation():
     try:
