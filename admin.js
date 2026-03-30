@@ -1850,6 +1850,16 @@ document.addEventListener('DOMContentLoaded', function() {
         'Juli', 'August', 'September', 'Oktober', 'November', 'December'
     ];
 
+    /** Visuelt: antal × 2.000 kr. (AlfaM-dashboard, ingen ekstra logik). */
+    function alfamDashReferralMultiplierAmount(count) {
+        const n = Math.max(0, Number(count) || 0) * 2000;
+        return new Intl.NumberFormat('da-DK', {
+            style: 'currency',
+            currency: 'DKK',
+            maximumFractionDigits: 0
+        }).format(n);
+    }
+
     function parseOrderInstallationDateForDashboard(order) {
         if (!order || !order.installationDate) return null;
         const raw = String(order.installationDate).trim();
@@ -1971,7 +1981,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <details class="alfam-dash-month">
   <summary class="alfam-dash-month-summary">
     <span class="alfam-dash-month-name">${monthName} ${year}</span>
-    <span class="alfam-dash-month-counts">Aktive: ${ia} · Kommende: ${uc} · Tabte referrals: ${lr}</span>
+    <span class="alfam-dash-month-counts">Aktive: ${ia} · ${alfamDashReferralMultiplierAmount(ia)} · Kommende: ${uc} · ${alfamDashReferralMultiplierAmount(uc)} · Tabte referrals: ${lr}</span>
   </summary>
   <div class="alfam-dash-month-body">
     <details class="alfam-dash-section">
