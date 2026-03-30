@@ -95,6 +95,42 @@ async function saveCompletedOrdersToServer(orders) {
     return false;
 }
 
+async function fetchReferralsFromServer() {
+    const candidates = getProductApiCandidates();
+    for (const baseUrl of candidates) {
+        try {
+            const response = await fetch(`${baseUrl}/referrals`, { cache: 'no-store' });
+            if (!response.ok) continue;
+            const data = await response.json().catch(() => ({}));
+            if (data && Array.isArray(data.referrals)) {
+                return data.referrals;
+            }
+        } catch (error) {
+            console.warn('Failed to fetch referrals from server:', error);
+        }
+    }
+    return null;
+}
+
+async function saveReferralsToServer(referrals) {
+    const candidates = getProductApiCandidates();
+    for (const baseUrl of candidates) {
+        try {
+            const response = await fetch(`${baseUrl}/referrals`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ referrals })
+            });
+            if (response.ok) {
+                return true;
+            }
+        } catch (error) {
+            console.warn('Failed to save referrals to server:', error);
+        }
+    }
+    return false;
+}
+
 function readProductsFromLocalStorage() {
     const stored = localStorage.getItem('products');
     if (!stored) return [];
@@ -533,6 +569,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function saveReferrals(referrals) {
         localStorage.setItem(REFERRALS_STORAGE_KEY, JSON.stringify(referrals));
+        saveReferralsToServer(referrals);
     }
 
     function formatMoveInDate(dateString) {
@@ -542,11 +579,22 @@ document.addEventListener('DOMContentLoaded', function() {
         return d.toLocaleDateString('da-DK');
     }
 
-    function loadReferrals() {
+    async function loadReferrals() {
         const container = document.getElementById('referralsContainer');
         if (!container) return;
 
-        const referrals = getReferrals();
+        let referrals = [];
+        const serverReferrals = await fetchReferralsFromServer();
+        if (serverReferrals !== null) {
+            referrals = serverReferrals;
+            try {
+                localStorage.setItem(REFERRALS_STORAGE_KEY, JSON.stringify(referrals));
+            } catch (e) {
+                console.warn('Failed to cache referrals locally:', e);
+            }
+        } else {
+            referrals = getReferrals();
+        }
         referrals.sort((a, b) => {
             const aTime = a.moveInDate ? new Date(a.moveInDate + 'T00:00:00').getTime() : Number.MAX_SAFE_INTEGER;
             const bTime = b.moveInDate ? new Date(b.moveInDate + 'T00:00:00').getTime() : Number.MAX_SAFE_INTEGER;
@@ -607,7 +655,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     if (referralForm) {
-        referralForm.addEventListener('submit', function(e) {
+        referralForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             const customerName = document.getElementById('referralCustomerName').value.trim();
             const contact = document.getElementById('referralContact').value.trim();
@@ -628,7 +676,7 @@ document.addEventListener('DOMContentLoaded', function() {
             referrals.push(referral);
             saveReferrals(referrals);
             closeReferralModalFunc();
-            loadReferrals();
+            await loadReferrals();
         });
     }
     

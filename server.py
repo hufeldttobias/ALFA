@@ -30,11 +30,21 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 PRODUCTS_FILE = os.path.join(os.path.dirname(__file__), 'products.json')
 ORDERS_FILE = os.path.join(os.path.dirname(__file__), 'orders.json')
 COMPLETED_ORDERS_FILE = os.path.join(os.path.dirname(__file__), 'completed_orders.json')
+REFERRALS_FILE = os.path.join(os.path.dirname(__file__), 'referrals.json')
 ORDERS_TABLE = 'orders'
 COMPLETED_ORDERS_TABLE = 'completed_orders'
+REFERRALS_TABLE = 'referrals'
 
 def get_db_url():
-    return os.environ.get('DATABASE_URL', '').strip()
+    """Prefer DATABASE_URL (Railway injects this). Fallback to DATABASE_PUBLIC_URL for local dev."""
+    url = (os.environ.get('DATABASE_URL', '').strip()
+           or os.environ.get('DATABASE_PUBLIC_URL', '').strip())
+    if url.startswith('postgres://'):
+        url = 'postgresql://' + url[len('postgres://'):]
+    # Railway public proxy (hopper.proxy.rlwy.net) requires SSL for psycopg2
+    if url and 'sslmode' not in url and 'proxy.rlwy.net' in url:
+        url += '&sslmode=require' if '?' in url else '?sslmode=require'
+    return url
 
 def ensure_orders_table(cursor, table_name):
     cursor.execute(
@@ -217,6 +227,23 @@ def save_completed_orders():
         return jsonify({'success': True, 'count': len(orders)}), 200
     except Exception as e:
         return jsonify({'error': 'Server error during completed orders save', 'detail': str(e)}), 500
+
+@app.route('/referrals', methods=['GET'])
+def get_referrals():
+    referrals = read_orders(REFERRALS_FILE, REFERRALS_TABLE)
+    return jsonify({'referrals': referrals}), 200
+
+@app.route('/referrals', methods=['POST'])
+def save_referrals():
+    data = request.json or {}
+    referrals = data.get('referrals')
+    if not isinstance(referrals, list):
+        return jsonify({'error': 'Invalid referrals payload'}), 400
+    try:
+        write_orders(REFERRALS_FILE, REFERRALS_TABLE, referrals)
+        return jsonify({'success': True, 'count': len(referrals)}), 200
+    except Exception as e:
+        return jsonify({'error': 'Server error during referrals save', 'detail': str(e)}), 500
 
 @app.route('/delete', methods=['POST'])
 def delete_file():
