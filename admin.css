@@ -1045,6 +1045,8 @@ body {
     position: absolute;
     top: 0;
     left: 0;
+    /* Let clicks reach the product card / nav buttons; avoids flaky hit-testing on stacked imgs */
+    pointer-events: none;
 }
 
 .image-nav-btn {
@@ -1061,7 +1063,8 @@ body {
     justify-content: center;
     cursor: pointer;
     transition: all 0.2s ease;
-    z-index: 10;
+    z-index: 20;
+    pointer-events: auto;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 

@@ -369,10 +369,10 @@ function displayProducts() {
             html += `
                 <div class="product-card" data-product-id="${product.id}" style="cursor: pointer; border: ${borderStyle};">
                     <div class="product-image-container">
-                        <div class="product-image" data-product-id="${product.id}">
-                            <img src="${mainImageSrc}" alt="${product.name}" class="product-main-image" data-orientation="main" style="display: ${mainImageDisplay};">
-                            ${rightImageSrc ? `<img src="${rightImageSrc}" alt="${product.name} - Højreorienteret" class="product-orientation-image" data-orientation="right" style="display: ${initialDisplay === 'right' ? 'block' : 'none'};">` : ''}
-                            ${leftImageSrc ? `<img src="${leftImageSrc}" alt="${product.name} - Venstreorienteret" class="product-orientation-image" data-orientation="left" style="display: ${initialDisplay === 'left' ? 'block' : 'none'};">` : ''}
+                        <div class="product-image" data-product-id="${product.id}" data-current-orientation="${initialDisplay}">
+                            <img src="${mainImageSrc}" alt="${product.name}" class="product-main-image" data-orientation="main" loading="lazy" decoding="async" style="display: ${mainImageDisplay};">
+                            ${rightImageSrc ? `<img src="${rightImageSrc}" alt="${product.name} - Højreorienteret" class="product-orientation-image" data-orientation="right" loading="lazy" decoding="async" style="display: ${initialDisplay === 'right' ? 'block' : 'none'};">` : ''}
+                            ${leftImageSrc ? `<img src="${leftImageSrc}" alt="${product.name} - Venstreorienteret" class="product-orientation-image" data-orientation="left" loading="lazy" decoding="async" style="display: ${initialDisplay === 'left' ? 'block' : 'none'};">` : ''}
                         </div>
                         ${hasOrientation ? `
                             <button class="image-nav-btn image-nav-left" data-product-id="${product.id}" data-direction="left" aria-label="Venstreorienteret">
@@ -425,16 +425,12 @@ function displayProducts() {
             if (e.target.closest('.image-nav-btn')) {
                 return;
             }
-            const productId = parseInt(this.getAttribute('data-product-id'));
+            const productId = parseInt(this.getAttribute('data-product-id'), 10);
             
-            // Get current visible orientation
             const productImageContainer = this.querySelector('.product-image');
             let currentOrientation = 'main';
             if (productImageContainer) {
-                const visibleImage = productImageContainer.querySelector('img[style*="block"], img:not([style*="none"])');
-                if (visibleImage) {
-                    currentOrientation = visibleImage.getAttribute('data-orientation') || 'main';
-                }
+                currentOrientation = productImageContainer.getAttribute('data-current-orientation') || 'main';
             }
             
             if (editProduct) {
@@ -484,20 +480,23 @@ function displayProducts() {
     });
 }
 
-// Navigate between product images
+// Navigate between product images (scoped to #productsContainer so order-modal images never conflict)
 function navigateProductImage(productId, direction) {
-    const productImageContainer = document.querySelector(`.product-image[data-product-id="${productId}"]`);
+    const productImageContainer = document.querySelector(
+        `#productsContainer .product-image[data-product-id="${productId}"]`
+    );
     if (!productImageContainer) return;
     
     const images = productImageContainer.querySelectorAll('img');
-    let currentOrientation = 'main';
+    let currentOrientation = productImageContainer.getAttribute('data-current-orientation') || 'main';
     
-    // Find current visible image
-    images.forEach(img => {
+    for (let i = 0; i < images.length; i++) {
+        const img = images[i];
         if (img.style.display !== 'none') {
-            currentOrientation = img.getAttribute('data-orientation');
+            currentOrientation = img.getAttribute('data-orientation') || 'main';
+            break;
         }
-    });
+    }
     
     // Determine next orientation
     let nextOrientation = currentOrientation;
@@ -523,31 +522,33 @@ function navigateProductImage(productId, direction) {
             img.style.display = 'none';
         }
     });
+    productImageContainer.setAttribute('data-current-orientation', nextOrientation);
     
     // Update button visibility
-    const product = products.find(p => p.id === productId);
+    const product = products.find(p => Number(p.id) === Number(productId));
     if (product) {
-        const leftBtn = document.querySelector(`.image-nav-left[data-product-id="${productId}"]`);
-        const rightBtn = document.querySelector(`.image-nav-right[data-product-id="${productId}"]`);
+        const leftBtn = document.querySelector(`#productsContainer .image-nav-left[data-product-id="${productId}"]`);
+        const rightBtn = document.querySelector(`#productsContainer .image-nav-right[data-product-id="${productId}"]`);
         const hasLeft = product.leftOrientedImage;
         const hasRight = product.rightOrientedImage;
         
-        // Show left button if not on left image (or if left doesn't exist and we're on main)
-        if (nextOrientation === 'left') {
-            leftBtn.style.display = 'none';
-        } else if (nextOrientation === 'main' && !hasLeft) {
-            leftBtn.style.display = 'none';
-        } else {
-            leftBtn.style.display = 'flex';
+        if (leftBtn) {
+            if (nextOrientation === 'left') {
+                leftBtn.style.display = 'none';
+            } else if (nextOrientation === 'main' && !hasLeft) {
+                leftBtn.style.display = 'none';
+            } else {
+                leftBtn.style.display = 'flex';
+            }
         }
-        
-        // Show right button if not on right image (or if right doesn't exist and we're on main)
-        if (nextOrientation === 'right') {
-            rightBtn.style.display = 'none';
-        } else if (nextOrientation === 'main' && !hasRight) {
-            rightBtn.style.display = 'none';
-        } else {
-            rightBtn.style.display = 'flex';
+        if (rightBtn) {
+            if (nextOrientation === 'right') {
+                rightBtn.style.display = 'none';
+            } else if (nextOrientation === 'main' && !hasRight) {
+                rightBtn.style.display = 'none';
+            } else {
+                rightBtn.style.display = 'flex';
+            }
         }
     }
 }
@@ -874,23 +875,29 @@ document.addEventListener('DOMContentLoaded', function() {
         loadOrders();
     }
     
-    // Listen for visibility change to reload orders when admin page becomes visible
-    document.addEventListener('visibilitychange', function() {
-        if (!document.hidden) {
-            // Check if we're on the opgaver page
+    let opgaverRefreshDebounceTimer = null;
+    function debouncedRefreshOpgaverPage() {
+        if (opgaverRefreshDebounceTimer) {
+            clearTimeout(opgaverRefreshDebounceTimer);
+        }
+        opgaverRefreshDebounceTimer = setTimeout(function() {
             const currentOpgaverPage = document.getElementById('opgaver');
             if (currentOpgaverPage && currentOpgaverPage.classList.contains('active')) {
                 loadOrders();
             }
+        }, 500);
+    }
+
+    // Listen for visibility change to reload orders when admin page becomes visible
+    document.addEventListener('visibilitychange', function() {
+        if (!document.hidden) {
+            debouncedRefreshOpgaverPage();
         }
     });
     
     // Also listen for focus event to reload orders when window regains focus
     window.addEventListener('focus', function() {
-        const currentOpgaverPage = document.getElementById('opgaver');
-        if (currentOpgaverPage && currentOpgaverPage.classList.contains('active')) {
-            loadOrders();
-        }
+        debouncedRefreshOpgaverPage();
     });
     
     // Listen for storage changes (when orders are saved from other tabs/pages)
@@ -918,13 +925,8 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     
     window.addEventListener('localStorageUpdated', function() {
-        console.log('LocalStorage updated - reloading orders');
-        const currentOpgaverPage = document.getElementById('opgaver');
-        if (currentOpgaverPage && currentOpgaverPage.classList.contains('active')) {
-            loadOrders();
-        }
-        // Also update badge
         updateOpgaverBadge();
+        debouncedRefreshOpgaverPage();
     });
 
     // Load referrals if page is active on load
@@ -979,7 +981,10 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        const serverOrders = await fetchOrdersFromServer();
+        const [serverOrders, serverCompletedForMerge] = await Promise.all([
+            fetchOrdersFromServer(),
+            fetchCompletedOrdersFromServer()
+        ]);
         let orders = await mergeOrdersWithServer(serverOrders);
         if (orders.length) {
             console.log('Orders after merge (server/local):', orders.length);
@@ -1140,9 +1145,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
-        // Load and display cancelled pending orders from completedOrders
-        const serverCompletedForPending = await fetchCompletedOrdersFromServer();
-        const mergedCompletedForPending = await mergeCompletedOrdersWithServer(serverCompletedForPending);
+        // Load and display cancelled pending orders from completedOrders (reuse parallel fetch result)
+        const mergedCompletedForPending = await mergeCompletedOrdersWithServer(serverCompletedForMerge);
         const cancelledPendingOrders = mergedCompletedForPending.filter(order => order.status === 'cancelled_pending');
         
         // Display cancelled pending orders section
@@ -1211,20 +1215,17 @@ document.addEventListener('DOMContentLoaded', function() {
         updateOpgaverBadge();
     }
     
-    // Calculate and update badge count for Opgaver menu item
-    async function updateOpgaverBadge() {
+    // Badge from localStorage only — instant; avoids duplicate network storms with loadOrders / merge
+    function updateOpgaverBadge() {
         const badge = document.getElementById('opgaverBadge');
         if (!badge) return;
         
         let count = 0;
         
-        // Count cancelled pending orders
-        const mergedCompleted = await mergeCompletedOrdersWithServer(await fetchCompletedOrdersFromServer());
-        const cancelledPendingOrders = mergedCompleted.filter(order => order.status === 'cancelled_pending');
-        count += cancelledPendingOrders.length;
+        const completed = getCompletedOrdersFromLocalStorageSafe();
+        count += completed.filter(order => order.status === 'cancelled_pending').length;
         
-        // Count orders that need to be completed within 2 weeks
-        const orders = await mergeOrdersWithServer(await fetchOrdersFromServer());
+        const orders = getOrdersFromLocalStorageSafe();
         if (orders.length > 0) {
             const today = new Date();
             today.setHours(0, 0, 0, 0);
@@ -1420,7 +1421,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 return `
                     <div class="order-product-item">
                         <div class="order-product-image-container">
-                            <img src="${imageToShow}" alt="${product.name}">
+                            <img src="${imageToShow}" alt="${product.name}" loading="lazy" decoding="async">
                         </div>
                         <div class="order-product-info">
                             <h3>${product.name}${orientationText}${quantityText}</h3>
