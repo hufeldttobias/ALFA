@@ -647,6 +647,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Page titles mapping
     const pageTitles = {
+        dashboard: 'Dashboard',
         'produkter': 'Produkter',
         'oversigt': 'Oversigt',
         'opgaver': 'Opgaver',
@@ -692,18 +693,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 loadCompletedOrders();
             }
 
+            if (targetPage === 'dashboard') {
+                loadAlfamDashboard();
+            }
+
             if (targetPage === 'referrals') {
                 loadReferrals();
             }
         });
     });
 
-    // Limited access: "Oversigt" + "Referrals" + read-only "Opgaver" (hide Produkter)
+    // Limited access: "Dashboard" + "Oversigt" + "Referrals" + read-only "Opgaver" (hide Produkter)
     if (isOverviewOnly) {
         const productsMenuItem = document.querySelector('.menu-item[data-page="produkter"]');
         if (productsMenuItem) productsMenuItem.style.display = 'none';
 
+        const dashboardMenuItem = document.querySelector('.menu-item[data-page="dashboard"]');
+        if (dashboardMenuItem) dashboardMenuItem.style.display = '';
+
         const productsPage = document.getElementById('produkter');
+        const dashboardPage = document.getElementById('dashboard');
         const tasksPage = document.getElementById('opgaver');
         if (tasksPage) tasksPage.classList.add('opgaver-readonly');
         const referralsPage = document.getElementById('referrals');
@@ -711,15 +720,31 @@ document.addEventListener('DOMContentLoaded', function() {
         if (productsPage) productsPage.classList.remove('active');
         if (tasksPage) tasksPage.classList.remove('active');
         if (referralsPage) referralsPage.classList.remove('active');
-        if (overviewPage) overviewPage.classList.add('active');
+        if (overviewPage) overviewPage.classList.remove('active');
+        if (dashboardPage) dashboardPage.classList.add('active');
 
         menuItems.forEach(i => i.classList.remove('active'));
-        const overviewMenuItem = document.querySelector('.menu-item[data-page="oversigt"]');
-        if (overviewMenuItem) overviewMenuItem.classList.add('active');
+        if (dashboardMenuItem) dashboardMenuItem.classList.add('active');
 
-        if (pageTitle) pageTitle.textContent = pageTitles.oversigt;
+        if (pageTitle) pageTitle.textContent = pageTitles.dashboard;
         if (overviewPage) overviewPage.classList.add('oversigt--alfam');
-        loadCompletedOrders();
+
+        const yearSel = document.getElementById('alfamDashboardYear');
+        if (yearSel && !yearSel.dataset.alfamBound) {
+            yearSel.dataset.alfamBound = '1';
+            const yNow = new Date().getFullYear();
+            yearSel.innerHTML = '';
+            for (let yy = yNow - 3; yy <= yNow + 2; yy++) {
+                const opt = document.createElement('option');
+                opt.value = String(yy);
+                opt.textContent = String(yy);
+                yearSel.appendChild(opt);
+            }
+            yearSel.value = String(yNow);
+            yearSel.addEventListener('change', () => loadAlfamDashboard());
+        }
+
+        loadAlfamDashboard();
     }
 
     // Referrals
@@ -1732,6 +1757,207 @@ document.addEventListener('DOMContentLoaded', function() {
             return `<button type="button" class="contact-request-btn contact-request-btn--row contact-request-btn--sent" data-contact-order-id="${order.id}" disabled>Sendt</button>`;
         }
         return `<button type="button" class="contact-request-btn contact-request-btn--row" data-contact-order-id="${order.id}">Ønsker kontakt</button>`;
+    }
+
+    const ALFAM_MONTH_NAMES_DA = [
+        'Januar', 'Februar', 'Marts', 'April', 'Maj', 'Juni',
+        'Juli', 'August', 'September', 'Oktober', 'November', 'December'
+    ];
+
+    function parseOrderInstallationDateForDashboard(order) {
+        if (!order || !order.installationDate) return null;
+        const raw = String(order.installationDate).trim();
+        if (!raw) return null;
+        const d = raw.includes('T') ? new Date(raw) : new Date(`${raw}T12:00:00`);
+        return Number.isNaN(d.getTime()) ? null : d;
+    }
+
+    function alfamDateInMonth(d, year, monthIndex) {
+        return !!(d && d.getFullYear() === year && d.getMonth() === monthIndex);
+    }
+
+    function parseReferralLostOrHandledDate(ref) {
+        const raw = ref.handledAt || ref.createdAt;
+        if (!raw) return null;
+        const d = new Date(raw);
+        return Number.isNaN(d.getTime()) ? null : d;
+    }
+
+    function alfamIsValidPipelineCustomerOrder(order) {
+        const hasName = order.name && order.name.trim() !== '';
+        const hasAddress = order.address && order.address.trim() !== '';
+        const hasEmail = order.email && order.email.trim() !== '';
+        const hasPhoneNumber = order.phoneNumber && order.phoneNumber.trim() !== '';
+        if (!hasName || !hasAddress || !hasEmail || !hasPhoneNumber) return false;
+        const testNames = ['test', 'example', 'eksempel', 'demo', 'sample'];
+        const nameLower = (order.name || '').toLowerCase();
+        if (testNames.some((test) => nameLower.includes(test))) return false;
+        return true;
+    }
+
+    function alfamFormatOrderAddress(order) {
+        const parts = [order.address, order.postalCode, order.city].filter((p) => p && String(p).trim());
+        return parts.length ? parts.join(', ') : (order.address || '');
+    }
+
+    function alfamProductThumbsHtml(order) {
+        const products = order.products || [];
+        const parts = [];
+        for (let i = 0; i < Math.min(products.length, 8); i++) {
+            const p = products[i];
+            const src = p.imageUrl || p.leftOrientedImage || p.rightOrientedImage || '';
+            if (!src) continue;
+            const safe = String(src).replace(/"/g, '&quot;').replace(/</g, '');
+            parts.push(`<img class="alfam-dash-thumb" src="${safe}" alt="" loading="lazy" width="72" height="72">`);
+        }
+        if (parts.length === 0) {
+            return '<span class="alfam-dash-no-img">Ingen produktbilleder</span>';
+        }
+        return `<div class="alfam-dash-thumbs">${parts.join('')}</div>`;
+    }
+
+    function alfamRenderInstalledCard(o) {
+        const addr = escapeReferralHtml(alfamFormatOrderAddress(o));
+        const when = parseOrderInstallationDateForDashboard(o);
+        const whenStr = when ? when.toLocaleDateString('da-DK') : (o.installationWeek || '—');
+        return `
+    <article class="alfam-dash-card alfam-dash-card--installed">
+      <div class="alfam-dash-card-main">
+        <h4 class="alfam-dash-card-title">${escapeReferralHtml(o.name)} <span class="alfam-dash-muted">#${escapeReferralHtml(String(o.id))}</span></h4>
+        <p class="alfam-dash-card-addr">${addr}</p>
+        <p class="alfam-dash-card-meta">Installation: ${escapeReferralHtml(whenStr)}</p>
+      </div>
+      ${alfamProductThumbsHtml(o)}
+    </article>`;
+    }
+
+    function alfamRenderUpcomingRow(o, badge) {
+        const addr = escapeReferralHtml(alfamFormatOrderAddress(o));
+        const when = parseOrderInstallationDateForDashboard(o);
+        const whenStr = when ? when.toLocaleDateString('da-DK') : (o.installationWeek || '—');
+        const badgeHtml = badge
+            ? `<span class="alfam-dash-badge">${escapeReferralHtml(badge)}</span>`
+            : '';
+        return `
+    <div class="alfam-dash-row">
+      <div>
+        <strong>${escapeReferralHtml(o.name)}</strong> ${badgeHtml}
+        <div class="alfam-dash-row-addr">${addr}</div>
+        <div class="alfam-dash-muted">Ordre #${escapeReferralHtml(String(o.id))} · ${escapeReferralHtml(whenStr)}</div>
+      </div>
+    </div>`;
+    }
+
+    function alfamRenderLostReferralRow(r) {
+        return `
+    <div class="alfam-dash-row alfam-dash-row--lost">
+      <div>
+        <strong>${escapeReferralHtml(r.customerName)}</strong>
+        <div class="alfam-dash-row-addr">${escapeReferralHtml(r.addressArea || '—')}</div>
+        <div class="alfam-dash-muted">${escapeReferralHtml(r.contact || '')} · Move-in: ${escapeReferralHtml(formatMoveInDate(r.moveInDate))}</div>
+      </div>
+    </div>`;
+    }
+
+    function alfamRenderMonthBlock(year, monthIndex, installed, upcomingMain, upcomingCp, lostRefs) {
+        const monthName = ALFAM_MONTH_NAMES_DA[monthIndex];
+        const ia = installed.length;
+        const uc = upcomingMain.length + upcomingCp.length;
+        const lr = lostRefs.length;
+
+        const installedCards = installed.length
+            ? installed.map((o) => alfamRenderInstalledCard(o)).join('')
+            : '<p class="alfam-dash-empty">Ingen i denne måned.</p>';
+
+        let upcomingHtml = '';
+        upcomingMain.forEach((o) => {
+            upcomingHtml += alfamRenderUpcomingRow(o, '');
+        });
+        upcomingCp.forEach((o) => {
+            upcomingHtml += alfamRenderUpcomingRow(o, 'Annulleret, afventer afhentning');
+        });
+        const upcomingBlock =
+            upcomingMain.length + upcomingCp.length
+                ? upcomingHtml
+                : '<p class="alfam-dash-empty">Ingen opgaver med installationsdato i denne måned.</p>';
+
+        const lostBlock = lostRefs.length
+            ? lostRefs.map((r) => alfamRenderLostReferralRow(r)).join('')
+            : '<p class="alfam-dash-empty">Ingen tabte referrals i denne måned.</p>';
+
+        return `
+<details class="alfam-dash-month">
+  <summary class="alfam-dash-month-summary">
+    <span class="alfam-dash-month-name">${monthName} ${year}</span>
+    <span class="alfam-dash-month-counts">Aktive: ${ia} · Kommende: ${uc} · Tabte referrals: ${lr}</span>
+  </summary>
+  <div class="alfam-dash-month-body">
+    <details class="alfam-dash-section">
+      <summary class="alfam-dash-section-summary">Gik aktive (installeret)</summary>
+      <div class="alfam-dash-section-body">${installedCards}</div>
+    </details>
+    <details class="alfam-dash-section">
+      <summary class="alfam-dash-section-summary">Skal installeres (Opgaver)</summary>
+      <div class="alfam-dash-section-body">${upcomingBlock}</div>
+    </details>
+    <details class="alfam-dash-section">
+      <summary class="alfam-dash-section-summary">Referrals – ikke succes</summary>
+      <div class="alfam-dash-section-body">${lostBlock}</div>
+    </details>
+  </div>
+</details>`;
+    }
+
+    async function loadAlfamDashboard() {
+        if (!isOverviewOnly) return;
+        const acc = document.getElementById('alfamDashboardAccordion');
+        if (!acc) return;
+        const yearSel = document.getElementById('alfamDashboardYear');
+        const year = yearSel ? parseInt(yearSel.value, 10) : new Date().getFullYear();
+        if (!Number.isFinite(year)) return;
+
+        acc.innerHTML = '<p class="alfam-dash-loading">Henter data…</p>';
+
+        try {
+            const [serverCO, serverOrd, serverRef] = await Promise.all([
+                fetchCompletedOrdersFromServer(),
+                fetchOrdersFromServer(),
+                fetchReferralsFromServer()
+            ]);
+            const completed = await mergeCompletedOrdersWithServer(serverCO);
+            let orders = await mergeOrdersWithServer(serverOrd);
+            const referrals = await mergeReferralsWithServer(serverRef);
+
+            orders = orders.filter(alfamIsValidPipelineCustomerOrder);
+
+            const activeCompleted = completed.filter((o) => !o.status || o.status === 'active');
+            const cancelledPending = completed.filter((o) => o.status === 'cancelled_pending');
+
+            let html = '';
+            for (let m = 0; m < 12; m++) {
+                const installed = activeCompleted.filter((o) =>
+                    alfamDateInMonth(parseOrderInstallationDateForDashboard(o), year, m)
+                );
+                const upcomingMain = orders.filter((o) =>
+                    alfamDateInMonth(parseOrderInstallationDateForDashboard(o), year, m)
+                );
+                const upcomingCp = cancelledPending.filter((o) =>
+                    alfamDateInMonth(parseOrderInstallationDateForDashboard(o), year, m)
+                );
+                const lostRefs = referrals.filter(
+                    (r) =>
+                        r.handledStatus === 'not_success' &&
+                        alfamDateInMonth(parseReferralLostOrHandledDate(r), year, m)
+                );
+
+                html += alfamRenderMonthBlock(year, m, installed, upcomingMain, upcomingCp, lostRefs);
+            }
+            acc.innerHTML = html;
+        } catch (err) {
+            console.error('loadAlfamDashboard:', err);
+            acc.innerHTML =
+                '<p class="alfam-dash-empty">Kunne ikke hente dashboard. Prøv at genindlæse siden.</p>';
+        }
     }
 
     // Load and display completed orders (now called "Aktive")

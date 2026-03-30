@@ -15,6 +15,9 @@
                 <h2>Adminpanel</h2>
             </div>
             <nav class="sidebar-menu">
+                <a href="#" class="menu-item alfam-only-menu" data-page="dashboard" style="display: none;">
+                    <span>Dashboard</span>
+                </a>
                 <a href="#" class="menu-item active" data-page="produkter">
                     <span>Produkter</span>
                 </a>
@@ -38,6 +41,17 @@
             </header>
             
             <div class="admin-content">
+                <div id="dashboard" class="page-content">
+                    <div class="page-header alfam-dash-page-header">
+                        <h2>Dashboard</h2>
+                        <div class="alfam-dash-year-wrap">
+                            <label for="alfamDashboardYear" class="alfam-dash-year-label">År</label>
+                            <select id="alfamDashboardYear" class="alfam-dash-year-select" aria-label="Vælg år"></select>
+                        </div>
+                    </div>
+                    <p class="alfam-dash-intro">Åbn en måned for at se aktive installationer (med produktbilleder), kommende opgaver og referrals markeret som ikke succes.</p>
+                    <div id="alfamDashboardAccordion" class="alfam-dash-accordion" aria-live="polite"></div>
+                </div>
                 <div id="produkter" class="page-content active">
                     <div class="page-header">
                         <h2>Produkter</h2>

@@ -348,6 +348,248 @@ body {
     opacity: 1;
 }
 
+/* AlfaM månedligt dashboard */
+.alfam-dash-page-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.alfam-dash-year-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.alfam-dash-year-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+.alfam-dash-year-select {
+    padding: 0.45rem 0.75rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    background: #fff;
+    color: #111827;
+}
+
+.alfam-dash-intro {
+    color: #6b7280;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin: 0 0 1.25rem 0;
+    max-width: 52rem;
+}
+
+.alfam-dash-accordion {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.alfam-dash-loading {
+    color: #6b7280;
+    padding: 1rem 0;
+}
+
+.alfam-dash-month {
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background: #ffffff;
+    overflow: hidden;
+}
+
+.alfam-dash-month-summary {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.85rem 1rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #111827;
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+    background: #f9fafb;
+}
+
+.alfam-dash-month-summary::-webkit-details-marker {
+    display: none;
+}
+
+.alfam-dash-month-summary::before {
+    content: '\25B6';
+    display: inline-block;
+    margin-right: 0.45rem;
+    font-size: 0.65rem;
+    transition: transform 0.15s ease;
+}
+
+.alfam-dash-month[open] > .alfam-dash-month-summary::before {
+    transform: rotate(90deg);
+}
+
+.alfam-dash-month-counts {
+    font-weight: 500;
+    font-size: 0.8125rem;
+    color: #6b7280;
+}
+
+.alfam-dash-month-body {
+    padding: 0.75rem 1rem 1rem;
+    border-top: 1px solid #eef2f7;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.alfam-dash-section {
+    border: 1px solid #eef2f7;
+    border-radius: 8px;
+    background: #fafafa;
+    overflow: hidden;
+}
+
+.alfam-dash-section-summary {
+    padding: 0.6rem 0.85rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #374151;
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+}
+
+.alfam-dash-section-summary::-webkit-details-marker {
+    display: none;
+}
+
+.alfam-dash-section-summary::before {
+    content: '\25B6';
+    display: inline-block;
+    margin-right: 0.35rem;
+    font-size: 0.55rem;
+    transition: transform 0.15s ease;
+}
+
+.alfam-dash-section[open] > .alfam-dash-section-summary::before {
+    transform: rotate(90deg);
+}
+
+.alfam-dash-section-body {
+    padding: 0.65rem 0.85rem 0.85rem;
+    border-top: 1px solid #eef2f7;
+    background: #fff;
+}
+
+.alfam-dash-empty {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #9ca3af;
+}
+
+.alfam-dash-card {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-start;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.alfam-dash-card:last-child {
+    border-bottom: none;
+}
+
+.alfam-dash-card-main {
+    flex: 1;
+    min-width: 200px;
+}
+
+.alfam-dash-card-title {
+    margin: 0 0 0.35rem 0;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+.alfam-dash-card-addr,
+.alfam-dash-row-addr {
+    margin: 0.15rem 0;
+    font-size: 0.875rem;
+    color: #4b5563;
+}
+
+.alfam-dash-card-meta {
+    margin: 0.35rem 0 0 0;
+    font-size: 0.8125rem;
+    color: #6b7280;
+}
+
+.alfam-dash-muted {
+    font-weight: 400;
+    color: #6b7280;
+    font-size: 0.8125rem;
+}
+
+.alfam-dash-thumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    max-width: 220px;
+}
+
+.alfam-dash-thumb {
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+    background: #f9fafb;
+}
+
+.alfam-dash-no-img {
+    font-size: 0.8125rem;
+    color: #9ca3af;
+    align-self: center;
+}
+
+.alfam-dash-row {
+    padding: 0.65rem 0;
+    border-bottom: 1px solid #f3f4f6;
+    font-size: 0.875rem;
+}
+
+.alfam-dash-row:last-child {
+    border-bottom: none;
+}
+
+.alfam-dash-row--lost {
+    border-left: 3px solid #fca5a5;
+    padding-left: 0.65rem;
+}
+
+.alfam-dash-badge {
+    display: inline-block;
+    margin-left: 0.35rem;
+    padding: 0.12rem 0.45rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: #b45309;
+    background: #fffbeb;
+    border-radius: 4px;
+    vertical-align: middle;
+}
+
 .referrals-container {
     background-color: #ffffff;
     border: 1px solid #e5e7eb;
