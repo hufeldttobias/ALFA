@@ -86,6 +86,7 @@ def write_products(products):
         raise
 
 def read_orders(path, table_name):
+    """Return list of order dicts, or None if Postgres read failed (do not treat as empty)."""
     db_url = get_db_url()
     if db_url:
         try:
@@ -100,7 +101,7 @@ def read_orders(path, table_name):
                     return [row[0] for row in rows]
         except Exception as e:
             print(f'Error reading orders from database: {e}')
-            return []
+            return None
 
     if not os.path.exists(path):
         return []
@@ -214,6 +215,8 @@ def save_orders():
 @app.route('/completed-orders', methods=['GET'])
 def get_completed_orders():
     orders = read_orders(COMPLETED_ORDERS_FILE, COMPLETED_ORDERS_TABLE)
+    if orders is None:
+        return jsonify({'error': 'database_unavailable', 'orders': []}), 503
     return jsonify({'orders': orders}), 200
 
 @app.route('/completed-orders', methods=['POST'])
@@ -231,6 +234,8 @@ def save_completed_orders():
 @app.route('/referrals', methods=['GET'])
 def get_referrals():
     referrals = read_orders(REFERRALS_FILE, REFERRALS_TABLE)
+    if referrals is None:
+        return jsonify({'error': 'database_unavailable', 'referrals': []}), 503
     return jsonify({'referrals': referrals}), 200
 
 @app.route('/referrals', methods=['POST'])

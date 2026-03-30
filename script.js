@@ -396,6 +396,64 @@ document.addEventListener('DOMContentLoaded', function() {
         return false;
     }
 
+    function getOrdersFromLocalStorageSafe() {
+        try {
+            const raw = localStorage.getItem('orders');
+            if (!raw) return [];
+            const p = JSON.parse(raw);
+            return Array.isArray(p) ? p : [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    function getCompletedOrdersFromLocalStorageSafe() {
+        try {
+            const raw = localStorage.getItem('completedOrders');
+            if (!raw) return [];
+            const p = JSON.parse(raw);
+            return Array.isArray(p) ? p : [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    async function mergeOrdersWithServer(serverOrders) {
+        const local = getOrdersFromLocalStorageSafe();
+        if (serverOrders === null) {
+            return local;
+        }
+        if (serverOrders.length > 0) {
+            try {
+                localStorage.setItem('orders', JSON.stringify(serverOrders));
+            } catch (e) {}
+            return serverOrders;
+        }
+        if (local.length > 0) {
+            await saveOrdersToServer(local);
+            return local;
+        }
+        return [];
+    }
+
+    async function mergeCompletedOrdersWithServer(serverCompleted) {
+        const local = getCompletedOrdersFromLocalStorageSafe();
+        if (serverCompleted === null) {
+            return local;
+        }
+        if (serverCompleted.length > 0) {
+            try {
+                localStorage.setItem('completedOrders', JSON.stringify(serverCompleted));
+            } catch (e) {}
+            return serverCompleted;
+        }
+        if (local.length > 0) {
+            await saveCompletedOrdersToServer(local);
+            return local;
+        }
+        return [];
+    }
+
     function getBuilderProductsFromStorage() {
         if (builderProducts && builderProducts.length > 0) {
             return builderProducts;
@@ -1356,7 +1414,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Final submit package
-    function finalSubmitPackage(formData) {
+    async function finalSubmitPackage(formData) {
         // Calculate totals
         let totalStartup = 0;
         let deliveryOption = selectedDeliveryOption;
@@ -1418,20 +1476,10 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        // Save order to localStorage
-        let orders = [];
-        const storedOrders = localStorage.getItem('orders');
-        if (storedOrders) {
-            try {
-                orders = JSON.parse(storedOrders);
-                // Ensure orders is an array
-                if (!Array.isArray(orders)) {
-                    orders = [];
-                }
-            } catch (e) {
-                console.error('Error parsing stored orders:', e);
-                orders = [];
-            }
+        // Merge with server then append (avoids overwriting Postgres with stale empty local cache)
+        let orders = await mergeOrdersWithServer(await fetchOrdersFromServer());
+        if (!Array.isArray(orders)) {
+            orders = [];
         }
         
         // Ensure order has all required fields with non-empty values
@@ -1775,7 +1823,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Final submit form
     const packageSubmitForm = document.getElementById('packageSubmitForm');
     if (packageSubmitForm) {
-        packageSubmitForm.addEventListener('submit', function(e) {
+        packageSubmitForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
             // Validate installation date is at least 14 days from today
@@ -1806,7 +1854,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 deliveryOption: selectedDeliveryOption
             };
             
-            finalSubmitPackage(formData);
+            await finalSubmitPackage(formData);
         });
     }
     
@@ -2057,44 +2105,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
-            let orders = [];
-            let completedOrdersList = [];
-            const serverOrders = await fetchOrdersFromServer();
-            const serverCompleted = await fetchCompletedOrdersFromServer();
-            if (serverOrders !== null) {
-                orders = serverOrders;
-                try {
-                    localStorage.setItem('orders', JSON.stringify(orders));
-                } catch (err) {
-                    console.warn('Unable to cache orders locally:', err);
-                }
-            } else {
-                const storedOrders = localStorage.getItem('orders');
-                if (storedOrders) {
-                    try {
-                        orders = JSON.parse(storedOrders);
-                    } catch (err) {
-                        console.error('Error parsing stored orders:', err);
-                    }
-                }
-            }
-            if (serverCompleted !== null) {
-                completedOrdersList = serverCompleted;
-                try {
-                    localStorage.setItem('completedOrders', JSON.stringify(completedOrdersList));
-                } catch (err) {
-                    console.warn('Unable to cache completed orders locally:', err);
-                }
-            } else {
-                const storedCompletedOrders = localStorage.getItem('completedOrders');
-                if (storedCompletedOrders) {
-                    try {
-                        completedOrdersList = JSON.parse(storedCompletedOrders);
-                    } catch (err) {
-                        console.error('Error parsing stored completed orders:', err);
-                    }
-                }
-            }
+            const orders = await mergeOrdersWithServer(await fetchOrdersFromServer());
+            const completedOrdersList = await mergeCompletedOrdersWithServer(await fetchCompletedOrdersFromServer());
             
             const combined = orders.concat(completedOrdersList);
             
@@ -2192,28 +2204,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Cancel order subscription
     async function cancelOrderSubscription(order) {
-        let orders = [];
-        let completedOrders = [];
-        const serverOrders = await fetchOrdersFromServer();
-        const serverCompleted = await fetchCompletedOrdersFromServer();
-        if (serverOrders !== null) {
-            orders = serverOrders;
-        } else if (localStorage.getItem('orders')) {
-            try {
-                orders = JSON.parse(localStorage.getItem('orders'));
-            } catch (err) {
-                console.error('Error parsing stored orders:', err);
-            }
-        }
-        if (serverCompleted !== null) {
-            completedOrders = serverCompleted;
-        } else if (localStorage.getItem('completedOrders')) {
-            try {
-                completedOrders = JSON.parse(localStorage.getItem('completedOrders'));
-            } catch (err) {
-                console.error('Error parsing stored completed orders:', err);
-            }
-        }
+        let orders = await mergeOrdersWithServer(await fetchOrdersFromServer());
+        let completedOrders = await mergeCompletedOrdersWithServer(await fetchCompletedOrdersFromServer());
         
         // Check if order is in completedOrders (means it's been activated)
         const orderInCompleted = completedOrders.find(o => o.id === order.id);

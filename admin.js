@@ -131,6 +131,99 @@ async function saveReferralsToServer(referrals) {
     return false;
 }
 
+const REFERRALS_LOCAL_KEY = 'referrals';
+
+function getOrdersFromLocalStorageSafe() {
+    try {
+        const raw = localStorage.getItem('orders');
+        if (!raw) return [];
+        const p = JSON.parse(raw);
+        return Array.isArray(p) ? p : [];
+    } catch (e) {
+        return [];
+    }
+}
+
+function getCompletedOrdersFromLocalStorageSafe() {
+    try {
+        const raw = localStorage.getItem('completedOrders');
+        if (!raw) return [];
+        const p = JSON.parse(raw);
+        return Array.isArray(p) ? p : [];
+    } catch (e) {
+        return [];
+    }
+}
+
+function getReferralsFromLocalStorageSafe() {
+    try {
+        const raw = localStorage.getItem(REFERRALS_LOCAL_KEY);
+        if (!raw) return [];
+        const p = JSON.parse(raw);
+        return Array.isArray(p) ? p : [];
+    } catch (e) {
+        return [];
+    }
+}
+
+/**
+ * serverOrders === null: fetch failed or 503 — use browser cache only.
+ * serverOrders === []: if localStorage still has rows (fx før sync til tom DB), upload local to Postgres.
+ */
+async function mergeOrdersWithServer(serverOrders) {
+    const local = getOrdersFromLocalStorageSafe();
+    if (serverOrders === null) {
+        return local;
+    }
+    if (serverOrders.length > 0) {
+        try {
+            localStorage.setItem('orders', JSON.stringify(serverOrders));
+        } catch (e) {}
+        return serverOrders;
+    }
+    if (local.length > 0) {
+        await saveOrdersToServer(local);
+        return local;
+    }
+    return [];
+}
+
+async function mergeCompletedOrdersWithServer(serverCompleted) {
+    const local = getCompletedOrdersFromLocalStorageSafe();
+    if (serverCompleted === null) {
+        return local;
+    }
+    if (serverCompleted.length > 0) {
+        try {
+            localStorage.setItem('completedOrders', JSON.stringify(serverCompleted));
+        } catch (e) {}
+        return serverCompleted;
+    }
+    if (local.length > 0) {
+        await saveCompletedOrdersToServer(local);
+        return local;
+    }
+    return [];
+}
+
+async function mergeReferralsWithServer(serverReferrals) {
+    const local = getReferralsFromLocalStorageSafe();
+    if (serverReferrals === null) {
+        return local;
+    }
+    if (serverReferrals.length > 0) {
+        try {
+            localStorage.setItem(REFERRALS_LOCAL_KEY, JSON.stringify(serverReferrals));
+        } catch (e) {}
+        return serverReferrals;
+    }
+    if (local.length > 0) {
+        await saveReferralsToServer(local);
+        return local;
+    }
+    return [];
+}
+
 function readProductsFromLocalStorage() {
     const stored = localStorage.getItem('products');
     if (!stored) return [];
@@ -614,17 +707,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const container = document.getElementById('referralsContainer');
         if (!container) return;
 
-        let referrals = [];
         const serverReferrals = await fetchReferralsFromServer();
-        if (serverReferrals !== null) {
-            referrals = serverReferrals;
-            try {
-                localStorage.setItem(REFERRALS_STORAGE_KEY, JSON.stringify(referrals));
-            } catch (e) {
-                console.warn('Failed to cache referrals locally:', e);
-            }
-        } else {
-            referrals = getReferrals();
+        let referrals = await mergeReferralsWithServer(serverReferrals);
+        try {
+            localStorage.setItem(REFERRALS_STORAGE_KEY, JSON.stringify(referrals));
+        } catch (e) {
+            console.warn('Failed to cache referrals locally:', e);
         }
 
         if (referrals.length === 0) {
@@ -857,21 +945,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!confirm('Er du sikker på, at du vil slette denne opgave permanent? Denne handling kan ikke fortrydes.')) {
             return;
         }
-        let orders = [];
         const serverOrders = await fetchOrdersFromServer();
-        if (serverOrders !== null) {
-            orders = serverOrders;
-        } else {
-            const stored = localStorage.getItem('orders');
-            if (stored) {
-                try {
-                    orders = JSON.parse(stored);
-                    if (!Array.isArray(orders)) orders = [];
-                } catch (e) {
-                    orders = [];
-                }
-            }
-        }
+        let orders = await mergeOrdersWithServer(serverOrders);
         const idNum = Number(orderId);
         const next = orders.filter((o) => Number(o.id) !== idNum);
         localStorage.setItem('orders', JSON.stringify(next));
@@ -884,21 +959,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!confirm('Er du sikker på, at du vil slette denne opgave permanent? Denne handling kan ikke fortrydes.')) {
             return;
         }
-        let completed = [];
         const serverCompleted = await fetchCompletedOrdersFromServer();
-        if (serverCompleted !== null) {
-            completed = serverCompleted;
-        } else {
-            const stored = localStorage.getItem('completedOrders');
-            if (stored) {
-                try {
-                    completed = JSON.parse(stored);
-                    if (!Array.isArray(completed)) completed = [];
-                } catch (e) {
-                    completed = [];
-                }
-            }
-        }
+        let completed = await mergeCompletedOrdersWithServer(serverCompleted);
         const idNum = Number(orderId);
         const next = completed.filter((o) => Number(o.id) !== idNum);
         localStorage.setItem('completedOrders', JSON.stringify(next));
@@ -917,18 +979,10 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        let orders = [];
         const serverOrders = await fetchOrdersFromServer();
-        if (serverOrders) {
-            orders = serverOrders;
-        } else {
-            const storedOrders = localStorage.getItem('orders');
-            if (storedOrders) {
-                orders = JSON.parse(storedOrders);
-                console.log('Loaded orders from localStorage:', orders.length);
-            } else {
-                console.log('No orders found in localStorage');
-            }
+        let orders = await mergeOrdersWithServer(serverOrders);
+        if (orders.length) {
+            console.log('Orders after merge (server/local):', orders.length);
         }
         
         // Check if there are example orders before filtering
@@ -1087,17 +1141,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Load and display cancelled pending orders from completedOrders
-        let cancelledPendingOrders = [];
-        const serverCompletedOrders = await fetchCompletedOrdersFromServer();
-        if (serverCompletedOrders) {
-            cancelledPendingOrders = serverCompletedOrders.filter(order => order.status === 'cancelled_pending');
-        } else {
-            const storedCompletedOrders = localStorage.getItem('completedOrders');
-            if (storedCompletedOrders) {
-                const completedOrders = JSON.parse(storedCompletedOrders);
-                cancelledPendingOrders = completedOrders.filter(order => order.status === 'cancelled_pending');
-            }
-        }
+        const serverCompletedForPending = await fetchCompletedOrdersFromServer();
+        const mergedCompletedForPending = await mergeCompletedOrdersWithServer(serverCompletedForPending);
+        const cancelledPendingOrders = mergedCompletedForPending.filter(order => order.status === 'cancelled_pending');
         
         // Display cancelled pending orders section
         if (cancelledPendingTasksSection && cancelledPendingTasksContainer) {
@@ -1173,23 +1219,13 @@ document.addEventListener('DOMContentLoaded', function() {
         let count = 0;
         
         // Count cancelled pending orders
-        const serverCompletedOrders = await fetchCompletedOrdersFromServer();
-        if (serverCompletedOrders) {
-            const cancelledPendingOrders = serverCompletedOrders.filter(order => order.status === 'cancelled_pending');
-            count += cancelledPendingOrders.length;
-        } else {
-            const storedCompletedOrders = localStorage.getItem('completedOrders');
-            if (storedCompletedOrders) {
-                const completedOrders = JSON.parse(storedCompletedOrders);
-                const cancelledPendingOrders = completedOrders.filter(order => order.status === 'cancelled_pending');
-                count += cancelledPendingOrders.length;
-            }
-        }
+        const mergedCompleted = await mergeCompletedOrdersWithServer(await fetchCompletedOrdersFromServer());
+        const cancelledPendingOrders = mergedCompleted.filter(order => order.status === 'cancelled_pending');
+        count += cancelledPendingOrders.length;
         
         // Count orders that need to be completed within 2 weeks
-        const serverOrders = await fetchOrdersFromServer();
-        if (serverOrders) {
-            const orders = serverOrders;
+        const orders = await mergeOrdersWithServer(await fetchOrdersFromServer());
+        if (orders.length > 0) {
             const today = new Date();
             today.setHours(0, 0, 0, 0);
             const twoWeeksFromNow = new Date(today);
@@ -1216,35 +1252,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             
             count += urgentOrders.length;
-        } else {
-            const storedOrders = localStorage.getItem('orders');
-            if (storedOrders) {
-                const orders = JSON.parse(storedOrders);
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
-                const twoWeeksFromNow = new Date(today);
-                twoWeeksFromNow.setDate(twoWeeksFromNow.getDate() + 14);
-
-                const urgentOrders = orders.filter(order => {
-                    if (!order.name || !order.address || !order.email || !order.phoneNumber) {
-                        return false;
-                    }
-                    const testNames = ['test', 'example', 'eksempel', 'demo', 'sample'];
-                    const nameLower = (order.name || '').toLowerCase();
-                    if (testNames.some(test => nameLower.includes(test))) {
-                        return false;
-                    }
-
-                    if (order.installationDate) {
-                        const installationDate = new Date(order.installationDate);
-                        installationDate.setHours(0, 0, 0, 0);
-                        return installationDate >= today && installationDate <= twoWeeksFromNow;
-                    }
-                    return false;
-                });
-
-                count += urgentOrders.length;
-            }
         }
         
         // Update badge
@@ -1259,15 +1266,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Clear example orders
     async function clearExampleOrders() {
         if (isOverviewOnly) return;
-        let orders = [];
-        const serverOrders = await fetchOrdersFromServer();
-        if (serverOrders) {
-            orders = serverOrders;
-        } else {
-            const storedOrders = localStorage.getItem('orders');
-            if (!storedOrders) return;
-            orders = JSON.parse(storedOrders);
-        }
+        let orders = await mergeOrdersWithServer(await fetchOrdersFromServer());
+        if (!orders.length) return;
         const originalCount = orders.length;
         
         // Filter out example/test orders
@@ -1308,39 +1308,18 @@ document.addEventListener('DOMContentLoaded', function() {
         let isFromOrders = false;
         let isCancelledPending = false;
 
-        const serverOrders = await fetchOrdersFromServer();
-        if (serverOrders) {
-            order = serverOrders.find(o => o.id === orderId);
-            if (order) {
-                isFromOrders = true;
-            }
-        } else {
-            const storedOrders = localStorage.getItem('orders');
-            if (storedOrders) {
-                const orders = JSON.parse(storedOrders);
-                order = orders.find(o => o.id === orderId);
-                if (order) {
-                    isFromOrders = true;
-                }
-            }
+        const idNum = Number(orderId);
+        const ordersMerged = await mergeOrdersWithServer(await fetchOrdersFromServer());
+        order = ordersMerged.find((o) => Number(o.id) === idNum);
+        if (order) {
+            isFromOrders = true;
         }
 
         if (!order) {
-            const serverCompletedOrders = await fetchCompletedOrdersFromServer();
-            if (serverCompletedOrders) {
-                order = serverCompletedOrders.find(o => o.id === orderId);
-                if (order && order.status === 'cancelled_pending') {
-                    isCancelledPending = true;
-                }
-            } else {
-                const storedCompletedOrders = localStorage.getItem('completedOrders');
-                if (storedCompletedOrders) {
-                    const completedOrders = JSON.parse(storedCompletedOrders);
-                    order = completedOrders.find(o => o.id === orderId);
-                    if (order && order.status === 'cancelled_pending') {
-                        isCancelledPending = true;
-                    }
-                }
+            const completedMerged = await mergeCompletedOrdersWithServer(await fetchCompletedOrdersFromServer());
+            order = completedMerged.find((o) => Number(o.id) === idNum);
+            if (order && order.status === 'cancelled_pending') {
+                isCancelledPending = true;
             }
         }
         
@@ -1522,28 +1501,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Complete order - move from Opgaver to Oversigt
     async function completeOrder(orderId) {
-        let orders = [];
-        let completedOrders = [];
-        const serverOrders = await fetchOrdersFromServer();
-        const serverCompletedOrders = await fetchCompletedOrdersFromServer();
-
-        if (serverOrders) {
-            orders = serverOrders;
-        } else {
-            const storedOrders = localStorage.getItem('orders');
-            if (!storedOrders) return;
-            orders = JSON.parse(storedOrders);
-        }
-
-        if (serverCompletedOrders) {
-            completedOrders = serverCompletedOrders;
-        } else {
-            const storedCompletedOrders = localStorage.getItem('completedOrders');
-            completedOrders = storedCompletedOrders ? JSON.parse(storedCompletedOrders) : [];
-        }
+        let orders = await mergeOrdersWithServer(await fetchOrdersFromServer());
+        let completedOrders = await mergeCompletedOrdersWithServer(await fetchCompletedOrdersFromServer());
         
         // Find the order
-        const orderIndex = orders.findIndex(o => o.id === orderId);
+        const idNum = Number(orderId);
+        const orderIndex = orders.findIndex((o) => Number(o.id) === idNum);
         if (orderIndex === -1) return;
         
         const order = orders[orderIndex];
@@ -1588,16 +1551,8 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (!activeContainer || !cancelledPendingContainer || !cancelledCollectedContainer) return;
         
-        let completedOrders = [];
         const serverCompletedOrders = await fetchCompletedOrdersFromServer();
-        if (serverCompletedOrders) {
-            completedOrders = serverCompletedOrders;
-        } else {
-            const storedCompletedOrders = localStorage.getItem('completedOrders');
-            if (storedCompletedOrders) {
-                completedOrders = JSON.parse(storedCompletedOrders);
-            }
-        }
+        let completedOrders = await mergeCompletedOrdersWithServer(serverCompletedOrders);
         
         // Filter orders by status
         const activeOrders = completedOrders.filter(order => !order.status || order.status === 'active');
@@ -1836,15 +1791,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Cancel order - move to "Opsagt, mangler afhentning" group
     async function cancelOrderPending(orderId) {
-        let completedOrders = [];
-        const serverCompletedOrders = await fetchCompletedOrdersFromServer();
-        if (serverCompletedOrders) {
-            completedOrders = serverCompletedOrders;
-        } else {
-            const storedCompletedOrders = localStorage.getItem('completedOrders');
-            if (!storedCompletedOrders) return;
-            completedOrders = JSON.parse(storedCompletedOrders);
-        }
+        let completedOrders = await mergeCompletedOrdersWithServer(await fetchCompletedOrdersFromServer());
+        if (!completedOrders.length) return;
         
         // Find the order
         const orderIndex = completedOrders.findIndex(o => o.id === orderId);
@@ -1883,15 +1831,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Cancel order - move to "Opsagt og hentet" group
     async function cancelOrderCollected(orderId) {
-        let completedOrders = [];
-        const serverCompletedOrders = await fetchCompletedOrdersFromServer();
-        if (serverCompletedOrders) {
-            completedOrders = serverCompletedOrders;
-        } else {
-            const storedCompletedOrders = localStorage.getItem('completedOrders');
-            if (!storedCompletedOrders) return;
-            completedOrders = JSON.parse(storedCompletedOrders);
-        }
+        let completedOrders = await mergeCompletedOrdersWithServer(await fetchCompletedOrdersFromServer());
+        if (!completedOrders.length) return;
         
         // Find the order
         const orderIndex = completedOrders.findIndex(o => o.id === orderId);
