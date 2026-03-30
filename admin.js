@@ -1800,34 +1800,25 @@ document.addEventListener('DOMContentLoaded', function() {
         return parts.length ? parts.join(', ') : (order.address || '');
     }
 
-    function alfamProductThumbsHtml(order) {
-        const products = order.products || [];
-        const parts = [];
-        for (let i = 0; i < Math.min(products.length, 8); i++) {
-            const p = products[i];
-            const src = p.imageUrl || p.leftOrientedImage || p.rightOrientedImage || '';
-            if (!src) continue;
-            const safe = String(src).replace(/"/g, '&quot;').replace(/</g, '');
-            parts.push(`<img class="alfam-dash-thumb" src="${safe}" alt="" loading="lazy" width="72" height="72">`);
-        }
-        if (parts.length === 0) {
-            return '<span class="alfam-dash-no-img">Ingen produktbilleder</span>';
-        }
-        return `<div class="alfam-dash-thumbs">${parts.join('')}</div>`;
-    }
-
     function alfamRenderInstalledCard(o) {
         const addr = escapeReferralHtml(alfamFormatOrderAddress(o));
         const when = parseOrderInstallationDateForDashboard(o);
         const whenStr = when ? when.toLocaleDateString('da-DK') : (o.installationWeek || '—');
+        const emailLine = o.email
+            ? `<p class="alfam-dash-card-meta">${escapeReferralHtml(o.email)}</p>`
+            : '';
+        const phoneLine = o.phoneNumber
+            ? `<p class="alfam-dash-card-meta">${escapeReferralHtml(o.phoneNumber)}</p>`
+            : '';
         return `
     <article class="alfam-dash-card alfam-dash-card--installed">
       <div class="alfam-dash-card-main">
         <h4 class="alfam-dash-card-title">${escapeReferralHtml(o.name)} <span class="alfam-dash-muted">#${escapeReferralHtml(String(o.id))}</span></h4>
         <p class="alfam-dash-card-addr">${addr}</p>
+        ${emailLine}
+        ${phoneLine}
         <p class="alfam-dash-card-meta">Installation: ${escapeReferralHtml(whenStr)}</p>
       </div>
-      ${alfamProductThumbsHtml(o)}
     </article>`;
     }
 
@@ -1838,11 +1829,16 @@ document.addEventListener('DOMContentLoaded', function() {
         const badgeHtml = badge
             ? `<span class="alfam-dash-badge">${escapeReferralHtml(badge)}</span>`
             : '';
+        const contactLine = [o.email, o.phoneNumber].filter(Boolean).map((x) => escapeReferralHtml(x)).join(' · ');
+        const contactHtml = contactLine
+            ? `<div class="alfam-dash-muted">${contactLine}</div>`
+            : '';
         return `
     <div class="alfam-dash-row">
       <div>
         <strong>${escapeReferralHtml(o.name)}</strong> ${badgeHtml}
         <div class="alfam-dash-row-addr">${addr}</div>
+        ${contactHtml}
         <div class="alfam-dash-muted">Ordre #${escapeReferralHtml(String(o.id))} · ${escapeReferralHtml(whenStr)}</div>
       </div>
     </div>`;

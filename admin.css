@@ -496,10 +496,6 @@ body {
 }
 
 .alfam-dash-card {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    align-items: flex-start;
     padding: 0.85rem 0;
     border-bottom: 1px solid #f3f4f6;
 }
@@ -537,28 +533,6 @@ body {
     font-weight: 400;
     color: #6b7280;
     font-size: 0.8125rem;
-}
-
-.alfam-dash-thumbs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.35rem;
-    max-width: 220px;
-}
-
-.alfam-dash-thumb {
-    width: 72px;
-    height: 72px;
-    object-fit: cover;
-    border-radius: 6px;
-    border: 1px solid #e5e7eb;
-    background: #f9fafb;
-}
-
-.alfam-dash-no-img {
-    font-size: 0.8125rem;
-    color: #9ca3af;
-    align-self: center;
 }
 
 .alfam-dash-row {
