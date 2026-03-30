@@ -287,6 +287,23 @@ function markAlfamContactSent(orderId) {
     saveAlfamContactTimestamps(map);
 }
 
+/** ISO-uge fra YYYY-MM-DD (samme logik som kundesiden). */
+function adminGetIsoWeekNumberFromDateStr(dateStr) {
+    if (!dateStr) return '';
+    const raw = String(dateStr).trim();
+    const date = new Date(raw.includes('T') ? raw : `${raw}T12:00:00`);
+    if (Number.isNaN(date.getTime())) return '';
+    date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
+    const week1 = new Date(date.getFullYear(), 0, 4);
+    week1.setDate(week1.getDate() + 3 - (week1.getDay() + 6) % 7);
+    return 1 + Math.round(((date - week1) / 86400000) / 7);
+}
+
+function adminFormatInstallationWeekLabel(dateStr) {
+    const w = adminGetIsoWeekNumberFromDateStr(dateStr);
+    return w ? `Uge ${w}` : '';
+}
+
 async function sendContactRequestNotificationToServer(order) {
     const candidates = getProductApiCandidates();
     for (const baseUrl of candidates) {
@@ -1533,6 +1550,20 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
+        const orderAdminManualBanner = document.getElementById('orderAdminManualBanner');
+        if (orderAdminManualBanner) {
+            if (order.adminManualOrder) {
+                orderAdminManualBanner.style.display = 'block';
+                const noteHtml = order.adminNote
+                    ? `<p class="order-admin-note-display"><strong>Note:</strong> ${escapeReferralHtml(order.adminNote)}</p>`
+                    : '';
+                orderAdminManualBanner.innerHTML = `<p class="order-manual-badge">Manuelt oprettet ordre</p>${noteHtml}`;
+            } else {
+                orderAdminManualBanner.style.display = 'none';
+                orderAdminManualBanner.innerHTML = '';
+            }
+        }
+
         // Display all products
         const productsList = document.getElementById('orderProductsList');
         if (productsList && order.products && order.products.length > 0) {
@@ -1564,7 +1595,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 `;
             }).join('');
         } else if (productsList) {
-            productsList.innerHTML = '<p style="color: #6b7280;">Ingen produkter i denne ordre.</p>';
+            productsList.innerHTML = order.adminManualOrder
+                ? '<p class="order-manual-no-products">Ingen produktlinjer i denne ordre.</p>'
+                : '<p style="color: #6b7280;">Ingen produkter i denne ordre.</p>';
         }
         
         // Set customer information
@@ -1576,32 +1609,57 @@ document.addEventListener('DOMContentLoaded', function() {
         // Calculate and display pricing
         const pricingDetails = document.getElementById('orderPricingDetails');
         if (pricingDetails) {
-            const totalStartupBase = order.products.reduce((sum, p) => {
-                const quantity = p.quantity || 1;
-                return sum + (parseFloat(p.startupCost || 0) * quantity);
-            }, 0);
-            const deliveryPrice = order.deliveryOption ? parseFloat(order.deliveryOption.price || 0) : 0;
-            const logisticsFee = 3000; // Logistics, coordination and handling fee
-            const totalStartup = totalStartupBase + deliveryPrice + logisticsFee;
-            
-            const totalMonth1to4 = order.products.reduce((sum, p) => {
-                const quantity = p.quantity || 1;
-                return sum + (parseFloat(p.month1to4 || 0) * quantity);
-            }, 0);
-            const totalMonth5to12 = order.products.reduce((sum, p) => {
-                const quantity = p.quantity || 1;
-                return sum + (parseFloat(p.month5to12 || 0) * quantity);
-            }, 0);
-            const totalMonth13plus = order.products.reduce((sum, p) => {
-                const quantity = p.quantity || 1;
-                return sum + (parseFloat(p.month13plus || 0) * quantity);
-            }, 0);
-            
-            const deliveryOptionText = order.deliveryOption && order.deliveryOption.type === 'setup' 
-                ? 'Levering og opsætning' 
-                : 'Kantstenslevering';
-            
-            pricingDetails.innerHTML = `
+            if (order.adminManualPricing && typeof order.adminManualPricing.startupTotal !== 'undefined') {
+                const mp = order.adminManualPricing;
+                const totalStartup = parseFloat(mp.startupTotal) || 0;
+                const totalMonth1to4 = parseFloat(mp.month1to4) || 0;
+                const totalMonth5to12 = parseFloat(mp.month5to12) || 0;
+                const totalMonth13plus = parseFloat(mp.month13plus) || 0;
+                pricingDetails.innerHTML = `
+                <div class="pricing-row">
+                    <span class="pricing-label">Opstart (inkl. kantstenslevering og logistik, koordinering &amp; håndtering):</span>
+                    <span class="pricing-value">${totalStartup.toFixed(2)} DKK</span>
+                </div>
+                <div class="pricing-row">
+                    <span class="pricing-label">Måned 1-4:</span>
+                    <span class="pricing-value">${totalMonth1to4.toFixed(2)} DKK</span>
+                </div>
+                <div class="pricing-row">
+                    <span class="pricing-label">Måned 5-12:</span>
+                    <span class="pricing-value">${totalMonth5to12.toFixed(2)} DKK</span>
+                </div>
+                <div class="pricing-row">
+                    <span class="pricing-label">Måned 13+:</span>
+                    <span class="pricing-value">${totalMonth13plus.toFixed(2)} DKK</span>
+                </div>
+            `;
+            } else {
+                const totalStartupBase = order.products.reduce((sum, p) => {
+                    const quantity = p.quantity || 1;
+                    return sum + (parseFloat(p.startupCost || 0) * quantity);
+                }, 0);
+                const deliveryPrice = order.deliveryOption ? parseFloat(order.deliveryOption.price || 0) : 0;
+                const logisticsFee = 3000; // Logistics, coordination and handling fee
+                const totalStartup = totalStartupBase + deliveryPrice + logisticsFee;
+                
+                const totalMonth1to4 = order.products.reduce((sum, p) => {
+                    const quantity = p.quantity || 1;
+                    return sum + (parseFloat(p.month1to4 || 0) * quantity);
+                }, 0);
+                const totalMonth5to12 = order.products.reduce((sum, p) => {
+                    const quantity = p.quantity || 1;
+                    return sum + (parseFloat(p.month5to12 || 0) * quantity);
+                }, 0);
+                const totalMonth13plus = order.products.reduce((sum, p) => {
+                    const quantity = p.quantity || 1;
+                    return sum + (parseFloat(p.month13plus || 0) * quantity);
+                }, 0);
+                
+                const deliveryOptionText = order.deliveryOption && order.deliveryOption.type === 'setup' 
+                    ? 'Levering og opsætning' 
+                    : 'Kantstenslevering';
+                
+                pricingDetails.innerHTML = `
                 <div class="pricing-row">
                     <span class="pricing-label">Opstart (inkl. ${deliveryOptionText} og logistik, koordinering & håndtering):</span>
                     <span class="pricing-value">${totalStartup.toFixed(2)} DKK</span>
@@ -1619,6 +1677,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <span class="pricing-value">${totalMonth13plus.toFixed(2)} DKK</span>
                 </div>
             `;
+            }
         }
         
         // Show modal
@@ -2155,6 +2214,36 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Calculate current monthly rent based on installation date
     function calculateCurrentMonthlyRent(order) {
+        if (order.adminManualPricing && typeof order.adminManualPricing.month1to4 !== 'undefined') {
+            const mp = order.adminManualPricing;
+            const totalMonth1to4 = parseFloat(mp.month1to4) || 0;
+            const totalMonth5to12 = parseFloat(mp.month5to12) || 0;
+            const totalMonth13plus = parseFloat(mp.month13plus) || 0;
+            if (!order.installationDate) {
+                return totalMonth1to4;
+            }
+            let installationDate = new Date(order.installationDate);
+            if (isNaN(installationDate.getTime())) {
+                installationDate = order.createdAt ? new Date(order.createdAt) : new Date();
+            }
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            installationDate.setHours(0, 0, 0, 0);
+            const yearDiff = today.getFullYear() - installationDate.getFullYear();
+            const monthDiff = today.getMonth() - installationDate.getMonth();
+            const monthsDiff = yearDiff * 12 + monthDiff;
+            if (monthsDiff < 0) {
+                return totalMonth1to4;
+            }
+            if (monthsDiff <= 3) {
+                return totalMonth1to4;
+            }
+            if (monthsDiff <= 11) {
+                return totalMonth5to12;
+            }
+            return totalMonth13plus;
+        }
+
         if (!order.products || order.products.length === 0) {
             return 0;
         }
@@ -2229,6 +2318,98 @@ document.addEventListener('DOMContentLoaded', function() {
             if (e.target === orderDetailModal) {
                 closeOrderDetailModal();
             }
+        });
+    }
+
+    const addManualOrderBtn = document.getElementById('addManualOrderBtn');
+    if (addManualOrderBtn) {
+        addManualOrderBtn.style.display = isOverviewOnly ? 'none' : 'inline-flex';
+    }
+
+    const manualOrderModal = document.getElementById('manualOrderModal');
+    const manualOrderForm = document.getElementById('manualOrderForm');
+    const closeManualOrderModalEl = document.getElementById('closeManualOrderModal');
+    const cancelManualOrderBtn = document.getElementById('cancelManualOrderBtn');
+
+    function closeManualOrderModalFunc() {
+        if (manualOrderModal) manualOrderModal.style.display = 'none';
+        if (manualOrderForm) manualOrderForm.reset();
+    }
+
+    if (addManualOrderBtn && manualOrderModal) {
+        addManualOrderBtn.addEventListener('click', function() {
+            if (isOverviewOnly) return;
+            manualOrderModal.style.display = 'flex';
+            const dateInput = document.getElementById('manualOrderInstallationDate');
+            if (dateInput && !dateInput.value) {
+                dateInput.value = new Date().toISOString().slice(0, 10);
+            }
+        });
+    }
+    if (closeManualOrderModalEl) {
+        closeManualOrderModalEl.addEventListener('click', closeManualOrderModalFunc);
+    }
+    if (cancelManualOrderBtn) {
+        cancelManualOrderBtn.addEventListener('click', closeManualOrderModalFunc);
+    }
+    if (manualOrderModal) {
+        manualOrderModal.addEventListener('click', function(e) {
+            if (e.target === manualOrderModal) closeManualOrderModalFunc();
+        });
+    }
+
+    if (manualOrderForm) {
+        manualOrderForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            if (isOverviewOnly) return;
+            const name = document.getElementById('manualOrderName').value.trim();
+            const phoneNumber = document.getElementById('manualOrderPhone').value.trim();
+            const email = document.getElementById('manualOrderEmail').value.trim();
+            const address = document.getElementById('manualOrderAddress').value.trim();
+            const installationDate = document.getElementById('manualOrderInstallationDate').value;
+            const note = document.getElementById('manualOrderNote').value.trim();
+            const startupTotal = parseFloat(document.getElementById('manualPriceStartup').value) || 0;
+            const month1to4 = parseFloat(document.getElementById('manualPriceM1to4').value) || 0;
+            const month5to12 = parseFloat(document.getElementById('manualPriceM5to12').value) || 0;
+            const month13plus = parseFloat(document.getElementById('manualPriceM13plus').value) || 0;
+            if (!name || !phoneNumber || !email || !address || !installationDate) {
+                alert('Udfyld alle obligatoriske felter.');
+                return;
+            }
+            const ordersMerged = await mergeOrdersWithServer(await fetchOrdersFromServer());
+            const orders = Array.isArray(ordersMerged) ? ordersMerged.slice() : [];
+            const newOrder = {
+                id: Date.now(),
+                name,
+                phoneNumber,
+                email,
+                address,
+                installationDate,
+                installationWeek: adminFormatInstallationWeekLabel(installationDate),
+                createdAt: new Date().toISOString(),
+                language: 'da',
+                packageType: 'builder',
+                products: [],
+                deliveryOption: { type: 'curbside', price: 0 },
+                adminManualOrder: true,
+                adminNote: note,
+                adminManualPricing: {
+                    startupTotal,
+                    month1to4,
+                    month5to12,
+                    month13plus
+                },
+                firstPayment: startupTotal.toFixed(2)
+            };
+            orders.push(newOrder);
+            localStorage.setItem('orders', JSON.stringify(orders));
+            await saveOrdersToServer(orders);
+            closeManualOrderModalFunc();
+            const opgaverPage = document.getElementById('opgaver');
+            if (opgaverPage && opgaverPage.classList.contains('active')) {
+                loadOrders();
+            }
+            updateOpgaverBadge();
         });
     }
     

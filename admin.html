@@ -113,6 +113,9 @@
                     <div class="page-header">
                         <h2>Opgaver</h2>
                         <div class="page-header-actions">
+                            <button type="button" class="add-manual-order-btn" id="addManualOrderBtn" aria-label="Tilføj kunde" title="Tilføj kunde" style="display: none;">
+                                +
+                            </button>
                             <select id="orderFilter" class="order-filter">
                                 <option value="upcoming">Næste opgave</option>
                                 <option value="setup">Med opsætning</option>
@@ -416,6 +419,7 @@
             <div class="order-detail-body">
                 <div class="order-products-section">
                     <h4>Produkter</h4>
+                    <div id="orderAdminManualBanner" class="order-admin-manual-banner" style="display: none;"></div>
                     <div id="orderProductsList" class="order-products-list">
                         <!-- Products will be inserted here -->
                     </div>
@@ -457,6 +461,62 @@
         </div>
     </div>
     
+    <div id="manualOrderModal" class="modal">
+        <div class="modal-content manual-order-modal">
+            <span class="close-modal" id="closeManualOrderModal">&times;</span>
+            <h2>Tilføj kunde (manuel ordre)</h2>
+            <form id="manualOrderForm">
+                <div class="form-group">
+                    <label for="manualOrderName">Navn</label>
+                    <input type="text" id="manualOrderName" name="manualOrderName" required autocomplete="name">
+                </div>
+                <div class="form-group">
+                    <label for="manualOrderPhone">Telefon</label>
+                    <input type="tel" id="manualOrderPhone" name="manualOrderPhone" required autocomplete="tel">
+                </div>
+                <div class="form-group">
+                    <label for="manualOrderEmail">E-mail</label>
+                    <input type="email" id="manualOrderEmail" name="manualOrderEmail" required autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="manualOrderAddress">Adresse</label>
+                    <textarea id="manualOrderAddress" name="manualOrderAddress" rows="2" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="manualOrderInstallationDate">Installationsdato</label>
+                    <input type="date" id="manualOrderInstallationDate" name="manualOrderInstallationDate" required>
+                </div>
+                <div class="manual-order-pricing-section">
+                    <h3 class="manual-order-pricing-title">Priser (DKK)</h3>
+                    <div class="form-group">
+                        <label for="manualPriceStartup">Opstart (inkl. kantstenslevering og logistik, koordinering &amp; håndtering)</label>
+                        <input type="number" id="manualPriceStartup" name="manualPriceStartup" min="0" step="0.01" required value="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="manualPriceM1to4">Måned 1–4</label>
+                        <input type="number" id="manualPriceM1to4" name="manualPriceM1to4" min="0" step="0.01" required value="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="manualPriceM5to12">Måned 5–12</label>
+                        <input type="number" id="manualPriceM5to12" name="manualPriceM5to12" min="0" step="0.01" required value="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="manualPriceM13plus">Måned 13+</label>
+                        <input type="number" id="manualPriceM13plus" name="manualPriceM13plus" min="0" step="0.01" required value="0">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="manualOrderNote">Note</label>
+                    <textarea id="manualOrderNote" name="manualOrderNote" rows="3" placeholder="Valgfri note"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" id="cancelManualOrderBtn">Annuller</button>
+                    <button type="submit" class="submit-btn">Gem ordre</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script src="admin.js"></script>
 </body>
 </html>

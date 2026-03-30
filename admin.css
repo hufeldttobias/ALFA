@@ -161,6 +161,69 @@ body {
     gap: 1rem;
 }
 
+.add-manual-order-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.5rem;
+    height: 2.5rem;
+    padding: 0 0.65rem;
+    font-size: 1.5rem;
+    font-weight: 500;
+    line-height: 1;
+    border: none;
+    border-radius: 8px;
+    background-color: #004595;
+    color: #ffffff;
+    cursor: pointer;
+    transition: opacity 0.2s ease, background-color 0.2s ease;
+}
+
+.add-manual-order-btn:hover {
+    opacity: 0.92;
+}
+
+.manual-order-modal {
+    max-width: 520px;
+}
+
+.manual-order-pricing-section {
+    margin-top: 0.75rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+.manual-order-pricing-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 0.75rem 0;
+    color: #374151;
+}
+
+.order-admin-manual-banner {
+    margin-bottom: 0.75rem;
+}
+
+.order-manual-badge {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #004595;
+    margin: 0 0 0.5rem 0;
+}
+
+.order-admin-note-display {
+    font-size: 0.875rem;
+    color: #374151;
+    margin: 0;
+    white-space: pre-wrap;
+}
+
+.order-manual-no-products {
+    color: #6b7280;
+    font-size: 0.875rem;
+    margin: 0;
+}
+
 .order-filter {
     padding: 0.5rem 1rem;
     border: 1px solid #d1d5db;
