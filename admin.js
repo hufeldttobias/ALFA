@@ -1633,6 +1633,10 @@ document.addEventListener('DOMContentLoaded', function() {
         containers.forEach((container) => {
             const h = container.querySelector('.overview-order-header');
             if (!h) return;
+            const rentHeader = h.querySelector('.overview-order-rent');
+            if (rentHeader) {
+                rentHeader.textContent = isOverview ? 'Referral payout' : 'Månedlig leje';
+            }
             const existing = h.querySelector('.overview-order-contact-header');
             if (isOverview && !existing) {
                 const d = document.createElement('div');
@@ -1712,6 +1716,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 : `<button type="button" class="overview-order-delete-btn" data-order-id="${id}" aria-label="Slet ordre permanent" title="Slet permanent">×</button>`;
 
         const rowModClass = isOverviewOnly ? 'overview-order-row--alfam' : 'overview-order-row--deletable';
+        const alfamReferralPayoutDisplay = '2000.00 DKK';
         
         // Display active orders
         // Keep the header row and only replace the content after it
@@ -1719,8 +1724,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const activeContent = activeOrders.length === 0 
             ? '<p style="color: #6b7280; text-align: center; padding: 2rem;">Ingen aktive ordrer.</p>'
             : activeOrders.map(order => {
-                // Calculate current monthly rent based on installation date
-                const monthlyRent = calculateCurrentMonthlyRent(order);
+                const rentDisplay = isOverviewOnly
+                    ? alfamReferralPayoutDisplay
+                    : `${calculateCurrentMonthlyRent(order).toFixed(2)} DKK`;
                 const contactCol = isOverviewOnly
                     ? `<div class="overview-order-contact-cell">${contactRequestRowBtn(order)}</div>`
                     : '';
@@ -1731,7 +1737,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <div class="overview-order-number">Ordre #${order.id}</div>
                         <div class="overview-order-name">${order.name}</div>
                         <div class="overview-order-address">${order.address}</div>
-                        <div class="overview-order-rent">${monthlyRent.toFixed(2)} DKK</div>
+                        <div class="overview-order-rent">${rentDisplay}</div>
                         ${contactCol}
                     </div>
                 `;
@@ -1764,8 +1770,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const cancelledPendingContent = cancelledPendingOrders.length === 0 
             ? '<p style="color: #6b7280; text-align: center; padding: 2rem;">Ingen ordrer i denne kategori.</p>'
             : cancelledPendingOrders.map(order => {
-                // Calculate current monthly rent based on installation date
-                const monthlyRent = calculateCurrentMonthlyRent(order);
+                const rentDisplay = isOverviewOnly
+                    ? alfamReferralPayoutDisplay
+                    : `${calculateCurrentMonthlyRent(order).toFixed(2)} DKK`;
                 const contactCol = isOverviewOnly
                     ? `<div class="overview-order-contact-cell">${contactRequestRowBtn(order)}</div>`
                     : '';
@@ -1776,7 +1783,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <div class="overview-order-number">Ordre #${order.id}</div>
                         <div class="overview-order-name">${order.name}</div>
                         <div class="overview-order-address">${order.address}</div>
-                        <div class="overview-order-rent">${monthlyRent.toFixed(2)} DKK</div>
+                        <div class="overview-order-rent">${rentDisplay}</div>
                         ${contactCol}
                     </div>
                 `;
@@ -1809,8 +1816,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const cancelledCollectedContent = cancelledCollectedOrders.length === 0 
             ? '<p style="color: #6b7280; text-align: center; padding: 2rem;">Ingen ordrer i denne kategori.</p>'
             : cancelledCollectedOrders.map(order => {
-                // Calculate current monthly rent based on installation date
-                const monthlyRent = calculateCurrentMonthlyRent(order);
+                const rentDisplay = isOverviewOnly
+                    ? alfamReferralPayoutDisplay
+                    : `${calculateCurrentMonthlyRent(order).toFixed(2)} DKK`;
                 const contactCol = isOverviewOnly
                     ? `<div class="overview-order-contact-cell">${contactRequestRowBtn(order)}</div>`
                     : '';
@@ -1821,7 +1829,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <div class="overview-order-number">Ordre #${order.id}</div>
                         <div class="overview-order-name">${order.name}</div>
                         <div class="overview-order-address">${order.address}</div>
-                        <div class="overview-order-rent">${monthlyRent.toFixed(2)} DKK</div>
+                        <div class="overview-order-rent">${rentDisplay}</div>
                         ${contactCol}
                     </div>
                 `;
