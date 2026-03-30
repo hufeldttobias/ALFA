@@ -579,6 +579,37 @@ document.addEventListener('DOMContentLoaded', function() {
         return d.toLocaleDateString('da-DK');
     }
 
+    function escapeReferralHtml(text) {
+        if (text == null || text === '') return '';
+        const div = document.createElement('div');
+        div.textContent = String(text);
+        return div.innerHTML;
+    }
+
+    function setReferralHandled(referralId, handledStatus) {
+        const referrals = getReferrals();
+        const idx = referrals.findIndex((r) => Number(r.id) === Number(referralId));
+        if (idx === -1) return;
+        referrals[idx].handledStatus = handledStatus;
+        referrals[idx].handledAt = new Date().toISOString();
+        saveReferrals(referrals);
+        loadReferrals();
+    }
+
+    function renderReferralMetaBlock(ref) {
+        const notes = ref.notes
+            ? `<div class="referral-notes"><strong>Notes:</strong> ${escapeReferralHtml(ref.notes)}</div>`
+            : '';
+        return `
+            <div class="referral-meta">
+                <div><strong>Kontakt:</strong> ${escapeReferralHtml(ref.contact)}</div>
+                <div><strong>Adresse/område:</strong> ${escapeReferralHtml(ref.addressArea || 'Ikke angivet')}</div>
+                <div><strong>Type:</strong> ${escapeReferralHtml(ref.type || 'Ready-to-go')}</div>
+            </div>
+            ${notes}
+        `;
+    }
+
     async function loadReferrals() {
         const container = document.getElementById('referralsContainer');
         if (!container) return;
@@ -595,35 +626,100 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             referrals = getReferrals();
         }
-        referrals.sort((a, b) => {
-            const aTime = a.moveInDate ? new Date(a.moveInDate + 'T00:00:00').getTime() : Number.MAX_SAFE_INTEGER;
-            const bTime = b.moveInDate ? new Date(b.moveInDate + 'T00:00:00').getTime() : Number.MAX_SAFE_INTEGER;
-            return aTime - bTime;
-        });
 
         if (referrals.length === 0) {
             container.innerHTML = '<p style="color: #6b7280; text-align: center; padding: 1rem;">Ingen referrals endnu.</p>';
             return;
         }
 
-        container.innerHTML = `
-            <div class="referral-list">
-                ${referrals.map((ref) => `
-                    <div class="referral-item">
+        const pending = referrals.filter((r) => !r.handledStatus);
+        const notSuccess = referrals.filter((r) => r.handledStatus === 'not_success');
+        const successList = referrals.filter((r) => r.handledStatus === 'success');
+
+        pending.sort((a, b) => {
+            const aTime = a.moveInDate ? new Date(a.moveInDate + 'T00:00:00').getTime() : Number.MAX_SAFE_INTEGER;
+            const bTime = b.moveInDate ? new Date(b.moveInDate + 'T00:00:00').getTime() : Number.MAX_SAFE_INTEGER;
+            return aTime - bTime;
+        });
+        const byHandledAt = (a, b) => {
+            const ta = a.handledAt ? new Date(a.handledAt).getTime() : 0;
+            const tb = b.handledAt ? new Date(b.handledAt).getTime() : 0;
+            return tb - ta;
+        };
+        notSuccess.sort(byHandledAt);
+        successList.sort(byHandledAt);
+
+        const pendingHtml = pending.length
+            ? `
+            <div class="referral-list referral-list--pending">
+                ${pending.map((ref) => `
+                    <div class="referral-item referral-item--open" data-referral-id="${ref.id}">
                         <div class="referral-item-header">
-                            <span class="referral-name">${ref.customerName}</span>
+                            <span class="referral-name">${escapeReferralHtml(ref.customerName)}</span>
                             <span class="referral-date">Move-in: ${formatMoveInDate(ref.moveInDate)}</span>
                         </div>
-                        <div class="referral-meta">
-                            <div><strong>Kontakt:</strong> ${ref.contact}</div>
-                            <div><strong>Adresse/område:</strong> ${ref.addressArea || 'Ikke angivet'}</div>
-                            <div><strong>Type:</strong> ${ref.type || 'Ready-to-go'}</div>
+                        ${renderReferralMetaBlock(ref)}
+                        <div class="referral-actions">
+                            <button type="button" class="referral-action-btn referral-action-btn--fail" data-referral-action="not_success" data-referral-id="${ref.id}">Håndteret, ikke succes</button>
+                            <button type="button" class="referral-action-btn referral-action-btn--ok" data-referral-action="success" data-referral-id="${ref.id}">Håndteret, Succes</button>
                         </div>
-                        ${ref.notes ? `<div class="referral-notes"><strong>Notes:</strong> ${ref.notes}</div>` : ''}
                     </div>
                 `).join('')}
             </div>
+        `
+            : '<p class="referral-empty-pending-msg">Ingen afventende referrals.</p>';
+
+        const renderHandledRow = (ref, variant) => {
+            const rowClass =
+                variant === 'not_success' ? 'referral-handled-row referral-handled-row--fail' : 'referral-handled-row referral-handled-row--ok';
+            return `
+                <details class="${rowClass}">
+                    <summary class="referral-handled-summary">${escapeReferralHtml(ref.customerName)} · Move-in: ${formatMoveInDate(ref.moveInDate)}</summary>
+                    <div class="referral-handled-body">
+                        ${renderReferralMetaBlock(ref)}
+                    </div>
+                </details>
+            `;
+        };
+
+        const handledStackHtml = referrals.length > 0
+                ? `
+            <div class="referral-handled-stack">
+                <details class="referral-handled-group">
+                    <summary class="referral-handled-group-summary">Håndteret, ikke succes (${notSuccess.length})</summary>
+                    <div class="referral-handled-inner">
+                        ${notSuccess.length ? notSuccess.map((ref) => renderHandledRow(ref, 'not_success')).join('') : '<p class="referral-handled-empty">Ingen i denne kategori.</p>'}
+                    </div>
+                </details>
+                <details class="referral-handled-group">
+                    <summary class="referral-handled-group-summary">Håndteret, Succes (${successList.length})</summary>
+                    <div class="referral-handled-inner">
+                        ${successList.length ? successList.map((ref) => renderHandledRow(ref, 'success')).join('') : '<p class="referral-handled-empty">Ingen i denne kategori.</p>'}
+                    </div>
+                </details>
+            </div>
+        `
+                : '';
+
+        container.innerHTML = `
+            <div class="referral-layout">
+                ${pendingHtml}
+                ${handledStackHtml}
+            </div>
         `;
+    }
+
+    const referralsContainerEl = document.getElementById('referralsContainer');
+    if (referralsContainerEl) {
+        referralsContainerEl.addEventListener('click', function(e) {
+            const btn = e.target.closest('[data-referral-action]');
+            if (!btn) return;
+            const id = btn.getAttribute('data-referral-id');
+            const action = btn.getAttribute('data-referral-action');
+            if (!id) return;
+            if (action === 'not_success') setReferralHandled(id, 'not_success');
+            else if (action === 'success') setReferralHandled(id, 'success');
+        });
     }
 
     const addReferralBtn = document.getElementById('addReferralBtn');
@@ -747,6 +843,67 @@ document.addEventListener('DOMContentLoaded', function() {
     const referralsPage = document.getElementById('referrals');
     if (referralsPage && referralsPage.classList.contains('active')) {
         loadReferrals();
+    }
+
+    const deleteOrderBtnHtml = isOverviewOnly
+        ? ''
+        : `<button type="button" class="order-card-delete-btn" data-delete-context="active" aria-label="Slet opgave permanent" title="Slet permanent">×</button>`;
+    const deleteCompletedOrderBtnHtml = isOverviewOnly
+        ? ''
+        : `<button type="button" class="order-card-delete-btn" data-delete-context="completed-pending" aria-label="Slet opgave permanent" title="Slet permanent">×</button>`;
+
+    async function permanentlyDeleteActiveOrder(orderId) {
+        if (isOverviewOnly) return;
+        if (!confirm('Er du sikker på, at du vil slette denne opgave permanent? Denne handling kan ikke fortrydes.')) {
+            return;
+        }
+        let orders = [];
+        const serverOrders = await fetchOrdersFromServer();
+        if (serverOrders !== null) {
+            orders = serverOrders;
+        } else {
+            const stored = localStorage.getItem('orders');
+            if (stored) {
+                try {
+                    orders = JSON.parse(stored);
+                    if (!Array.isArray(orders)) orders = [];
+                } catch (e) {
+                    orders = [];
+                }
+            }
+        }
+        const idNum = Number(orderId);
+        const next = orders.filter((o) => Number(o.id) !== idNum);
+        localStorage.setItem('orders', JSON.stringify(next));
+        await saveOrdersToServer(next);
+        loadOrders();
+    }
+
+    async function permanentlyDeleteCompletedOrder(orderId) {
+        if (isOverviewOnly) return;
+        if (!confirm('Er du sikker på, at du vil slette denne opgave permanent? Denne handling kan ikke fortrydes.')) {
+            return;
+        }
+        let completed = [];
+        const serverCompleted = await fetchCompletedOrdersFromServer();
+        if (serverCompleted !== null) {
+            completed = serverCompleted;
+        } else {
+            const stored = localStorage.getItem('completedOrders');
+            if (stored) {
+                try {
+                    completed = JSON.parse(stored);
+                    if (!Array.isArray(completed)) completed = [];
+                } catch (e) {
+                    completed = [];
+                }
+            }
+        }
+        const idNum = Number(orderId);
+        const next = completed.filter((o) => Number(o.id) !== idNum);
+        localStorage.setItem('completedOrders', JSON.stringify(next));
+        await saveCompletedOrdersToServer(next);
+        loadOrders();
     }
     
     // Load and display orders
@@ -879,6 +1036,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 return `
                     <div class="order-card ${setupClass}" data-order-id="${order.id}" style="cursor: ${isOverviewOnly ? 'default' : 'pointer'};">
+                        ${deleteOrderBtnHtml}
                         <div class="order-header">
                             <div class="order-id">Ordre #${order.id}</div>
                             <div class="order-date">${new Date(order.createdAt).toLocaleDateString('da-DK')}</div>
@@ -908,9 +1066,21 @@ document.addEventListener('DOMContentLoaded', function() {
             // Add click event listeners to order cards (not in read-only overview)
             if (!isOverviewOnly) {
                 container.querySelectorAll('.order-card').forEach(card => {
-                    card.addEventListener('click', function() {
-                        const orderId = parseInt(this.dataset.orderId);
+                    card.addEventListener('click', function(e) {
+                        if (e.target.closest('.order-card-delete-btn')) return;
+                        const orderId = parseInt(this.dataset.orderId, 10);
                         showOrderDetail(orderId);
+                    });
+                });
+                container.querySelectorAll('.order-card-delete-btn[data-delete-context="active"]').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        const card = this.closest('.order-card');
+                        const rawId = card && card.dataset.orderId;
+                        if (rawId !== undefined && rawId !== '') {
+                            permanentlyDeleteActiveOrder(rawId);
+                        }
                     });
                 });
             }
@@ -940,6 +1110,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     // All cancelled pending orders should have red border
                     return `
                         <div class="order-card order-card-cancelled-pending" data-order-id="${order.id}" style="cursor: ${isOverviewOnly ? 'default' : 'pointer'};">
+                            ${deleteCompletedOrderBtnHtml}
                             <div class="order-header">
                             <div class="order-id">Ordre #${order.id}</div>
                                 <div class="order-date">${new Date(order.createdAt).toLocaleDateString('da-DK')}</div>
@@ -969,9 +1140,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Add click event listeners to cancelled pending order cards (not in read-only overview)
                 if (!isOverviewOnly) {
                     cancelledPendingTasksContainer.querySelectorAll('.order-card').forEach(card => {
-                        card.addEventListener('click', function() {
-                            const orderId = parseInt(this.dataset.orderId);
+                        card.addEventListener('click', function(e) {
+                            if (e.target.closest('.order-card-delete-btn')) return;
+                            const orderId = parseInt(this.dataset.orderId, 10);
                             showOrderDetail(orderId);
+                        });
+                    });
+                    cancelledPendingTasksContainer.querySelectorAll('.order-card-delete-btn[data-delete-context="completed-pending"]').forEach(btn => {
+                        btn.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            const card = this.closest('.order-card');
+                            const rawId = card && card.dataset.orderId;
+                            if (rawId !== undefined && rawId !== '') {
+                                permanentlyDeleteCompletedOrder(rawId);
+                            }
                         });
                     });
                 }
