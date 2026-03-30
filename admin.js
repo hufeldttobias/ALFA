@@ -225,22 +225,66 @@ async function mergeReferralsWithServer(serverReferrals) {
 }
 
 const ALFAM_CONTACT_SENT_KEY = 'alfamContactRequestSent';
+/** Grøn "Sendt"-tilstand for Kontakt-knap udløber efter dette (ms). */
+const ALFAM_CONTACT_SENT_TTL_MS = 10 * 60 * 1000;
 
-function getAlfamContactSentSet() {
+function loadAlfamContactTimestamps() {
     try {
         const raw = localStorage.getItem(ALFAM_CONTACT_SENT_KEY);
-        if (!raw) return new Set();
-        const arr = JSON.parse(raw);
-        return new Set(Array.isArray(arr) ? arr.map(Number) : []);
+        if (!raw) return {};
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+            const migrated = {};
+            const t = Date.now();
+            parsed.forEach((id) => {
+                const n = Number(id);
+                if (Number.isFinite(n)) migrated[String(n)] = t;
+            });
+            saveAlfamContactTimestamps(migrated);
+            return migrated;
+        }
+        if (parsed && typeof parsed === 'object') {
+            return parsed;
+        }
     } catch (e) {
-        return new Set();
+        /* ignore */
+    }
+    return {};
+}
+
+function saveAlfamContactTimestamps(map) {
+    try {
+        localStorage.setItem(ALFAM_CONTACT_SENT_KEY, JSON.stringify(map));
+    } catch (e) {
+        /* ignore */
     }
 }
 
+function pruneExpiredAlfamContactEntries() {
+    const map = loadAlfamContactTimestamps();
+    const now = Date.now();
+    let changed = false;
+    Object.keys(map).forEach((key) => {
+        if (now - Number(map[key]) > ALFAM_CONTACT_SENT_TTL_MS) {
+            delete map[key];
+            changed = true;
+        }
+    });
+    if (changed) saveAlfamContactTimestamps(map);
+}
+
+function isAlfamContactSent(orderId) {
+    const map = loadAlfamContactTimestamps();
+    const key = String(Number(orderId));
+    const ts = map[key];
+    if (ts == null) return false;
+    return Date.now() - Number(ts) <= ALFAM_CONTACT_SENT_TTL_MS;
+}
+
 function markAlfamContactSent(orderId) {
-    const s = getAlfamContactSentSet();
-    s.add(Number(orderId));
-    localStorage.setItem(ALFAM_CONTACT_SENT_KEY, JSON.stringify([...s]));
+    const map = loadAlfamContactTimestamps();
+    map[String(Number(orderId))] = Date.now();
+    saveAlfamContactTimestamps(map);
 }
 
 async function sendContactRequestNotificationToServer(order) {
@@ -1677,10 +1721,13 @@ document.addEventListener('DOMContentLoaded', function() {
         markAlfamContactSent(orderId);
         btn.classList.add('contact-request-btn--sent');
         btn.textContent = 'Sendt';
+        setTimeout(() => {
+            loadCompletedOrders();
+        }, ALFAM_CONTACT_SENT_TTL_MS);
     }
 
     function contactRequestRowBtn(order) {
-        const sent = getAlfamContactSentSet().has(Number(order.id));
+        const sent = isAlfamContactSent(order.id);
         if (sent) {
             return `<button type="button" class="contact-request-btn contact-request-btn--row contact-request-btn--sent" data-contact-order-id="${order.id}" disabled>Sendt</button>`;
         }
@@ -1696,7 +1743,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!activeContainer || !cancelledPendingContainer || !cancelledCollectedContainer) return;
 
         ensureOverviewContactHeaders(isOverviewOnly);
-        
+        pruneExpiredAlfamContactEntries();
+
         const serverCompletedOrders = await fetchCompletedOrdersFromServer();
         let completedOrders = await mergeCompletedOrdersWithServer(serverCompletedOrders);
         
