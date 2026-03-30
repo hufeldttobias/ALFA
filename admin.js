@@ -681,6 +681,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function setReferralHandled(referralId, handledStatus) {
+        if (isOverviewOnly) return;
         const referrals = getReferrals();
         const idx = referrals.findIndex((r) => Number(r.id) === Number(referralId));
         if (idx === -1) return;
@@ -688,6 +689,17 @@ document.addEventListener('DOMContentLoaded', function() {
         referrals[idx].handledAt = new Date().toISOString();
         saveReferrals(referrals);
         loadReferrals();
+    }
+
+    async function deleteReferralPermanently(referralId) {
+        if (isOverviewOnly) return;
+        if (!confirm('Er du sikker på, at du vil slette denne referral permanent? Denne handling kan ikke fortrydes.')) {
+            return;
+        }
+        const referrals = getReferrals().filter((r) => Number(r.id) !== Number(referralId));
+        localStorage.setItem(REFERRALS_STORAGE_KEY, JSON.stringify(referrals));
+        await saveReferralsToServer(referrals);
+        await loadReferrals();
     }
 
     function renderReferralMetaBlock(ref) {
@@ -742,16 +754,19 @@ document.addEventListener('DOMContentLoaded', function() {
             ? `
             <div class="referral-list referral-list--pending">
                 ${pending.map((ref) => `
-                    <div class="referral-item referral-item--open" data-referral-id="${ref.id}">
+                    <div class="referral-item referral-item--open ${isOverviewOnly ? '' : 'referral-item--deletable'}" data-referral-id="${ref.id}">
+                        ${isOverviewOnly ? '' : `<button type="button" class="referral-delete-btn" data-referral-delete="${ref.id}" aria-label="Slet referral permanent" title="Slet permanent">×</button>`}
                         <div class="referral-item-header">
                             <span class="referral-name">${escapeReferralHtml(ref.customerName)}</span>
                             <span class="referral-date">Move-in: ${formatMoveInDate(ref.moveInDate)}</span>
                         </div>
                         ${renderReferralMetaBlock(ref)}
+                        ${isOverviewOnly ? '' : `
                         <div class="referral-actions">
                             <button type="button" class="referral-action-btn referral-action-btn--fail" data-referral-action="not_success" data-referral-id="${ref.id}">Håndteret, ikke succes</button>
                             <button type="button" class="referral-action-btn referral-action-btn--ok" data-referral-action="success" data-referral-id="${ref.id}">Håndteret, Succes</button>
                         </div>
+                        `}
                     </div>
                 `).join('')}
             </div>
@@ -761,9 +776,15 @@ document.addEventListener('DOMContentLoaded', function() {
         const renderHandledRow = (ref, variant) => {
             const rowClass =
                 variant === 'not_success' ? 'referral-handled-row referral-handled-row--fail' : 'referral-handled-row referral-handled-row--ok';
+            const delBtn = isOverviewOnly
+                ? ''
+                : `<button type="button" class="referral-delete-btn referral-delete-btn--handled" data-referral-delete="${ref.id}" aria-label="Slet referral permanent" title="Slet permanent">×</button>`;
             return `
                 <details class="${rowClass}">
-                    <summary class="referral-handled-summary">${escapeReferralHtml(ref.customerName)} · Move-in: ${formatMoveInDate(ref.moveInDate)}</summary>
+                    <summary class="referral-handled-summary ${delBtn ? 'referral-handled-summary--with-delete' : ''}">
+                        ${delBtn}
+                        <span class="referral-handled-summary-text">${escapeReferralHtml(ref.customerName)} · Move-in: ${formatMoveInDate(ref.moveInDate)}</span>
+                    </summary>
                     <div class="referral-handled-body">
                         ${renderReferralMetaBlock(ref)}
                     </div>
@@ -800,15 +821,28 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const referralsContainerEl = document.getElementById('referralsContainer');
     if (referralsContainerEl) {
-        referralsContainerEl.addEventListener('click', function(e) {
-            const btn = e.target.closest('[data-referral-action]');
-            if (!btn) return;
-            const id = btn.getAttribute('data-referral-id');
-            const action = btn.getAttribute('data-referral-action');
-            if (!id) return;
-            if (action === 'not_success') setReferralHandled(id, 'not_success');
-            else if (action === 'success') setReferralHandled(id, 'success');
-        });
+        referralsContainerEl.addEventListener(
+            'click',
+            function(e) {
+                if (isOverviewOnly) return;
+                const delBtn = e.target.closest('[data-referral-delete]');
+                if (delBtn) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const delId = delBtn.getAttribute('data-referral-delete');
+                    if (delId) deleteReferralPermanently(delId);
+                    return;
+                }
+                const btn = e.target.closest('[data-referral-action]');
+                if (!btn) return;
+                const id = btn.getAttribute('data-referral-id');
+                const action = btn.getAttribute('data-referral-action');
+                if (!id) return;
+                if (action === 'not_success') setReferralHandled(id, 'not_success');
+                else if (action === 'success') setReferralHandled(id, 'success');
+            },
+            true
+        );
     }
 
     const addReferralBtn = document.getElementById('addReferralBtn');
@@ -1499,6 +1533,22 @@ document.addEventListener('DOMContentLoaded', function() {
             modal.style.display = 'none';
         }
     }
+
+    async function permanentlyDeleteOverviewOrder(orderId) {
+        if (isOverviewOnly) return;
+        if (!confirm('Er du sikker på, at du vil slette denne ordre permanent fra Oversigt? Denne handling kan ikke fortrydes.')) {
+            return;
+        }
+        const idNum = Number(orderId);
+        const serverCompleted = await fetchCompletedOrdersFromServer();
+        let completedOrders = await mergeCompletedOrdersWithServer(serverCompleted);
+        const next = completedOrders.filter((o) => Number(o.id) !== idNum);
+        localStorage.setItem('completedOrders', JSON.stringify(next));
+        await saveCompletedOrdersToServer(next);
+        closeOrderDetailModal();
+        updateOpgaverBadge();
+        await loadCompletedOrders();
+    }
     
     // Complete order - move from Opgaver to Oversigt
     async function completeOrder(orderId) {
@@ -1564,6 +1614,11 @@ document.addEventListener('DOMContentLoaded', function() {
         activeOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         cancelledPendingOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         cancelledCollectedOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+        const overviewDelBtn = (id) =>
+            isOverviewOnly
+                ? ''
+                : `<button type="button" class="overview-order-delete-btn" data-order-id="${id}" aria-label="Slet ordre permanent" title="Slet permanent">×</button>`;
         
         // Display active orders
         // Keep the header row and only replace the content after it
@@ -1575,7 +1630,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 const monthlyRent = calculateCurrentMonthlyRent(order);
                 
                 return `
-                    <div class="overview-order-row" data-order-id="${order.id}" style="cursor: ${isOverviewOnly ? 'default' : 'pointer'};">
+                    <div class="overview-order-row ${isOverviewOnly ? '' : 'overview-order-row--deletable'}" data-order-id="${order.id}" style="cursor: ${isOverviewOnly ? 'default' : 'pointer'};">
+                        ${overviewDelBtn(order.id)}
                         <div class="overview-order-number">Ordre #${order.id}</div>
                         <div class="overview-order-name">${order.name}</div>
                         <div class="overview-order-address">${order.address}</div>
@@ -1596,8 +1652,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // Add click event listeners to active order rows
             if (!isOverviewOnly) {
                 activeContainer.querySelectorAll('.overview-order-row').forEach(row => {
-                    row.addEventListener('click', function() {
-                        const orderId = parseInt(this.dataset.orderId);
+                    row.addEventListener('click', function(e) {
+                        if (e.target.closest('.overview-order-delete-btn')) return;
+                        const orderId = parseInt(this.dataset.orderId, 10);
                         showOrderDetail(orderId);
                     });
                 });
@@ -1614,7 +1671,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 const monthlyRent = calculateCurrentMonthlyRent(order);
                 
                 return `
-                    <div class="overview-order-row" data-order-id="${order.id}" style="cursor: ${isOverviewOnly ? 'default' : 'pointer'};">
+                    <div class="overview-order-row ${isOverviewOnly ? '' : 'overview-order-row--deletable'}" data-order-id="${order.id}" style="cursor: ${isOverviewOnly ? 'default' : 'pointer'};">
+                        ${overviewDelBtn(order.id)}
                         <div class="overview-order-number">Ordre #${order.id}</div>
                         <div class="overview-order-name">${order.name}</div>
                         <div class="overview-order-address">${order.address}</div>
@@ -1635,8 +1693,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // Add click event listeners (disabled for overview-only access)
             if (!isOverviewOnly) {
                 cancelledPendingContainer.querySelectorAll('.overview-order-row').forEach(row => {
-                    row.addEventListener('click', function() {
-                        const orderId = parseInt(this.dataset.orderId);
+                    row.addEventListener('click', function(e) {
+                        if (e.target.closest('.overview-order-delete-btn')) return;
+                        const orderId = parseInt(this.dataset.orderId, 10);
                         showOrderDetail(orderId);
                     });
                 });
@@ -1653,7 +1712,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 const monthlyRent = calculateCurrentMonthlyRent(order);
                 
                 return `
-                    <div class="overview-order-row" data-order-id="${order.id}" style="cursor: ${isOverviewOnly ? 'default' : 'pointer'};">
+                    <div class="overview-order-row ${isOverviewOnly ? '' : 'overview-order-row--deletable'}" data-order-id="${order.id}" style="cursor: ${isOverviewOnly ? 'default' : 'pointer'};">
+                        ${overviewDelBtn(order.id)}
                         <div class="overview-order-number">Ordre #${order.id}</div>
                         <div class="overview-order-name">${order.name}</div>
                         <div class="overview-order-address">${order.address}</div>
@@ -1674,8 +1734,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // Add click event listeners (disabled for overview-only access)
             if (!isOverviewOnly) {
                 cancelledCollectedContainer.querySelectorAll('.overview-order-row').forEach(row => {
-                    row.addEventListener('click', function() {
-                        const orderId = parseInt(this.dataset.orderId);
+                    row.addEventListener('click', function(e) {
+                        if (e.target.closest('.overview-order-delete-btn')) return;
+                        const orderId = parseInt(this.dataset.orderId, 10);
                         showOrderDetail(orderId);
                     });
                 });
@@ -1683,6 +1744,19 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             cancelledCollectedContainer.insertAdjacentHTML('beforeend', cancelledCollectedContent);
         }
+    }
+
+    const overviewGroupsEl = document.querySelector('.overview-groups');
+    if (overviewGroupsEl) {
+        overviewGroupsEl.addEventListener('click', function(e) {
+            if (isOverviewOnly) return;
+            const del = e.target.closest('.overview-order-delete-btn');
+            if (!del) return;
+            e.stopPropagation();
+            e.preventDefault();
+            const id = del.getAttribute('data-order-id');
+            if (id) permanentlyDeleteOverviewOrder(id);
+        });
     }
     
     // Calculate current monthly rent based on installation date
