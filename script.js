@@ -424,10 +424,23 @@ document.addEventListener('DOMContentLoaded', function() {
             return local;
         }
         if (serverOrders.length > 0) {
+            const serverById = new Map();
+            serverOrders.forEach((o) => {
+                const id = Number(o.id);
+                if (!Number.isNaN(id)) serverById.set(id, o);
+            });
+            const merged = Array.from(serverById.values());
+            local.forEach((o) => {
+                const id = Number(o.id);
+                if (Number.isNaN(id)) return;
+                if (!serverById.has(id)) {
+                    merged.push(o);
+                }
+            });
             try {
-                localStorage.setItem('orders', JSON.stringify(serverOrders));
+                localStorage.setItem('orders', JSON.stringify(merged));
             } catch (e) {}
-            return serverOrders;
+            return merged;
         }
         if (local.length > 0) {
             await saveOrdersToServer(local);

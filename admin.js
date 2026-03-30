@@ -169,6 +169,8 @@ function getReferralsFromLocalStorageSafe() {
 /**
  * serverOrders === null: fetch failed or 503 — use browser cache only.
  * serverOrders === []: if localStorage still has rows (fx før sync til tom DB), upload local to Postgres.
+ * Når server har data, flettes med lokale ordrer efter id, så rækker der kun findes lokalt (fx lige efter POST)
+ * ikke overskrives af et GET der endnu ikke indeholder den nye ordre.
  */
 async function mergeOrdersWithServer(serverOrders) {
     const local = getOrdersFromLocalStorageSafe();
@@ -176,10 +178,23 @@ async function mergeOrdersWithServer(serverOrders) {
         return local;
     }
     if (serverOrders.length > 0) {
+        const serverById = new Map();
+        serverOrders.forEach((o) => {
+            const id = Number(o.id);
+            if (!Number.isNaN(id)) serverById.set(id, o);
+        });
+        const merged = Array.from(serverById.values());
+        local.forEach((o) => {
+            const id = Number(o.id);
+            if (Number.isNaN(id)) return;
+            if (!serverById.has(id)) {
+                merged.push(o);
+            }
+        });
         try {
-            localStorage.setItem('orders', JSON.stringify(serverOrders));
+            localStorage.setItem('orders', JSON.stringify(merged));
         } catch (e) {}
-        return serverOrders;
+        return merged;
     }
     if (local.length > 0) {
         await saveOrdersToServer(local);
@@ -1242,6 +1257,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Check if order has delivery and setup
                 const hasSetup = order.deliveryOption && order.deliveryOption.type === 'setup';
                 const setupClass = hasSetup ? 'order-card-setup' : '';
+                let installationDateLabel = '';
+                if (order.installationDate) {
+                    const raw = String(order.installationDate).trim();
+                    const d = raw.includes('T') ? new Date(raw) : new Date(`${raw}T12:00:00`);
+                    const dateStr = Number.isNaN(d.getTime()) ? raw : d.toLocaleDateString('da-DK');
+                    installationDateLabel = `
+                            <div class="order-detail-row">
+                                <span class="order-label">Installationsdato:</span>
+                                <span class="order-value">${dateStr}</span>
+                            </div>`;
+                }
                 
                 return `
                     <div class="order-card ${setupClass}" data-order-id="${order.id}" style="cursor: ${isOverviewOnly ? 'default' : 'pointer'};">
@@ -1259,6 +1285,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <span class="order-label">Adresse:</span>
                                 <span class="order-value">${order.address}</span>
                             </div>
+                            ${installationDateLabel}
                             <div class="order-detail-row">
                                 <span class="order-label">Ønsket installationsuge:</span>
                                 <span class="order-value">${order.installationWeek || 'Ikke angivet'}</span>
@@ -2405,10 +2432,7 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.setItem('orders', JSON.stringify(orders));
             await saveOrdersToServer(orders);
             closeManualOrderModalFunc();
-            const opgaverPage = document.getElementById('opgaver');
-            if (opgaverPage && opgaverPage.classList.contains('active')) {
-                loadOrders();
-            }
+            await loadOrders();
             updateOpgaverBadge();
         });
     }
