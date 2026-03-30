@@ -255,6 +255,78 @@ body {
     opacity: 0.9;
 }
 
+.referrals-container {
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.referral-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.referral-item {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 0.9rem;
+    background: #ffffff;
+}
+
+.referral-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.referral-name {
+    font-weight: 600;
+    color: #111827;
+}
+
+.referral-date {
+    color: #374151;
+    font-size: 0.875rem;
+    white-space: nowrap;
+}
+
+.referral-meta {
+    font-size: 0.9rem;
+    color: #374151;
+    line-height: 1.5;
+}
+
+.referral-notes {
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid #eef2f7;
+    color: #1f2937;
+    font-size: 0.9rem;
+    white-space: pre-wrap;
+}
+
+.referral-modal {
+    max-width: 560px;
+}
+
+.close-referral-modal {
+    position: absolute;
+    top: 1rem;
+    right: 1.2rem;
+    font-size: 1.7rem;
+    font-weight: 500;
+    color: #6b7280;
+    cursor: pointer;
+}
+
+.close-referral-modal:hover {
+    color: #111827;
+}
+
 .overview-order-number {
     font-size: 0.875rem;
     font-weight: 600;

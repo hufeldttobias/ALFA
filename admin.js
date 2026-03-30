@@ -433,12 +433,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const pageTitle = document.getElementById('pageTitle');
     const accessMode = new URLSearchParams(window.location.search).get('access');
     const isOverviewOnly = accessMode === 'overview';
+    const REFERRALS_STORAGE_KEY = 'referrals';
     
     // Page titles mapping
     const pageTitles = {
         'produkter': 'Produkter',
         'oversigt': 'Oversigt',
-        'opgaver': 'Opgaver'
+        'opgaver': 'Opgaver',
+        'referrals': 'Referrals'
     };
     
     // Menu navigation
@@ -479,6 +481,10 @@ document.addEventListener('DOMContentLoaded', function() {
             if (targetPage === 'oversigt') {
                 loadCompletedOrders();
             }
+
+            if (targetPage === 'referrals') {
+                loadReferrals();
+            }
         });
     });
 
@@ -486,14 +492,18 @@ document.addEventListener('DOMContentLoaded', function() {
     if (isOverviewOnly) {
         const productsMenuItem = document.querySelector('.menu-item[data-page="produkter"]');
         const tasksMenuItem = document.querySelector('.menu-item[data-page="opgaver"]');
+        const referralsMenuItem = document.querySelector('.menu-item[data-page="referrals"]');
         if (productsMenuItem) productsMenuItem.style.display = 'none';
         if (tasksMenuItem) tasksMenuItem.style.display = 'none';
+        if (referralsMenuItem) referralsMenuItem.style.display = 'none';
 
         const productsPage = document.getElementById('produkter');
         const tasksPage = document.getElementById('opgaver');
+        const referralsPage = document.getElementById('referrals');
         const overviewPage = document.getElementById('oversigt');
         if (productsPage) productsPage.classList.remove('active');
         if (tasksPage) tasksPage.classList.remove('active');
+        if (referralsPage) referralsPage.classList.remove('active');
         if (overviewPage) overviewPage.classList.add('active');
 
         menuItems.forEach(i => i.classList.remove('active'));
@@ -509,6 +519,120 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
         loadCompletedOrders();
+    }
+
+    // Referrals
+    function getReferrals() {
+        const stored = localStorage.getItem(REFERRALS_STORAGE_KEY);
+        if (!stored) return [];
+        try {
+            const parsed = JSON.parse(stored);
+            return Array.isArray(parsed) ? parsed : [];
+        } catch (error) {
+            console.error('Error parsing referrals:', error);
+            return [];
+        }
+    }
+
+    function saveReferrals(referrals) {
+        localStorage.setItem(REFERRALS_STORAGE_KEY, JSON.stringify(referrals));
+    }
+
+    function formatMoveInDate(dateString) {
+        if (!dateString) return 'Ikke angivet';
+        const d = new Date(dateString + 'T00:00:00');
+        if (Number.isNaN(d.getTime())) return dateString;
+        return d.toLocaleDateString('da-DK');
+    }
+
+    function loadReferrals() {
+        const container = document.getElementById('referralsContainer');
+        if (!container) return;
+
+        const referrals = getReferrals();
+        referrals.sort((a, b) => {
+            const aTime = a.moveInDate ? new Date(a.moveInDate + 'T00:00:00').getTime() : Number.MAX_SAFE_INTEGER;
+            const bTime = b.moveInDate ? new Date(b.moveInDate + 'T00:00:00').getTime() : Number.MAX_SAFE_INTEGER;
+            return aTime - bTime;
+        });
+
+        if (referrals.length === 0) {
+            container.innerHTML = '<p style="color: #6b7280; text-align: center; padding: 1rem;">Ingen referrals endnu.</p>';
+            return;
+        }
+
+        container.innerHTML = `
+            <div class="referral-list">
+                ${referrals.map((ref) => `
+                    <div class="referral-item">
+                        <div class="referral-item-header">
+                            <span class="referral-name">${ref.customerName}</span>
+                            <span class="referral-date">Move-in: ${formatMoveInDate(ref.moveInDate)}</span>
+                        </div>
+                        <div class="referral-meta">
+                            <div><strong>Kontakt:</strong> ${ref.contact}</div>
+                            <div><strong>Adresse/område:</strong> ${ref.addressArea || 'Ikke angivet'}</div>
+                            <div><strong>Type:</strong> ${ref.type || 'Ready-to-go'}</div>
+                        </div>
+                        ${ref.notes ? `<div class="referral-notes"><strong>Notes:</strong> ${ref.notes}</div>` : ''}
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
+
+    const addReferralBtn = document.getElementById('addReferralBtn');
+    const referralModal = document.getElementById('referralModal');
+    const closeReferralModal = document.getElementById('closeReferralModal');
+    const cancelReferralBtn = document.getElementById('cancelReferralBtn');
+    const referralForm = document.getElementById('referralForm');
+
+    function closeReferralModalFunc() {
+        if (!referralModal) return;
+        referralModal.style.display = 'none';
+        if (referralForm) referralForm.reset();
+    }
+
+    if (addReferralBtn) {
+        addReferralBtn.addEventListener('click', function() {
+            if (referralModal) referralModal.style.display = 'flex';
+        });
+    }
+    if (closeReferralModal) {
+        closeReferralModal.addEventListener('click', closeReferralModalFunc);
+    }
+    if (cancelReferralBtn) {
+        cancelReferralBtn.addEventListener('click', closeReferralModalFunc);
+    }
+    if (referralModal) {
+        referralModal.addEventListener('click', function(e) {
+            if (e.target === referralModal) closeReferralModalFunc();
+        });
+    }
+    if (referralForm) {
+        referralForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const customerName = document.getElementById('referralCustomerName').value.trim();
+            const contact = document.getElementById('referralContact').value.trim();
+            if (!customerName || !contact) return;
+
+            const referral = {
+                id: Date.now(),
+                customerName,
+                contact,
+                addressArea: document.getElementById('referralAddressArea').value.trim(),
+                moveInDate: document.getElementById('referralMoveInDate').value,
+                type: document.getElementById('referralType').value,
+                notes: document.getElementById('referralNotes').value.trim(),
+                createdAt: new Date().toISOString()
+            };
+
+            const referrals = getReferrals();
+            referrals.push(referral);
+            saveReferrals(referrals);
+            closeReferralModalFunc();
+            loadReferrals();
+        });
     }
     
     // Update badge count on page load
@@ -573,6 +697,12 @@ document.addEventListener('DOMContentLoaded', function() {
         // Also update badge
         updateOpgaverBadge();
     });
+
+    // Load referrals if page is active on load
+    const referralsPage = document.getElementById('referrals');
+    if (referralsPage && referralsPage.classList.contains('active')) {
+        loadReferrals();
+    }
     
     // Load and display orders
     async function loadOrders() {

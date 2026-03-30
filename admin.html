@@ -25,6 +25,9 @@
                     <span>Opgaver</span>
                     <span class="menu-badge" id="opgaverBadge" style="display: none;">0</span>
                 </a>
+                <a href="#" class="menu-item" data-page="referrals">
+                    <span>Referrals</span>
+                </a>
             </nav>
         </aside>
         
@@ -118,8 +121,60 @@
                         </div>
                     </div>
                 </div>
+
+                <div id="referrals" class="page-content">
+                    <div class="page-header">
+                        <h2>Referrals</h2>
+                        <button class="add-product-btn" id="addReferralBtn" aria-label="Tilføj referral">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div id="referralsContainer" class="referrals-container"></div>
+                </div>
             </div>
         </main>
+    </div>
+
+    <div id="referralModal" class="modal">
+        <div class="modal-content referral-modal">
+            <span class="close-referral-modal" id="closeReferralModal">&times;</span>
+            <h2>Ny referral</h2>
+            <form id="referralForm">
+                <div class="form-group">
+                    <label for="referralCustomerName">Customer name</label>
+                    <input type="text" id="referralCustomerName" name="referralCustomerName" required>
+                </div>
+                <div class="form-group">
+                    <label for="referralContact">Email / phone</label>
+                    <input type="text" id="referralContact" name="referralContact" required>
+                </div>
+                <div class="form-group">
+                    <label for="referralAddressArea">Address / area</label>
+                    <input type="text" id="referralAddressArea" name="referralAddressArea">
+                </div>
+                <div class="form-group">
+                    <label for="referralMoveInDate">Move-in date</label>
+                    <input type="date" id="referralMoveInDate" name="referralMoveInDate">
+                </div>
+                <div class="form-group">
+                    <label for="referralType">Type</label>
+                    <select id="referralType" name="referralType">
+                        <option value="Ready-to-go">Ready-to-go</option>
+                        <option value="Full">Full</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="referralNotes">Notes</label>
+                    <textarea id="referralNotes" name="referralNotes" rows="4"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" id="cancelReferralBtn">Annuller</button>
+                    <button type="submit" class="submit-btn">Gem referral</button>
+                </div>
+            </form>
+        </div>
     </div>
     
     <!-- Add Product Modal -->
