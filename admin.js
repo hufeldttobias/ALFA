@@ -488,17 +488,14 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Limited access: only show "Oversigt"
+    // Limited access: "Oversigt" + "Referrals" + read-only "Opgaver" (hide Produkter)
     if (isOverviewOnly) {
         const productsMenuItem = document.querySelector('.menu-item[data-page="produkter"]');
-        const tasksMenuItem = document.querySelector('.menu-item[data-page="opgaver"]');
-        const referralsMenuItem = document.querySelector('.menu-item[data-page="referrals"]');
         if (productsMenuItem) productsMenuItem.style.display = 'none';
-        if (tasksMenuItem) tasksMenuItem.style.display = 'none';
-        if (referralsMenuItem) referralsMenuItem.style.display = 'none';
 
         const productsPage = document.getElementById('produkter');
         const tasksPage = document.getElementById('opgaver');
+        if (tasksPage) tasksPage.classList.add('opgaver-readonly');
         const referralsPage = document.getElementById('referrals');
         const overviewPage = document.getElementById('oversigt');
         if (productsPage) productsPage.classList.remove('active');
@@ -742,10 +739,10 @@ document.addEventListener('DOMContentLoaded', function() {
             return false;
         });
         
-        // Show/hide clear examples button
+        // Show/hide clear examples button (never in read-only / overview-only mode)
         const clearExamplesBtn = document.getElementById('clearExamplesBtn');
         if (clearExamplesBtn) {
-            clearExamplesBtn.style.display = hasExamples ? 'block' : 'none';
+            clearExamplesBtn.style.display = isOverviewOnly ? 'none' : (hasExamples ? 'block' : 'none');
         }
         
         // Filter out example/test orders (orders without proper customer info or with test data)
@@ -785,8 +782,8 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('Orders that passed filter:', orders.map(o => ({ id: o.id, name: o.name })));
         }
         
-        // Save filtered orders back to localStorage if any were removed
-        if (orders.length !== originalCount) {
+        // Save filtered orders back to localStorage if any were removed (not in read-only overview)
+        if (!isOverviewOnly && orders.length !== originalCount) {
             localStorage.setItem('orders', JSON.stringify(orders));
             saveOrdersToServer(orders);
         }
@@ -833,7 +830,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const setupClass = hasSetup ? 'order-card-setup' : '';
                 
                 return `
-                    <div class="order-card ${setupClass}" data-order-id="${order.id}" style="cursor: pointer;">
+                    <div class="order-card ${setupClass}" data-order-id="${order.id}" style="cursor: ${isOverviewOnly ? 'default' : 'pointer'};">
                         <div class="order-header">
                             <div class="order-id">Ordre #${order.id}</div>
                             <div class="order-date">${new Date(order.createdAt).toLocaleDateString('da-DK')}</div>
@@ -860,13 +857,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 `;
             }).join('');
             
-            // Add click event listeners to order cards
-            container.querySelectorAll('.order-card').forEach(card => {
-                card.addEventListener('click', function() {
-                    const orderId = parseInt(this.dataset.orderId);
-                    showOrderDetail(orderId);
+            // Add click event listeners to order cards (not in read-only overview)
+            if (!isOverviewOnly) {
+                container.querySelectorAll('.order-card').forEach(card => {
+                    card.addEventListener('click', function() {
+                        const orderId = parseInt(this.dataset.orderId);
+                        showOrderDetail(orderId);
+                    });
                 });
-            });
+            }
         }
         
         // Load and display cancelled pending orders from completedOrders
@@ -892,7 +891,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 cancelledPendingTasksContainer.innerHTML = cancelledPendingOrders.map(order => {
                     // All cancelled pending orders should have red border
                     return `
-                        <div class="order-card order-card-cancelled-pending" data-order-id="${order.id}" style="cursor: pointer;">
+                        <div class="order-card order-card-cancelled-pending" data-order-id="${order.id}" style="cursor: ${isOverviewOnly ? 'default' : 'pointer'};">
                             <div class="order-header">
                             <div class="order-id">Ordre #${order.id}</div>
                                 <div class="order-date">${new Date(order.createdAt).toLocaleDateString('da-DK')}</div>
@@ -919,13 +918,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     `;
                 }).join('');
                 
-                // Add click event listeners to cancelled pending order cards
-                cancelledPendingTasksContainer.querySelectorAll('.order-card').forEach(card => {
-                    card.addEventListener('click', function() {
-                        const orderId = parseInt(this.dataset.orderId);
-                        showOrderDetail(orderId);
+                // Add click event listeners to cancelled pending order cards (not in read-only overview)
+                if (!isOverviewOnly) {
+                    cancelledPendingTasksContainer.querySelectorAll('.order-card').forEach(card => {
+                        card.addEventListener('click', function() {
+                            const orderId = parseInt(this.dataset.orderId);
+                            showOrderDetail(orderId);
+                        });
                     });
-                });
+                }
             }
         }
         
@@ -1026,6 +1027,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Clear example orders
     async function clearExampleOrders() {
+        if (isOverviewOnly) return;
         let orders = [];
         const serverOrders = await fetchOrdersFromServer();
         if (serverOrders) {
@@ -1069,6 +1071,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Show order detail modal
     async function showOrderDetail(orderId) {
+        if (isOverviewOnly) return;
         // Check both orders and completedOrders
         let order = null;
         let isFromOrders = false;

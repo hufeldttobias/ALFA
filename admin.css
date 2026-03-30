@@ -183,6 +183,31 @@ body {
     box-shadow: 0 0 0 3px rgba(0, 69, 149, 0.1);
 }
 
+.opgaver-readonly-notice {
+    display: none;
+    margin: 0 0 1rem 0;
+    padding: 0.75rem 1rem;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    color: #1e40af;
+    line-height: 1.4;
+}
+
+#opgaver.opgaver-readonly .opgaver-readonly-notice {
+    display: block;
+}
+
+#opgaver.opgaver-readonly .order-card {
+    cursor: default;
+    pointer-events: none;
+}
+
+#opgaver.opgaver-readonly .order-card:hover {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
 /* Overview Groups */
 .overview-groups {
     display: flex;
